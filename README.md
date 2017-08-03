@@ -1,6 +1,7 @@
 # Thesis
     This will be a story about "data"
-   #### Known Issues:
+
+#### Known Issues:
 - when we request data within the time range, for different granularity , 
  the response time stamps are different 
      - 5min : it's the code running time, not the fixed data timestamp as below(__tricky part__ !!!! need more time to working on)
