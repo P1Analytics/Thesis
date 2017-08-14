@@ -27,7 +27,7 @@ _--ignore-installed six is due to [fail of updating six on macOS 10.11](https://
     
 `brew install apache-flink`
 
-__Why use Cassandra?, Flink, and xxx ?__
+__Why use Cassandra, Flink, and  ?__
 
 1. Quote from a wise man(a.k.a. Tyrion Lannister): It is almost a relief to confront a comfortable, familiar monster like ~~my sister~~ Flink in [Big data computing](https://piazza.com/uniroma1.it/spring2017/1044406/resources) 
 
@@ -41,6 +41,8 @@ Cassandra is good on scalability , mapreduce support , distributed(since we have
 
 
 4. What would be the source for flink input data? 
+
+Maybe we can keep using Cassandra as mentioned in [DS320: DataStax Enterprise Analytics with Apache Spark](https://academy.datastax.com/resources/getting-started-apache-spark)
 
 5. How is the format for the real time input data? 
 
