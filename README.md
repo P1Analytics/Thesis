@@ -4,7 +4,8 @@
 #### Known Issues:
 - when we request data within the time range, for different granularity , 
  the response time stamps are different 
-     - 5min : it's the code running time, not the fixed data timestamp as below(__tricky part__ !!!! need more time to working on)
+     - 5min : it's the code running time, not the fixed data timestamp as below
+       __walk around solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval
      - 1hour : beginning of every hour 
      - 1day : 21:00 for each day 
      - 1month :  at 21:00 last day of the month
