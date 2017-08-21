@@ -49,9 +49,9 @@ Maybe we can keep using Cassandra as mentioned in [DS320: DataStax Enterprise An
 
 (**_TODO_** More details will be added here)
     
-## Retrive the data
+## Retrieve the data
 
-- [x] [Retrive the data](https://github.com/nanazhu/Thesis/tree/master/RetriveData) by using APIs on  https://api.sparkworks.net/swagger-ui.html 
+- [x] [Retrieve the data](https://github.com/nanazhu/Thesis/tree/master/RetrieveData) by using APIs on  https://api.sparkworks.net/swagger-ui.html 
  
  (**_TODO_** More details will be added here)
 
