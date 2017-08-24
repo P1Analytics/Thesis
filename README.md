@@ -17,31 +17,38 @@
     - Cassandra (API for write)
 
 ## "Staring at" the data
-what do these sensors collect?  Power consumption and environmental parameters
-- External Air Contaminants : Raw Value
-- External Ammonia Concentration : Raw Value
-- External Carbon Dioxide Concentration : Raw Value
-- External Carbon Monoxide Concentration : Raw Value
-- External Oxygen Concentration : Raw Value
-- External Relative Humidity : %
-- External Temperature : C
-- Rain Height : mm
-- Wind Direction : degrees
-- Wind Speed : m/sec
-- Atmospheric Pressure : kPa
-- Carbon Monoxide Concentration : Raw Value
-- Methane Concentration : Raw Value
-- Radiation ： uSv/h
-- Temperature : Centigrade
-- Relative Humidity :  %
-- Noise : Raw Value
-- Motion : Raw Value
-- Movement : Raw Value
-- Light
-- Luminosity : Raw Value
-- Electrical Current : mA
-- Calculated Power Consumption : mWh
-- Power Consumption
+what do these sensors collect?
+
+- Power consumption
+
+    - Calculated Power Consumption : mWh
+    - Power Consumption : mWh
+    - Electrical Current : mA
+
+- Environmental parameters
+    - Light : lux
+    - Noise : Raw Value
+    - Motion : Raw Value
+    - Movement : Raw Value
+    - Luminosity : Raw Value
+    - External Air Contaminants : Raw Value
+    - External Ammonia Concentration : Raw Value
+    - External Carbon Dioxide Concentration : Raw Value
+    - External Carbon Monoxide Concentration : Raw Value
+    - External Oxygen Concentration : Raw Value
+    - Carbon Monoxide Concentration : Raw Value
+    - Methane Concentration : Raw Value
+    - Atmospheric Pressure : kPa
+    - Radiation ： uSv/h
+    
+    - External Relative Humidity : %
+    - Relative Humidity :  %
+    - Rain Height : mm
+    
+    - Wind Direction : degrees
+    - Wind Speed : m/sec
+    - Temperature : Centigrade
+    - External Temperature : C
 
 
 ### setup enviroment : Cassandra? and Flink on macOS Sierra 10.12+
