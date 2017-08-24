@@ -5,7 +5,7 @@
 - when we request data within the time range, for different granularity , 
  the response time stamps are different 
      - 5min : it's the code running time, not the fixed data timestamp as below
-       __walk around solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval
+     -----__walk around solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval
      - 1hour : beginning of every hour 
      - 1day : 21:00 for each day 
      - 1month :  at 21:00 last day of the month
@@ -15,6 +15,34 @@
     - MariaDB (API for SQL write and read?) 
     - Hadoop (API for both write and read) 
     - Cassandra (API for write)
+
+## "Staring at" the data
+what do these sensors collect?  Power consumption and environmental parameters
+- External Air Contaminants : Raw Value
+- External Ammonia Concentration : Raw Value
+- External Carbon Dioxide Concentration : Raw Value
+- External Carbon Monoxide Concentration : Raw Value
+- External Oxygen Concentration : Raw Value
+- External Relative Humidity : %
+- External Temperature : C
+- Rain Height : mm
+- Wind Direction : degrees
+- Wind Speed : m/sec
+- Atmospheric Pressure : kPa
+- Carbon Monoxide Concentration : Raw Value
+- Methane Concentration : Raw Value
+- Radiation ： uSv/h
+- Temperature : Centigrade
+- Relative Humidity :  %
+- Noise : Raw Value
+- Motion : Raw Value
+- Movement : Raw Value
+- Light
+- Luminosity : Raw Value
+- Electrical Current : mA
+- Calculated Power Consumption : mWh
+- Power Consumption
+
 
 ### setup enviroment : Cassandra? and Flink on macOS Sierra 10.12+
 
@@ -57,4 +85,3 @@ Maybe we can keep using Cassandra as mentioned in [DS320: DataStax Enterprise An
 
 ## Store the data for later processing 
 ## Process the data
-## Patten behind the data
