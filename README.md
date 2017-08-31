@@ -59,6 +59,8 @@ what do these sensors collect?
     - Temperature : Centigrade
     - External Temperature : C
 
+Demo for sensor data on [SITE_ID 144242 with some correlations](https://drive.google.com/open?id=0B9sPiD5EdfD-Ri1pUVFHSkhHX00)
+Trying to use function CORREL on Excel to find out the connection between different sensor data 
 
 ### setup enviroment : Cassandra? and Flink on macOS Sierra 10.12+
 
