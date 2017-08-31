@@ -2,7 +2,7 @@
     This will be a story about "data"
 
 #### Known Issues:
-- when we request data within the time range, for different granularity , 
+- [x] when we request data within the time range, for different granularity , 
  the response time stamps are different 
      - 5min : it's the code running time, not the fixed data timestamp as below
      -----__walk around solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval
@@ -89,7 +89,18 @@ Cassandra is good on scalability , mapreduce support , distributed(since we have
 
 Maybe we can keep using Cassandra as mentioned in [DS320: DataStax Enterprise Analytics with Apache Spark](https://academy.datastax.com/resources/getting-started-apache-spark)
 
-5. How is the format for the real time input data? 
+5. How is the format for the real time input data?
+
+6. Why Cassandra ? Here are the [Key Cassandra Features and Benefits](https://academy.datastax.com/resources/brief-introduction-apache-cassandra) 
+
+Allow me highlight the part we are looking for and give us more confidence :
+
+> __Top Use Cases__
+_While Cassandra is a general purpose non-relational database that can be used for a variety of different applications, there are a number of use cases where the database excels over most any other option._
+>> Internet of things applications – Cassandra is perfect for consuming lots of fast incoming data from devices, __sensors__ and similar mechanisms that exist in many different locations.
+
+
+   
 
 (**_TODO_** More details will be added here)
     
