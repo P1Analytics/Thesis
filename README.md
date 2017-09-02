@@ -19,7 +19,8 @@
 - Can't read data through API: 
 
     Resource  historical data resource ID: 90946 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] while the real data is not all-zeros in https://console.sparkworks.net/resource/view/90946
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+However the real data is not all-zeros in https://console.sparkworks.net/resource/view/90946
     
 - Data is missed from time to time: 
 
@@ -59,50 +60,61 @@ what do these sensors collect?
     - Temperature : Centigrade
     - External Temperature : C
 
-Demo for sensor data on [SITE_ID 144242 with some correlations](https://drive.google.com/open?id=0B9sPiD5EdfD-Ri1pUVFHSkhHX00)
-Trying to use function CORREL on Excel to find out the connection between different sensor data 
+Demo for sensor data on [SITE_ID 144242 with some correlations](https://drive.google.com/open?id=0B9sPiD5EdfD-dU1xb1JrbUtNUlE)
 
-### setup enviroment : Cassandra? and Flink on macOS Sierra 10.12+
+- Trying to use function CORREL on Excel for possible connection between different data. Some pairs show strong connections such as different elements concentration in air, or the humidity and temperature.
+
+Where are these data from? 
+
+ - 13 schools in [Greece](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
+
+### setup enviroment : Cassandra and Flink on macOS Sierra 10.12+
 
 `brew install python` (may or maybe not need to use it but I run this anyway)
 
 `pip install cql --ignore-installed six`
 
-_--ignore-installed six is due to [fail of updating six on macOS 10.11](https://github.com/donnemartin/haxor-news/issues/54)_
+   --ignore-installed six is due to [fail of updating six on macOS 10.11](https://github.com/donnemartin/haxor-news/issues/54)
     
 `brew install cassandra`
     
 `brew install apache-flink`
 
-__Why use Cassandra, Flink, and  ?__
+__Why use Cassandra, Flink__
 
-1. Quote from a wise man(a.k.a. Tyrion Lannister): It is almost a relief to confront a comfortable, familiar monster like ~~my sister~~ Flink in [Big data computing](https://piazza.com/uniroma1.it/spring2017/1044406/resources) 
+1. __Flink__
 
-2. The processor of the data
+    Flink is well-designed on processing [streaming data](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/datastream_api.html) 
+    comparing with Spark, Hadoop.
+    
+    That is the crucial requisition for processing the sensor data
+    
+    Flink also has [connector for Cassandra as data sink](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/connectors/index.html)
 
-Flink is good on [streaming data](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/datastream_api.html) and also has [connector for Cassandra as sink](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/connectors/index.html)
+2. __Cassandra__
 
-3. The sink of the data 
+    We are dealing with sensors data, which means a lot of machines, continuous emission and a large amount of data
+    
+    Maybe we can keep using Cassandra which we can find a tons of [lectures how to use it properly](https://academy.datastax.com/courses)
+    
+    Here are the [Key Cassandra Features and Benefits](https://academy.datastax.com/resources/brief-introduction-apache-cassandra)
+    - Massively scalable architecture – a masterless design where all nodes are the same, which provides operational simplicity and easy scale-out.
+    - Flexible and dynamic data model – supports modern data types with fast writes and reads.
+    - Linear scale performance – the ability to add nodes without going down produces predictable increases in performance
+    - Transparent fault detection and recovery – nodes that fail can easily be restored or replaced.
+    - Multi-data center replication – cross data center (in multiple geographies) and multi-cloud availability zone support for writes/reads.
+    - CQL (Cassandra Query Language) – an SQL-like language that makes moving from a relational database very easy.  
+    - ...
+    
+    Allow me highlight the part we are looking for and give us more confidence:
+    > __Top Use Cases__
+    _While Cassandra is a general purpose non-relational database that can be used for a variety of different applications, there are a number of use cases where the database excels over most any other option._
+    >> Internet of things applications – Cassandra is perfect for consuming lots of fast incoming data from devices, __sensors__ and similar mechanisms that exist in many different locations.
+    
+    __Challenge__:
+    - Unlike in the SQL world where you model your data first and then write the queries, in Cassandra you need to figure out all the queries that will be done and model your data accordingly.
+    It means you need to think twice when [building the data model](https://medium.com/@jscarp)
 
-Cassandra is good on scalability , mapreduce support , distributed(since we have several data source distributed in different countries in the whole ~~Westeros~~ Europe) and [support JSON](https://www.datastax.com/dev/blog/whats-new-in-cassandra-2-2-json-support). Pre-study [Big data management](https://www.slideshare.net/ZHUNa1/cassandra-tutorial-76288142) 
-
-
-4. What would be the source for flink input data? 
-
-Maybe we can keep using Cassandra as mentioned in [DS320: DataStax Enterprise Analytics with Apache Spark](https://academy.datastax.com/resources/getting-started-apache-spark)
-
-5. How is the format for the real time input data?
-
-6. Why Cassandra ? Here are the [Key Cassandra Features and Benefits](https://academy.datastax.com/resources/brief-introduction-apache-cassandra) 
-
-Allow me highlight the part we are looking for and give us more confidence :
-
-> __Top Use Cases__
-_While Cassandra is a general purpose non-relational database that can be used for a variety of different applications, there are a number of use cases where the database excels over most any other option._
->> Internet of things applications – Cassandra is perfect for consuming lots of fast incoming data from devices, __sensors__ and similar mechanisms that exist in many different locations.
-
-
-   
 
 (**_TODO_** More details will be added here)
     
@@ -114,3 +126,8 @@ _While Cassandra is a general purpose non-relational database that can be used f
 
 ## Store the data for later processing 
 ## Process the data
+
+
+###Ref
+1. [The building data genome project](https://github.com/buds-lab/the-building-data-genome-project)
+2. [Big data computing](https://piazza.com/uniroma1.it/spring2017/1044406/resources) 
