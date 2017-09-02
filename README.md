@@ -95,7 +95,7 @@ __Why use Cassandra, Flink__
 
     We are dealing with sensors data, which means a lot of machines, continuous emission and a large amount of data
     
-    Maybe we can keep using Cassandra which we can find a tons of [lectures how to use it properly](https://academy.datastax.com/courses)
+    And Cassandra is one of the many options.
     
     Here are the [Key Cassandra Features and Benefits](https://academy.datastax.com/resources/brief-introduction-apache-cassandra)
     - Massively scalable architecture – a masterless design where all nodes are the same, which provides operational simplicity and easy scale-out.
@@ -111,6 +111,8 @@ __Why use Cassandra, Flink__
     _While Cassandra is a general purpose non-relational database that can be used for a variety of different applications, there are a number of use cases where the database excels over most any other option._
     >> Internet of things applications – Cassandra is perfect for consuming lots of fast incoming data from devices, __sensors__ and similar mechanisms that exist in many different locations.
     
+    There are a tons of [lectures how to use it properly](https://academy.datastax.com/courses)
+
     __Challenge__:
     - Unlike in the SQL world where you model your data first and then write the queries, in Cassandra you need to figure out all the queries that will be done and model your data accordingly.
     It means you need to think twice when [building the data model](https://medium.com/@jscarp)
