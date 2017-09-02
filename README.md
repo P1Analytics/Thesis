@@ -120,8 +120,97 @@ __Why use Cassandra, Flink__
     
 ## Retrieve the data
 
-- [x] [Retrieve the data](https://github.com/nanazhu/Thesis/tree/master/RetrieveData) by using APIs on  https://api.sparkworks.net/swagger-ui.html 
- 
+- [x] [Retrieve the data](https://github.com/nanazhu/Thesis/tree/master/RetrieveData) by using APIs on  https://api.sparkworks.net/swagger-ui.html
+  
+  Demo for "POST /v1/resource/query/timerange" : 
+```  
+    Command line:
+        curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Bearer cd885cf5-7fca-4be8-b32e-97225da6763f' -d '{
+          "queries": [
+            {
+              "from": 1498867200000,
+              "granularity": "day",
+              "resourceID": 156972,
+              "resultLimit": 0,
+              "to": 1500076799000
+            }
+          ]
+        }' 'https://api.sparkworks.net/v1/resource/query/timerange'
+        
+        
+    Reponse body:
+        {
+          "results": {
+            "{\"resourceID\":156972,\"resourceURI\":\"gaia-ea/room-1/temp\",\"from\":1498867200000,\"to\":1500076799000,\"granularity\":\"day\",\"resultLimit\":0}": {
+              "average": 31.995042261495424,
+              "summary": 479.92563392243136,
+              "data": [
+                {
+                  "timestamp": 1498856400000,
+                  "reading": 34.19535065107274
+                },
+                {
+                  "timestamp": 1498942800000,
+                  "reading": 35.618584889499054
+                },
+                {
+                  "timestamp": 1499029200000,
+                  "reading": 36.04129544661687
+                },
+                {
+                  "timestamp": 1499115600000,
+                  "reading": 33.757383570057335
+                },
+                {
+                  "timestamp": 1499202000000,
+                  "reading": 33.53155289889761
+                },
+                {
+                  "timestamp": 1499288400000,
+                  "reading": 33.69297495797249
+                },
+                {
+                  "timestamp": 1499374800000,
+                  "reading": 33.86900649403725
+                },
+                {
+                  "timestamp": 1499461200000,
+                  "reading": 34.38513502358479
+                },
+                {
+                  "timestamp": 1499547600000,
+                  "reading": 33.115313475098816
+                },
+                {
+                  "timestamp": 1499634000000,
+                  "reading": 35.82894403139205
+                },
+                {
+                  "timestamp": 1499720400000,
+                  "reading": 28.39513749980371
+                },
+                {
+                  "timestamp": 1499806800000,
+                  "reading": 26.729258248353453
+                },
+                {
+                  "timestamp": 1499893200000,
+                  "reading": 26.55955035714077
+                },
+                {
+                  "timestamp": 1499979600000,
+                  "reading": 25.807027188020786
+                },
+                {
+                  "timestamp": 1500066000000,
+                  "reading": 28.399119190883642
+                }
+              ]
+            }
+          }
+        }
+```
+  
  (**_TODO_** More details will be added here)
 
 ## Store the data for later processing 
