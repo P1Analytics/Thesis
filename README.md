@@ -66,8 +66,19 @@ Demo for sensor data on [SITE_ID 144242 with some correlations](https://drive.go
 
 Where are these data from? 
 
- - 13 schools in [Greece](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
+ - Locations in [Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
 
+| Country  | Parameter | Number | Comment | 
+| ------------- | ------------- | ------------- | ------------- |
+| Greece  | Sensing endpoints | 872 | Each sensor equals 1 sensing endpoint | 
+| | Sensing rate | 1 minute | Can be modified | 
+| | Educators | 294 | Greek public schools in GAIA| 
+| |Students | 2267 | Greek public schools in GAIA | 
+| Italy (Rome) | Sensing endpoints  | 79 |Will soon be augmented|
+| | Sensing rate | 1 minute | Can be modified | 
+| | Educators | 120 | University faculty and Post Doc |
+| | Students | 1706 | University students | 
+| ....| more to add 
 ### setup enviroment : Cassandra and Flink on macOS Sierra 10.12+
 
 `brew install python` (may or maybe not need to use it but I run this anyway)
