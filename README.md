@@ -9,13 +9,25 @@
      - 1hour : beginning of every hour 
      - 1day : 21:00 for each day 
      - 1month :  at 21:00 last day of the month
-
-- APIs options from Apache Flink 
-    - MongoDB (customized need to try the functions?)
-    - MariaDB (API for SQL write and read?) 
-    - Hadoop (API for both write and read) 
-    - Cassandra (API for write)
-
+- [x] Cassandra do not have connector as data source for flink
+    
+    __walk around solution__ :[reference](https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-cassandra/src/test/java/org/apache/flink/streaming/connectors/cassandra/CassandraConnectorITCase.java)
+    ```
+    ClusterBuilder cb = new ClusterBuilder() {
+            @Override
+            public Cluster buildCluster(Cluster.Builder builder) {
+                return builder.addContactPoint("127.0.0.1").build();
+            }
+        };
+    String query = "SELECT ResourceID,Reading FROM gaia.reading_data WHERE ResourceID=155873";
+    InputFormat<Tuple2<Integer, Float>, InputSplit> source = new CassandraInputFormat<>(query, cb);
+    source.configure(null);
+    source.open(null);
+    List<Tuple2<Integer, Float>> result = new ArrayList<>();
+    while (!source.reachedEnd()) result.add(source.nextRecord(new Tuple2<Integer, Float>()));
+    source.close();
+    ```
+    
 - Can't read data through API: 
 
     Resource  historical data resource ID: 90946 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour
@@ -87,7 +99,7 @@ Cloud platform
  ![cloud](./image/GAIAcloudplatform.png?raw=true "")
 
 
-### setup enviroment : Cassandra and Flink on macOS Sierra 10.12+
+### Setup enviroment : Cassandra and Flink on macOS Sierra 10.12+
 
 `brew install python` (may or maybe not need to use it but I run this anyway)
 
@@ -139,7 +151,7 @@ __Why use Cassandra, Flink__
 
 (**_TODO_** More details will be added here)
     
-## Retrieve the data
+## Retrieve the data as stream
 
 - [x] [Retrieve the data](https://github.com/nanazhu/Thesis/tree/master/RetrieveData) by using APIs on  https://api.sparkworks.net/swagger-ui.html
   
@@ -235,9 +247,26 @@ __Why use Cassandra, Flink__
  (**_TODO_** More details will be added here)
 
 ## Store the data for later processing 
-## Process the data
+## Process the data on Flink
+Flink has the special classes DataSet and DataStream to represent data in a program. 
+You can think of them as immutable collections of data that can contain duplicates. 
+In the case of DataSet the data is finite while for a DataStream the number of elements can be unbounded.
 
+Flink program programs look like regular programs that transform collections of data. 
+Each program consists of the same basic parts:
+- Obtain an execution environment,
+- Load/create the initial data,
+- Specify transformations on this data,
+- Specify where to put the results of your computations,
+- Trigger the program execution
 
-###Ref
+Let's talk something about "Key" first
+- Define keys for Tuples 
+- Define keys using Field Expressions
+- Define keys using Key Selector Functions  
+### Batch 
+### Stream
+
+## Reference
 1. [The building data genome project](https://github.com/buds-lab/the-building-data-genome-project)
 2. [Big data computing](https://piazza.com/uniroma1.it/spring2017/1044406/resources) 
