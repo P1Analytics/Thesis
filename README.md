@@ -5,7 +5,7 @@
 - [x] when we request data within the time range, for different granularity , 
  the response time stamps are different 
      - 5min : it's the code running time, not the fixed data timestamp as below
-     -----__walk around solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval
+        - __walk around solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval
      - 1hour : beginning of every hour 
      - 1day : 21:00 for each day 
      - 1month :  at 21:00 last day of the month
@@ -38,8 +38,10 @@ However the real data is not all-zeros in https://console.sparkworks.net/resourc
 
     Resource  historical data resource ID: 155918 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour [32.34, 32.34, 32.34, 32.473637, 33.4425, 34.259167, 34.75733, 34.365334, 33.32, 32.764668, 32.570587, 32.36722, 32.3155, 32.3068, 32.241306, 31.868149, 31.868149, 31.85, 31.838118, 31.808867, 31.826338, 31.822662, 31.832302, 31.852188, 31.842134, 31.841246, 31.85319, 32.140522, 33.013374, 33.919827, 34.664608, 34.72307, 32.34, 32.34, 32.34, 31.85, 31.85, 32.34, 31.85, 31.85, 31.85, 31.85, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 31.367912, 31.374935, 31.410751, 31.416487, 31.51673, 31.94285, 32.77366, 33.64148, 34.232605, 33.768044, 32.68922, 32.30267, 32.140594, 31.958946, 31.87191, 31.852951, 31.830269, 31.64, 31.46889, 31.456898, 31.3657, 31.385254, 31.381018, 31.41322, 31.534771, 31.668463, 31.79291, 31.836, 31.869188, 32.38108, 33.044456, 33.666306, 33.827496, 32.96945, 32.38393, 32.23478, 32.038074, 31.907423, 31.856163, 31.844433, 31.838556, 31.69923, 31.6932, 31.511343, 31.412098, 31.391008, 31.380096, 31.443954, 31.619139, 31.776262, 31.830036, 31.832235, 31.799591, 31.84828, 32.09569, 32.928936, 33.33732, 33.126163, 32.188957, 31.83223, 31.623442, 31.422161, 31.361742, 31.356749, 31.3123, 30.906296, 30.886333, 30.878448, 30.859062, 30.843264, 30.859325, 30.861336, 30.849495, 30.85837, 30.85697]
     
-## "Staring at" the data
-What do these sensors collect?
+## "Gazing at" the data
+      When you gaze long into an abyss, the abyss also gazes into you
+
+__What do these sensors collect?__
 
 - Power consumption
 
@@ -72,11 +74,11 @@ What do these sensors collect?
     - Temperature : Centigrade
     - External Temperature : C
 
-Demo for sensor data on [SITE_ID 144242 with some correlations](https://drive.google.com/open?id=0B9sPiD5EdfD-dU1xb1JrbUtNUlE)
+- Demo for sensor data on [SITE_ID 144242 with some correlations](https://drive.google.com/open?id=0B9sPiD5EdfD-dU1xb1JrbUtNUlE)
 
-- Trying to use function CORREL on Excel for possible connection between different data. Some pairs show strong connections such as different elements concentration in air, or the humidity and temperature.
+    - Trying to use function CORREL on Excel for possible connection between different data. Some pairs show strong connections such as different elements concentration in air, or the humidity and temperature.
 
-Where are these data from? 
+__Where are these data from?__
 
  - Locations in [Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
 
@@ -92,15 +94,15 @@ Where are these data from?
 | | Students | 1706 | University students | 
 | ....| more to add 
 
-GAIA Architecture design overview 
+__GAIA Architecture design overview__
  ![archetecture](./image/GAIAarchitecturedesignOverview.jpg?raw=true "")
 
-Cloud platform 
+__Cloud platform__
  ![cloud](./image/GAIAcloudplatform.png?raw=true "")
 
 
-### Setup enviroment : Cassandra and Flink on macOS Sierra 10.12+
-
+## Setup enviroment : Cassandra and Flink on macOS Sierra 10.12+
+```
 `brew install python` (may or maybe not need to use it but I run this anyway)
 
 `pip install cql --ignore-installed six`
@@ -110,7 +112,7 @@ Cloud platform
 `brew install cassandra`
     
 `brew install apache-flink`
-
+```
 __Why use Cassandra, Flink__
 
 1. __Flink__
@@ -151,9 +153,10 @@ __Why use Cassandra, Flink__
 
 (**_TODO_** More details will be added here)
     
-## Retrieve the data as stream
+## Retrieve the data 
+### Stream
 
-- [x] [Retrieve the data](https://github.com/nanazhu/Thesis/tree/master/RetrieveData) by using APIs on  https://api.sparkworks.net/swagger-ui.html
+- [x] Retrieve the data by using APIs on  https://api.sparkworks.net/swagger-ui.html
   
   Demo for "POST /v1/resource/query/timerange" : 
 ```  
@@ -243,10 +246,9 @@ __Why use Cassandra, Flink__
           }
         }
 ```
-  
- (**_TODO_** More details will be added here)
 
-## Store the data for later processing 
+### Batch
+
 ## Process the data on Flink
 Flink has the special classes DataSet and DataStream to represent data in a program. 
 You can think of them as immutable collections of data that can contain duplicates. 
@@ -266,6 +268,7 @@ Let's talk something about "Key" first
 - Define keys using Key Selector Functions  
 ### Batch 
 ### Stream
+
 
 ## Reference
 1. [The building data genome project](https://github.com/buds-lab/the-building-data-genome-project)
