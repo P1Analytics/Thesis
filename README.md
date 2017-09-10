@@ -113,7 +113,7 @@ __Cloud platform__
     
 `brew install apache-flink`
 ```
-__Why use Cassandra, Flink__
+__Why use Flink and Cassandra__
 
 1. __Flink__
 
@@ -123,6 +123,7 @@ __Why use Cassandra, Flink__
     That is the crucial requisition for processing the sensor data
     
     Flink also has [connector for Cassandra as data sink](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/connectors/index.html)
+    and we can customize for connecting Cassandra as batch data source.
 
 2. __Cassandra__
 
@@ -266,10 +267,12 @@ Let's talk something about "Key" first
 - Define keys for Tuples 
 - Define keys using Field Expressions
 - Define keys using Key Selector Functions  
-### Batch 
 ### Stream
+### Batch 
+
 
 
 ## Reference
 1. [The building data genome project](https://github.com/buds-lab/the-building-data-genome-project)
 2. [Big data computing](https://piazza.com/uniroma1.it/spring2017/1044406/resources) 
+3. [Naked Statistics: Stripping the Dread from the Data by Charles Wheelan](https://www.goodreads.com/book/show/17986418-naked-statistics)

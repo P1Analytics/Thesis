@@ -11,15 +11,14 @@ import org.apache.flink.batch.connectors.cassandra.CassandraInputFormat;
 import org.apache.flink.core.io.InputSplit;
 import org.apache.flink.streaming.connectors.cassandra.ClusterBuilder;
 import org.apache.flink.util.Collector;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BatchCassandra {
-    public static void main(String[] args) throws IOException {
-        ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+
+    public static List<Tuple2<Integer, Float>> CassandraQuery_1() throws java.io.IOException {
+    // Tuple2<Integer, Float> might need to update according to the query
+        String query = "SELECT ResourceID,Reading FROM gaia.reading_data";
 
         ClusterBuilder cb = new ClusterBuilder() {
             @Override
@@ -27,21 +26,16 @@ public class BatchCassandra {
                 return builder.addContactPoint("127.0.0.1").build();
             }
         };
-        String query = "SELECT ResourceID,Reading FROM gaia.reading_data WHERE ResourceID=155873";
         InputFormat<Tuple2<Integer, Float>, InputSplit> source = new CassandraInputFormat<>(query, cb);
         source.configure(null);
         source.open(null);
-        List<Tuple2<Integer, Float>> result = new ArrayList<>();
-        while (!source.reachedEnd()) result.add(source.nextRecord(new Tuple2<Integer, Float>()));
-        source.close();
 
-        DataSource<List<Tuple2<Integer, Float>>> value = env.fromElements(result);
-        DataSet<Tuple2<String, Integer>> counts = value.flatMap(new Tokenizer()).groupBy(0).sum(1);
-        try {
-            counts.print();
-        } catch (Exception e) {
-            e.printStackTrace();
+        List<Tuple2<Integer, Float>> result = new ArrayList<>();
+        while (!source.reachedEnd()) {
+            result.add(source.nextRecord(new Tuple2<Integer, Float>()));
         }
+        source.close();
+        return result;
     }
 
     public static class Tokenizer implements FlatMapFunction<List<Tuple2<Integer, Float>>, Tuple2<String, Integer>> {
@@ -53,6 +47,19 @@ public class BatchCassandra {
             }
         }
     }
+
+    public static void main(String[] args) throws Exception {
+
+        ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+
+        List<Tuple2<Integer, Float>> result = CassandraQuery_1();
+        DataSource<List<Tuple2<Integer, Float>>> value = env.fromElements(result);
+        DataSet<Tuple2<String, Integer>> counts = value.flatMap(new Tokenizer()).groupBy(0).sum(1);
+
+        env.execute();
+    }
+
+
 
 
 }
