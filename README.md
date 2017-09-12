@@ -78,6 +78,19 @@ __What do these sensors collect?__
 
     - Trying to use function CORREL on Excel for possible connection between different data. Some pairs show strong connections such as different elements concentration in air, or the humidity and temperature.
 
+- Demo for the temperature of three different classrooms from Gramsci-Keynes School in Prato,Italy 
+    ![](./image/155368.png?raw=true "")
+    ![](./image/155372.png?raw=true "")
+    ![](./image/155375.png?raw=true "")
+    
+    The range of data is 12 months from 2016-09-12T16:42:07.534Z to 2017-09-12T16:42:07.534Z with step /hour
+    and the data spread for the whole X as one months and each colored line represent the data for that certain month
+    It is clear that three groups of data showing up the similar patten, mainly because they are in the same site and 
+    the data for the temprature should not behaving dramatically different from each other.
+    For part of the data is missing , we might assume at that time the site is closed or the sensors are powered off.
+    
+    If looking for the whole 12months patten, the data is matching the changing of the weather
+    ![](./image/155368_year.png?raw=true "")
 __Where are these data from?__
 
  - Locations in [Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
@@ -124,6 +137,8 @@ __Why use Flink and Cassandra__
     
     Flink also has [connector for Cassandra as data sink](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/connectors/index.html)
     and we can customize for connecting Cassandra as batch data source.
+    
+    ![architechture of flink](./image/flink.png?raw=true "")
 
 2. __Cassandra__
 
