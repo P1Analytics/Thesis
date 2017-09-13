@@ -5,13 +5,19 @@
 - [x] when we request data within the time range, for different granularity , 
  the response time stamps are different 
      - 5min : it's the code running time, not the fixed data timestamp as below
-        - __walk around solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval
      - 1hour : beginning of every hour 
      - 1day : 21:00 for each day 
      - 1month :  at 21:00 last day of the month
+    
+     __Solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval in one hour. 
+     So we will have 5', 10',15',...55' for the record timestamp
+
+     
 - [x] Cassandra do not have connector as data source for flink
     
-    __walk around solution__ :[reference](https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-cassandra/src/test/java/org/apache/flink/streaming/connectors/cassandra/CassandraConnectorITCase.java)
+    __Solution__
+    
+    [reference : CassandraConnectorITCase ](https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-cassandra/src/test/java/org/apache/flink/streaming/connectors/cassandra/CassandraConnectorITCase.java)
     ```
     ClusterBuilder cb = new ClusterBuilder() {
             @Override
@@ -28,19 +34,22 @@
     source.close();
     ```
     
-- Can't read data through API: 
+- [x] Can't read data through API: 
 
     Resource  historical data resource ID: 90946 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour
 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
 However the real data is not all-zeros in https://console.sparkworks.net/resource/view/90946
     
+    We will use the data extracted from API for further process , the console data are only for reference.
+    
 - Data is missed from time to time: 
 
     Resource  historical data resource ID: 155918 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour [32.34, 32.34, 32.34, 32.473637, 33.4425, 34.259167, 34.75733, 34.365334, 33.32, 32.764668, 32.570587, 32.36722, 32.3155, 32.3068, 32.241306, 31.868149, 31.868149, 31.85, 31.838118, 31.808867, 31.826338, 31.822662, 31.832302, 31.852188, 31.842134, 31.841246, 31.85319, 32.140522, 33.013374, 33.919827, 34.664608, 34.72307, 32.34, 32.34, 32.34, 31.85, 31.85, 32.34, 31.85, 31.85, 31.85, 31.85, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 31.367912, 31.374935, 31.410751, 31.416487, 31.51673, 31.94285, 32.77366, 33.64148, 34.232605, 33.768044, 32.68922, 32.30267, 32.140594, 31.958946, 31.87191, 31.852951, 31.830269, 31.64, 31.46889, 31.456898, 31.3657, 31.385254, 31.381018, 31.41322, 31.534771, 31.668463, 31.79291, 31.836, 31.869188, 32.38108, 33.044456, 33.666306, 33.827496, 32.96945, 32.38393, 32.23478, 32.038074, 31.907423, 31.856163, 31.844433, 31.838556, 31.69923, 31.6932, 31.511343, 31.412098, 31.391008, 31.380096, 31.443954, 31.619139, 31.776262, 31.830036, 31.832235, 31.799591, 31.84828, 32.09569, 32.928936, 33.33732, 33.126163, 32.188957, 31.83223, 31.623442, 31.422161, 31.361742, 31.356749, 31.3123, 30.906296, 30.886333, 30.878448, 30.859062, 30.843264, 30.859325, 30.861336, 30.849495, 30.85837, 30.85697]
     
+    **TODO** We will need to identify the "noise" from data
+    
 ## "Gazing at" the data
       When you gaze long into an abyss, the abyss also gazes into you
-
 __What do these sensors collect?__
 
 - Power consumption
@@ -78,10 +87,10 @@ __What do these sensors collect?__
 
     - Trying to use function CORREL on Excel for possible connection between different data. Some pairs show strong connections such as different elements concentration in air, or the humidity and temperature.
 
-- Demo for the temperature of three different classrooms from Gramsci-Keynes School in Prato,Italy 
-    ![](./image/155368.png?raw=true "")
-    ![](./image/155372.png?raw=true "")
-    ![](./image/155375.png?raw=true "")
+- Demo for the temperature of three different classrooms from [Gramsci-Keynes School in Prato,Italy](https://console.sparkworks.net/site/view/155076) 
+    ![resourceId155368](./image/155368.png?raw=true "")
+    ![resourceId155372](./image/155372.png?raw=true "")
+    ![resourceId155375](./image/155375.png?raw=true "")
     
     The range of data is 12 months from 2016-09-12T16:42:07.534Z to 2017-09-12T16:42:07.534Z with step /hour
     and the data spread for the whole X as one months and each colored line represent the data for that certain month
@@ -90,7 +99,10 @@ __What do these sensors collect?__
     For part of the data is missing , we might assume at that time the site is closed or the sensors are powered off.
     
     If looking for the whole 12months patten, the data is matching the changing of the weather
-    ![](./image/155368_year.png?raw=true "")
+    ![155368_year](./image/155368_year.png?raw=true "")
+
+**TODO** More visualization for the data comparing with the ground truth 
+
 __Where are these data from?__
 
  - Locations in [Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
@@ -106,6 +118,8 @@ __Where are these data from?__
 | | Educators | 120 | University faculty and Post Doc |
 | | Students | 1706 | University students | 
 | ....| more to add 
+Total : 16 sites and 922 sensors are on the record till 2017/09/13.
+Part of them are newly installed in this year and some have history data from 2015.
 
 __GAIA Architecture design overview__
  ![archetecture](./image/GAIAarchitecturedesignOverview.jpg?raw=true "")
@@ -114,7 +128,8 @@ __Cloud platform__
  ![cloud](./image/GAIAcloudplatform.png?raw=true "")
 
 
-## Setup enviroment : Cassandra and Flink on macOS Sierra 10.12+
+## Setup enviroment on mac OS Sierra 10
+### Cassandra and Flink 
 ```
 `brew install python` (may or maybe not need to use it but I run this anyway)
 
@@ -126,7 +141,7 @@ __Cloud platform__
     
 `brew install apache-flink`
 ```
-__Why use Flink and Cassandra__
+### Why use Flink and Cassandra 
 
 1. __Flink__
 
@@ -165,9 +180,13 @@ __Why use Flink and Cassandra__
     __Challenge__:
     - Unlike in the SQL world where you model your data first and then write the queries, in Cassandra you need to figure out all the queries that will be done and model your data accordingly.
     It means you need to think twice when [building the data model](https://medium.com/@jscarp)
+    Now we just use a very simple table as below for current phase
+    
+    | ResourceID  | Reading | timestamp | 
+    | ----------  | --------| ----------| 
+    
 
-
-(**_TODO_** More details will be added here)
+(**_TODO_** more combinations of infrastructure MongoDB, MariaDB, Spark, Storm, Hadoop, Kafka, etc will be put on the trial list)
     
 ## Retrieve the data 
 ### Stream
@@ -266,6 +285,12 @@ __Why use Flink and Cassandra__
 ### Batch
 
 ## Process the data on Flink
+__Target__ : 
+- Visualize and Identify the user patten
+- Predict abnormal case 
+- Data ETL , including matching the ground truth.  
+
+
 Flink has the special classes DataSet and DataStream to represent data in a program. 
 You can think of them as immutable collections of data that can contain duplicates. 
 In the case of DataSet the data is finite while for a DataStream the number of elements can be unbounded.
@@ -283,7 +308,9 @@ Let's talk something about "Key" first
 - Define keys using Field Expressions
 - Define keys using Key Selector Functions  
 ### Stream
+- Reference [SocketWindowWordCount.java](https://github.com/apache/flink/blob/master/flink-examples/flink-examples-streaming/src/main/java/org/apache/flink/streaming/examples/socket/SocketWindowWordCount.java)
 ### Batch 
+
 
 
 
