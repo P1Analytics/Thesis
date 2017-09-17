@@ -56,8 +56,12 @@ __What do these sensors collect?__
 
     - Calculated Power Consumption : mWh
     - Power Consumption : mWh
-    - Electrical Current : mA
-
+    - Electrical Current : mA/A
+    - Active Power : mW
+    - Apparent Energy : Vah
+    - Apparent Power : VA
+    - Voltage : V
+    
 - Environmental parameters
     - Light : lux
     - Noise : Raw Value
@@ -71,8 +75,11 @@ __What do these sensors collect?__
     - External Oxygen Concentration : Raw Value
     - Carbon Monoxide Concentration : Raw Value
     - Methane Concentration : Raw Value
+    - Power Factor : Raw Value
     - Atmospheric Pressure : kPa
-    - Radiation ： uSv/h
+    - Radiation ：uSv/h
+    - Reactive Energy : VARh
+    - Reactive Power : VAR
     
     - External Relative Humidity : %
     - Relative Humidity :  %
@@ -101,6 +108,9 @@ __What do these sensors collect?__
     If looking for the whole 12months patten, the data is matching the changing of the weather
     ![155368_year](./image/155368_year.png?raw=true "")
 
+- Demo for 10 schools in Greece for one year Power Consumption 
+    ![greece one year](./image/GAIAGreece16-17.png)
+     
 **TODO** More visualization for the data comparing with the ground truth 
 
 __Where are these data from?__
@@ -113,12 +123,13 @@ __Where are these data from?__
 | | Sensing rate | 1 minute | Can be modified | 
 | | Educators | 294 | Greek public schools in GAIA| 
 | |Students | 2267 | Greek public schools in GAIA | 
-| Italy (Rome) | Sensing endpoints  | 79 |Will soon be augmented|
+| Italy (Sapienza,Roma) | Sensing endpoints  | 118 |Will soon be augmented|
 | | Sensing rate | 1 minute | Can be modified | 
 | | Educators | 120 | University faculty and Post Doc |
 | | Students | 1706 | University students | 
-| ....| more to add 
-Total : 16 sites and 922 sensors are on the record till 2017/09/13.
+|Italy(Prato)|Sensing endpoints |117 |
+| Sweden(Soderhamn)|Sensing endpoints |3 | create on 2017-07-12T12 more to add, no data yet| 
+Total : 16 sites and 1922 sensors are on the record till 2017/09/16.
 Part of them are newly installed in this year and some have history data from 2015.
 
 __GAIA Architecture design overview__
