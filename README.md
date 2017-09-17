@@ -108,8 +108,9 @@ __What do these sensors collect?__
     If looking for the whole 12months patten, the data is matching the changing of the weather
     ![155368_year](./image/155368_year.png?raw=true "")
 
-- Demo for 10 schools in Greece for one year Power Consumption 
-    ![greece one year](./image/GAIAGreece16-17.png)
+- Demo for 11 schools in Greece for one year Power Consumption 
+    ![greece one year](./image/GAIAGreece16-17.png?raw=true "")
+    There are two other schools without power consumption sensors 
      
 **TODO** More visualization for the data comparing with the ground truth 
 
