@@ -112,6 +112,9 @@ __What do these sensors collect?__
     ![greece one year](./image/GAIAGreece16-17.png?raw=true "")
     There are two other schools without power consumption sensors 
      
+- Demo for 4 month 4 movement sensors data compared in 2ο ΕΠΑΛ Λάρισας, Greece
+    ![4 months movments](./image/4month_movement.png?raw=true "")
+    
 **TODO** More visualization for the data comparing with the ground truth 
 
 __Where are these data from?__
