@@ -115,6 +115,16 @@ __What do these sensors collect?__
 - Demo for 4 month 4 movement sensors data compared in 2ο ΕΠΑΛ Λάρισας, Greece
     ![4 months movments](./image/4month_movement.png?raw=true "")
     
+- Demo Temperature for 3 weeks, time interval: hour 
+    ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
+
+- Demo Motion for 3 weeks, time interval: hour 
+    ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true "")
+
+- Demo Calculated Power Consumption for 3 weeks, time interval: hour 
+    ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
+
+ 
 **TODO** More visualization for the data comparing with the ground truth 
 
 __Where are these data from?__
