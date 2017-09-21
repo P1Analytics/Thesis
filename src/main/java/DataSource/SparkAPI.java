@@ -83,7 +83,7 @@ public class SparkAPI {
                 .extract()
                 .body().asString();
         List<Long> resourceIds = from(response).getList("resources.resourceId", Long.class);
-        System.out.println(" CHECKOUT site " + siteId + " the resourcesIds list " + resourceIds);
+        System.out.println("CHECKOUT site／subsite " + siteId + " the resourcesIds list " + resourceIds);
 
         return resourceIds;
     }
@@ -105,6 +105,23 @@ public class SparkAPI {
         System.out.println(response);
 //        System.out.println(from(response).getList("subsites.user.username"));
         return siteId;
+    }
+
+    public List<Long>  listSubsites(Long siteId) throws Exception, AssertionError {
+//        GET GET /v1/location/site/{siteId}/subsite Retrieve the subsite
+        String get_str = "/location/site/" + Long.toString(siteId) + "/subsite";
+        String response = given()
+                .spec(requestSpecBuilder.build())
+                .auth().preemptive().oauth2(accessToken)
+                .get(get_str)
+                .then().assertThat()
+                .statusCode(200)
+                .extract()
+                .body().asString();
+        List<Long> subsitesIds = from(response).getList("sites.id", Long.class);
+        System.out.println("CHECKOUT subsite " + siteId + " the subsite list " + subsitesIds);
+
+        return subsitesIds;
     }
 
     public Long getResourceIdRandom(List<Long> resourceIds) throws Exception, AssertionError {

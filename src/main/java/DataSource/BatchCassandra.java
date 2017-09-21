@@ -58,8 +58,4 @@ public class BatchCassandra {
 
         env.execute();
     }
-
-
-
-
 }
