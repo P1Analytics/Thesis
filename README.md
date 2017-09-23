@@ -144,16 +144,30 @@ __What do these sensors collect?__
     - Motion at the main building 
     ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
     
+    - Noise at the main building 
+    ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
+        
     - Motion at the sub-site building
     ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
     
+    - Noise at the sub-site building
+    ![4 weeks motion](./image/19640%20noise2.png?raw=true"")
+    
+    - Motion and Noise at the sub-site building
+    ![4 weeks motion](./image/19640%20subsite%20motion%20noise.png?raw=true"")
+
     - Temperature at the main building
     ![4 weeks Temperature](./image/19640%20Temperature1.png?raw=true"")
     
     - Temperature at the sub-site building
     ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
         
-
+    - Rain Height and Relative Humidity at the main building
+    ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
+    
+    - Relative Humidity at the sub-site building
+    ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
+    
 **TODO** More visualization for the data comparing with the ground truth 
 
 __Where are these data from?__
@@ -208,6 +222,7 @@ __Cloud platform__
     and we can customize for connecting Cassandra as batch data source.
     
     ![architechture of flink](./image/flink.png?raw=true "")
+    
 
 2. __Cassandra__
 

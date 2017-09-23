@@ -83,7 +83,7 @@ public class SparkAPI {
                 .extract()
                 .body().asString();
         List<Long> resourceIds = from(response).getList("resources.resourceId", Long.class);
-        System.out.println("CHECKOUT site／subsite " + siteId + " the resourcesIds list " + resourceIds);
+//        System.out.println("CHECKOUT site／subsite " + siteId + " the resourcesIds list " + resourceIds);
 
         return resourceIds;
     }
@@ -119,7 +119,7 @@ public class SparkAPI {
                 .extract()
                 .body().asString();
         List<Long> subsitesIds = from(response).getList("sites.id", Long.class);
-        System.out.println("CHECKOUT subsite " + siteId + " the subsite list " + subsitesIds);
+//        System.out.println("CHECKOUT subsite " + siteId + " the subsite list " + subsitesIds);
 
         return subsitesIds;
     }
