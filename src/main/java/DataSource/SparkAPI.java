@@ -155,7 +155,7 @@ public class SparkAPI {
         System.out.println(data);
     }
 
-    public void getResourceIdDetails(Long resourceId, String detail) throws Exception, AssertionError {
+    public String getResourceIdDetails(Long resourceId, String detail) throws Exception, AssertionError {
 //        GET /v1/resource/{resourceId} Retrieve a Spark Works Resource Details by its unique identifier
 //       TODO GET /v1/resource/{resourceId}/property Retrieve the properties of a Resource by the resource unique identifier
 //       TODO since all the information we need could be retrieved from the first API i dont get why we need the second one
@@ -171,10 +171,12 @@ public class SparkAPI {
                     .extract()
                     .body().asString();
 //            System.out.println("resouceId "+ resourceId + " : " + from(response).get(detail));
-            System.out.println(from(response).get("property")+" "+ from(response).get("uom"));
+//            System.out.println((String) from(response).get(detail));
+            return (String)from(response).get(detail);
         }
-        catch(AssertionError e){
+        catch(Exception e){
             System.out.println("getResourceIdDetails " + resourceId + " " + e);
+            return null;
         }
     }
 
@@ -222,11 +224,12 @@ public class SparkAPI {
             }
         }
         catch(AssertionError e){
-                System.out.println("getResourceSummary " + resourceId + " " + e);
-            }
+            System.out.println("getResourceSummary " + resourceId + " " + e);
+        }
     }
 
     public Matcher getResourceDataByDayRange(Long resourceId, ZonedDateTime start, ZonedDateTime end, String frequency) throws Exception,AssertionError {
+
         System.out.println("Resource  historical data resource ID: "+ resourceId +" from : " +  start.toInstant()+" to "
                 +  end.toInstant() + " with steps per " + frequency );
         String requestBody = "" +

@@ -1,7 +1,14 @@
+
 # Thesis
     This will be a story about "data"
-
-#### Known Issues:
+## Category
+* [Known Issues](#Known Issues)
+* [Gazing at the data](#Gazing at the data)
+* [Setup enviroment on mac OS Sierra 10](#Setup enviroment on mac OS Sierra 10)
+* [Retrieve the data](#Retrieve the data )
+* [Process the data](#Process the data on Flink)
+* [Reference](#Reference)
+## Known Issues:
 - [x] when we request data within the time range, for different granularity , 
  the response time stamps are different 
      - 5min : it's the code running time, not the fixed data timestamp as below
@@ -112,21 +119,40 @@ __What do these sensors collect?__
     ![greece one year](./image/GAIAGreece16-17.png?raw=true "")
     There are two other schools without power consumption sensors 
      
+ 
 - Demo for 4 month 4 movement sensors data compared in 2ο ΕΠΑΛ Λάρισας, Greece
     ![4 months movments](./image/4month_movement.png?raw=true "")
+
+- Demo on site __8ο Γυμνάσιο Πατρών,Greece__        
+    - Demo Temperature for 3 weeks, time interval: hour 
+        ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
     
-- Demo Temperature for 3 weeks, time interval: hour 
-    ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
+    - Demo Calculated Power Consumption for 3 weeks, time interval: hour 
+        ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
+    
+    - Demo main building Motion for 3 weeks, time interval: hour 
+        ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true "")
+     
+    - Demo subsite building(Αίθουσα ισόγειο) Motion for 3 weeks, time interval: hour 
+        ![3 weeks motion ](./image/Mo2.png?raw=true"")
 
-- Demo Calculated Power Consumption for 3 weeks, time interval: hour 
-    ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
+- Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__ 
 
-- Demo main building(8ο Γυμνάσιο Πατρών) Motion for 3 weeks, time interval: hour 
-    ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true "")
- 
-
-- Demo subsite building(Αίθουσα ισόγειο,8ο Γυμνάσιο Πατρών) Motion  for 3 weeks, time interval: hour 
-    ![3 weeks motion ](./image/Mo2.png?raw=true"")
+    - Calculated Power Consumption at the main building 
+    ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")
+    
+    - Motion at the main building 
+    ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
+    
+    - Motion at the sub-site building
+    ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
+    
+    - Temperature at the main building
+    ![4 weeks Temperature](./image/19640%20Temperature1.png?raw=true"")
+    
+    - Temperature at the sub-site building
+    ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
+        
 
 **TODO** More visualization for the data comparing with the ground truth 
 
