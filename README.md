@@ -2,12 +2,12 @@
 # Thesis
     This will be a story about "data"
 ## Category
-* [Known Issues](#Known Issues)
-* [Gazing at the data](#Gazing at the data)
+* [Known Issues](##Known Issues)
+* [Gazing at the data](##Gazing at the data)
 * [Setup enviroment on mac OS Sierra 10](#Setup enviroment on mac OS Sierra 10)
 * [Retrieve the data](#Retrieve the data )
 * [Process the data](#Process the data on Flink)
-* [Reference](#Reference)
+* [Reference](##Reference)
 ## Known Issues:
 - [x] when we request data within the time range, for different granularity , 
  the response time stamps are different 
@@ -141,15 +141,27 @@ __What do these sensors collect?__
     - Calculated Power Consumption at the main building 
     ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")
     
+    - Electrical Current at the main building 
+    ![4 weeks ElectricalCurrent](./image/19640%20ElectricalCurrent.png?raw=true"")
+        
     - Motion at the main building 
     ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
     
+    - Luminosity at the main building 
+    ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
+        
     - Noise at the main building 
     ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
         
+    - Rain Height and Relative Humidity at the main building
+    ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
+
     - Motion at the sub-site building
     ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
     
+    - Motion at the sub-site building
+    ![4 weeks Luminosity](./image/19640%20Luminosity2.png?raw=true"")
+        
     - Noise at the sub-site building
     ![4 weeks motion](./image/19640%20noise2.png?raw=true"")
     
@@ -161,10 +173,7 @@ __What do these sensors collect?__
     
     - Temperature at the sub-site building
     ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
-        
-    - Rain Height and Relative Humidity at the main building
-    ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
-    
+            
     - Relative Humidity at the sub-site building
     ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
     
