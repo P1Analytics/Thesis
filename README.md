@@ -108,16 +108,15 @@ __What do these sensors collect?__
         ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
     
     - Demo main building Motion for 3 weeks, time interval: hour 
-        ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true "")
+        ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
      
     - Demo subsite building(Αίθουσα ισόγειο) Motion for 3 weeks, time interval: hour 
         ![3 weeks motion ](./image/Mo2.png?raw=true"")
     
     - Demo Temperature for 4 weeks in the main building, time interval: hour 
-        ![4 weeks temperature](./image/27827 Temperature1.png?raw=true "")
+        ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
             
     
-
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__ 
 
     - Calculated Power Consumption at the main building 
