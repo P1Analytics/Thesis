@@ -1,13 +1,7 @@
 
 # Thesis
     This will be a story about "data"
-## Category
-* [Known Issues](##Known Issues)
-* [Gazing at the data](##Gazing at the data)
-* [Setup enviroment on mac OS Sierra 10](#Setup enviroment on mac OS Sierra 10)
-* [Retrieve the data](#Retrieve the data )
-* [Process the data](#Process the data on Flink)
-* [Reference](##Reference)
+
 ## Known Issues:
 - [x] when we request data within the time range, for different granularity , 
  the response time stamps are different 
