@@ -115,10 +115,14 @@ __What do these sensors collect?__
     If looking for the whole 12months patten, the data is matching the changing of the weather
     ![155368_year](./image/155368_year.png?raw=true "")
 
-- Demo for 10 schools in Greece for one year Power Consumption 
+- Demo on all the schools in Greece for one year, time interval: day
+    - Demo for 10 schools in Greece for one year Power Consumption 
     ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
     There are 3 other schools without power consumption sensors or no data.
-
+    
+    - Demo for 12 schools in Greece for one year Temperature 
+      ![greece one year](./image/Greece%20Temperature.png?raw=true "")
+        
 - Demo on site __8ο Γυμνάσιο Πατρών,Greece__        
     - Demo Temperature for 3 weeks, time interval: hour 
         ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
