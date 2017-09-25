@@ -230,8 +230,8 @@ public class SparkAPI {
 
     public Matcher getResourceDataByDayRange(Long resourceId, ZonedDateTime start, ZonedDateTime end, String frequency) throws Exception,AssertionError {
 
-        System.out.println("Resource  historical data resource ID: "+ resourceId +" from : " +  start.toInstant()+" to "
-                +  end.toInstant() + " with steps per " + frequency );
+//        System.out.println("Resource  historical data resource ID: "+ resourceId +" from : " +  start.toInstant()+" to "
+//                +  end.toInstant() + " with steps per " + frequency );
         String requestBody = "" +
                 "{" +
                 "\"queries\": [" +

@@ -1,13 +1,7 @@
 
 # Thesis
     This will be a story about "data"
-## Category
-* [Known Issues](##Known Issues)
-* [Gazing at the data](##Gazing at the data)
-* [Setup enviroment on mac OS Sierra 10](#Setup enviroment on mac OS Sierra 10)
-* [Retrieve the data](#Retrieve the data )
-* [Process the data](#Process the data on Flink)
-* [Reference](##Reference)
+
 ## Known Issues:
 - [x] when we request data within the time range, for different granularity , 
  the response time stamps are different 
@@ -109,7 +103,7 @@ __What do these sensors collect?__
 - Demo on site __8ο Γυμνάσιο Πατρών,Greece__        
     - Demo Temperature for 3 weeks, time interval: hour 
         ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
-    
+        
     - Demo Calculated Power Consumption for 3 weeks, time interval: hour 
         ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
     
@@ -118,6 +112,11 @@ __What do these sensors collect?__
      
     - Demo subsite building(Αίθουσα ισόγειο) Motion for 3 weeks, time interval: hour 
         ![3 weeks motion ](./image/Mo2.png?raw=true"")
+    
+    - Demo Temperature for 4 weeks in the main building, time interval: hour 
+        ![4 weeks temperature](./image/27827 Temperature1.png?raw=true "")
+            
+    
 
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__ 
 
