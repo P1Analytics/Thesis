@@ -1,53 +1,6 @@
 
 # Thesis
     This will be a story about "data"
-
-## Known Issues:
-- [x] when we request data within the time range, for different granularity , 
- the response time stamps are different 
-     - 5min : it's the code running time, not the fixed data timestamp as below
-     - 1hour : beginning of every hour 
-     - 1day : 21:00 for each day 
-     - 1month :  at 21:00 last day of the month
-    
-     __Solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval in one hour. 
-     So we will have 5', 10',15',...55' for the record timestamp
-
-     
-- [x] Cassandra do not have connector as data source for flink
-    
-    __Solution__
-    
-    [reference : CassandraConnectorITCase ](https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-cassandra/src/test/java/org/apache/flink/streaming/connectors/cassandra/CassandraConnectorITCase.java)
-    ```
-    ClusterBuilder cb = new ClusterBuilder() {
-            @Override
-            public Cluster buildCluster(Cluster.Builder builder) {
-                return builder.addContactPoint("127.0.0.1").build();
-            }
-        };
-    String query = "SELECT ResourceID,Reading FROM gaia.reading_data WHERE ResourceID=155873";
-    InputFormat<Tuple2<Integer, Float>, InputSplit> source = new CassandraInputFormat<>(query, cb);
-    source.configure(null);
-    source.open(null);
-    List<Tuple2<Integer, Float>> result = new ArrayList<>();
-    while (!source.reachedEnd()) result.add(source.nextRecord(new Tuple2<Integer, Float>()));
-    source.close();
-    ```
-    
-- [x] Can't read data through API: 
-
-    Resource  historical data resource ID: 90946 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
-However the real data is not all-zeros in https://console.sparkworks.net/resource/view/90946
-    
-    We will use the data extracted from API for further process , the console data are only for reference.
-    
-- Data is missed from time to time: 
-
-    Resource  historical data resource ID: 155918 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour [32.34, 32.34, 32.34, 32.473637, 33.4425, 34.259167, 34.75733, 34.365334, 33.32, 32.764668, 32.570587, 32.36722, 32.3155, 32.3068, 32.241306, 31.868149, 31.868149, 31.85, 31.838118, 31.808867, 31.826338, 31.822662, 31.832302, 31.852188, 31.842134, 31.841246, 31.85319, 32.140522, 33.013374, 33.919827, 34.664608, 34.72307, 32.34, 32.34, 32.34, 31.85, 31.85, 32.34, 31.85, 31.85, 31.85, 31.85, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 31.367912, 31.374935, 31.410751, 31.416487, 31.51673, 31.94285, 32.77366, 33.64148, 34.232605, 33.768044, 32.68922, 32.30267, 32.140594, 31.958946, 31.87191, 31.852951, 31.830269, 31.64, 31.46889, 31.456898, 31.3657, 31.385254, 31.381018, 31.41322, 31.534771, 31.668463, 31.79291, 31.836, 31.869188, 32.38108, 33.044456, 33.666306, 33.827496, 32.96945, 32.38393, 32.23478, 32.038074, 31.907423, 31.856163, 31.844433, 31.838556, 31.69923, 31.6932, 31.511343, 31.412098, 31.391008, 31.380096, 31.443954, 31.619139, 31.776262, 31.830036, 31.832235, 31.799591, 31.84828, 32.09569, 32.928936, 33.33732, 33.126163, 32.188957, 31.83223, 31.623442, 31.422161, 31.361742, 31.356749, 31.3123, 30.906296, 30.886333, 30.878448, 30.859062, 30.843264, 30.859325, 30.861336, 30.849495, 30.85837, 30.85697]
-    
-    **TODO** We will need to identify the "noise" from data
     
 ## "Gazing at" the data
       When you gaze long into an abyss, the abyss also gazes into you
@@ -92,12 +45,12 @@ __What do these sensors collect?__
     - External Temperature : C
 
 
-- Demo on all the schools in Greece for one year, time interval: day
-    - Demo for 10 schools in Greece for one year Power Consumption 
+- Demo on all the schools in Greece, for one year, time interval: day
+    - Power Consumption, 10 schools in Greece 
     ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
     There are 3 other schools without power consumption sensors or no data.
     
-    - Demo for 12 schools in Greece for one year Temperature 
+    - Temperature, 12 schools in Greece
       ![greece one year](./image/Greece%20Temperature.png?raw=true "")
         
 - Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
@@ -160,7 +113,7 @@ __What do these sensors collect?__
     - Relative Humidity at the sub-site building
     ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
     
-Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
+- Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
     - Temperature inside and outside of the main building with building floor plan
     ![4 weeks Temperature](./image/144243Temperature.png?raw=true"")
     
@@ -252,7 +205,8 @@ __Cloud platform__
     
 
 (**_TODO_** more combinations of infrastructure MongoDB, MariaDB, Spark, Storm, Hadoop, Kafka, etc will be put on the trial list)
-    
+
+
 ## Retrieve the data 
 ### Stream
 
@@ -377,6 +331,52 @@ Let's talk something about "Key" first
 ### Batch 
 
 
+## Known Issues:
+- [x] when we request data within the time range, for different granularity , 
+ the response time stamps are different 
+     - 5min : it's the code running time, not the fixed data timestamp as below
+     - 1hour : beginning of every hour 
+     - 1day : 21:00 for each day 
+     - 1month :  at 21:00 last day of the month
+    
+     __Solution__ : use ".toInstant().toEpochMilli()/ 300000*300000" to change the time into 5mins interval in one hour. 
+     So we will have 5', 10',15',...55' for the record timestamp
+
+     
+- [x] Cassandra do not have connector as data source for flink
+    
+    __Solution__
+    
+    [reference : CassandraConnectorITCase ](https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-cassandra/src/test/java/org/apache/flink/streaming/connectors/cassandra/CassandraConnectorITCase.java)
+    ```
+    ClusterBuilder cb = new ClusterBuilder() {
+            @Override
+            public Cluster buildCluster(Cluster.Builder builder) {
+                return builder.addContactPoint("127.0.0.1").build();
+            }
+        };
+    String query = "SELECT ResourceID,Reading FROM gaia.reading_data WHERE ResourceID=155873";
+    InputFormat<Tuple2<Integer, Float>, InputSplit> source = new CassandraInputFormat<>(query, cb);
+    source.configure(null);
+    source.open(null);
+    List<Tuple2<Integer, Float>> result = new ArrayList<>();
+    while (!source.reachedEnd()) result.add(source.nextRecord(new Tuple2<Integer, Float>()));
+    source.close();
+    ```
+    
+- [x] Can't read data through API: 
+
+    Resource  historical data resource ID: 90946 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+However the real data is not all-zeros in https://console.sparkworks.net/resource/view/90946
+    
+    We will use the data extracted from API for further process , the console data are only for reference.
+    
+- Data is missed from time to time: 
+
+    Resource  historical data resource ID: 155918 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour [32.34, 32.34, 32.34, 32.473637, 33.4425, 34.259167, 34.75733, 34.365334, 33.32, 32.764668, 32.570587, 32.36722, 32.3155, 32.3068, 32.241306, 31.868149, 31.868149, 31.85, 31.838118, 31.808867, 31.826338, 31.822662, 31.832302, 31.852188, 31.842134, 31.841246, 31.85319, 32.140522, 33.013374, 33.919827, 34.664608, 34.72307, 32.34, 32.34, 32.34, 31.85, 31.85, 32.34, 31.85, 31.85, 31.85, 31.85, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 31.367912, 31.374935, 31.410751, 31.416487, 31.51673, 31.94285, 32.77366, 33.64148, 34.232605, 33.768044, 32.68922, 32.30267, 32.140594, 31.958946, 31.87191, 31.852951, 31.830269, 31.64, 31.46889, 31.456898, 31.3657, 31.385254, 31.381018, 31.41322, 31.534771, 31.668463, 31.79291, 31.836, 31.869188, 32.38108, 33.044456, 33.666306, 33.827496, 32.96945, 32.38393, 32.23478, 32.038074, 31.907423, 31.856163, 31.844433, 31.838556, 31.69923, 31.6932, 31.511343, 31.412098, 31.391008, 31.380096, 31.443954, 31.619139, 31.776262, 31.830036, 31.832235, 31.799591, 31.84828, 32.09569, 32.928936, 33.33732, 33.126163, 32.188957, 31.83223, 31.623442, 31.422161, 31.361742, 31.356749, 31.3123, 30.906296, 30.886333, 30.878448, 30.859062, 30.843264, 30.859325, 30.861336, 30.849495, 30.85837, 30.85697]
+    
+    **TODO** We will need to identify the "noise" from data
 
 
 ## Reference
