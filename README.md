@@ -7,7 +7,6 @@
 __What do these sensors collect?__
 
 - Power consumption
-
     - Calculated Power Consumption : mWh
     - Power Consumption : mWh
     - Electrical Current : mA/A
@@ -73,6 +72,9 @@ __What do these sensors collect?__
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
     - Temperature at the main building with building floor plan
     ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")
+    
+    - Humidity at the main building with building floor plan
+    ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
 
     - Temperature inside & outside of the building
     ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")
