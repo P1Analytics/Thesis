@@ -67,8 +67,11 @@ __What do these sensors collect?__
     
     - Temperature for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
-            
     
+    - Clustering temperature for 4 weeks in the main building with building floor plan 
+        ![4 weeks temperature](./image/27827%20Temperature_cluster_0.png?raw=true"")
+
+
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
     - Temperature at the main building with building floor plan
     ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")
@@ -122,7 +125,7 @@ __What do these sensors collect?__
     - Temperature inside and outside of the main building with building floor plan
     ![4 weeks Temperature](./image/144243Temperature.png?raw=true"")
     It is not so obvious for the orientation
-    - Temperature inside and outside of the main building with building floor plan
+    - Clustering the temperature inside and outside of the main building with building floor plan
     ![4 weeks Temperature](./image/144243Temperature_cluster.png?raw=true"")
      Now, it is easy to see the orientation 
      
