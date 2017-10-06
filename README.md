@@ -70,8 +70,13 @@ __What do these sensors collect?__
     
     - Clustering temperature for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Temperature_cluster_0.png?raw=true"")
-
-
+    
+    - Clustering luminosity for 4 weeks in the main building with building floor plan 
+        ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
+    
+    - Luminosity 
+        ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
+            
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
     - Temperature at the main building with building floor plan
     ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")
