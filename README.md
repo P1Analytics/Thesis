@@ -68,9 +68,6 @@ __What do these sensors collect?__
     - Temperature for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
     
-    - Clustering temperature for 4 weeks in the main building with building floor plan 
-        ![4 weeks temperature](./image/27827%20Temperature_cluster_0.png?raw=true"")
-    
     - Clustering luminosity for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
     
