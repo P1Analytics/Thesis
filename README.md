@@ -121,7 +121,11 @@ __What do these sensors collect?__
 - Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
     - Temperature inside and outside of the main building with building floor plan
     ![4 weeks Temperature](./image/144243Temperature.png?raw=true"")
-    
+    It is not so obvious for the orientation
+    - Temperature inside and outside of the main building with building floor plan
+    ![4 weeks Temperature](./image/144243Temperature_cluster.png?raw=true"")
+     Now, it is easy to see the orientation 
+     
 **TODO** More visualization for the data comparing with the ground truth 
 
 __Where are these data from?__
