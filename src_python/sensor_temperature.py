@@ -1,67 +1,90 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+import warnings
 
-def box_plot_data(df):
-    a = df.values.transpose()
-    Q0 = min(a)
-    Q4 = max(a)
-    Q1 = np.percentile(a, 25)
-    Q2 = np.percentile(a, 50)
-    Q3 = np.percentile(a, 75)
-    inner = (Q3-Q1)*1.5
-    out = (Q3-Q1)*3
-    inner_up = Q3+inner
-    inner_down = Q1-inner
-    outter_up = Q3 + out
-    outter_down = Q1 - out
-    print(df.quantile([0,.25, .5, .75,1]))
-    # return [outter_down,outter_up,Q0,Q4]
+warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
-if __name__ == "__main__":
-    # csv file first column must be timestamps
-    df = pd.read_csv("GREECE.csv", delimiter=";", index_col='timestamps', parse_dates=True)
+
+def outliers_Q1_Q3(df, head):
+    "return boundary"
+    try:
+        Q1 = df.quantile(0.25)
+        Q3 = df.quantile(0.75)
+        upper = Q3 + (Q3 - Q1) * 3
+        lower = Q1 - (Q3 - Q1) * 3
+        sub = df.mean()
+    except TypeError:
+        print("here is the problem of Type Error from: ", head)
+        print(df)
+
+    return sub, upper, lower
+
+
+def outliers_normal_distrib(df):
+    return
+
+
+def clean_data(filename):
+    df = pd.read_csv(filename, delimiter=";", index_col='timestamps', parse_dates=True)
     header = list(df)
-
     # first I want to clear all power-off in the data set, one raw are 0s => power-off
-    df = df[(df.T != 0).any()]
-    # print("the power off period is deleted", df)
-
-    # TODO now the time sequence is not good. Resample by day is necessary but how dose pandas resample/rolling work ?
-    df_rolling = df.rolling(window=15, center=True).mean()
-    # df_resample = df.resample('W').mean()
-    # df_resample = df.resample('D').mean()
-    # df_resample.plot()
-    # df_resample.to_csv("output1.csv", sep=";")
-
-    working = []
+    # df = df[(df.T != 0).any()]
+    working_sensors = []
     for head in header:
         df_col = df[head]
-
         # second I want to clean all the broken sensors , which are all zeros in columns
         # the index for non-all-zeros data is not (0,)
-        if np.shape(np.flatnonzero(df_col))[0] != 0:
-            working.append(head)
-
+        if (df_col[df_col != 0]).size != 0:
             # TODO third I want to  delete / replace / mean / KNN  those missing data which are zero, tag: temperatures
-            # Fill the 0 into NaN , so 0 wont change the statistic data
             df_col = df_col.replace(0, np.nan)
+            sub, upper, lower = outliers_Q1_Q3(df_col, head)
 
-            static = df_col.quantile([0, .25, .5, .75, 1])
+            if df_col[df_col > upper].size > 0:
+                df_col[df_col > upper] = sub
+            if df_col[df_col < lower].size > 0:
+                df_col[df_col < lower] = sub
 
-            print(df_col.describe()[mean])
-            print(static)
-
-            # generally the temperature wont change so much in 10days we use this to fill the missing data
-            df_col = df_col.replace(np.nan, method='backfill',limit=10)
-
-            # df_col = df_col.interpolate()
-            # plt.figure()
-            # df_col.resample('W').mean().plot()
+            df_col = df_col.rolling(window=30, center=False, min_periods=0).mean()
+            df_col = df_col.fillna(sub)
 
             df[head] = df_col
+            working_sensors.append(head)
         else:
-            print("this is an broken sensor with all zeros",df_col)
+            print("this is an broken sensor with all zeros called ", head)
+            df = df.drop(head, 1)
+    df.to_csv(filename.split(".")[0]+"_output.csv", sep=";")
 
-    # plt.show()
-    # df.to_csv("output2.csv", sep=";")
+    return df, working_sensors
+
+
+if __name__ == "__main__":
+    df_indoor, working_indoor = clean_data("19640_Temperature.csv")
+    df_outdoor, working_outdoor = clean_data("19640_ExternalTemperature.csv")
+    coef = []
+    inter = []
+    for outdoor  in working_outdoor:
+        for indoor in working_indoor:
+            X = df_outdoor[outdoor] #.to_dense()
+            Y = df_indoor[indoor]
+            X = X.values.reshape(np.shape(X)[0], 1)
+            Y = Y.values.reshape(np.shape(Y)[0], 1)
+            clf = LinearRegression().fit(X, Y)
+            print(clf.coef_, clf.intercept_,indoor,outdoor)
+            coef.append(clf.coef_)
+            inter.append(clf.intercept_)
+
+            xfit = df_indoor[working_indoor[0]].to_dense().values.reshape(np.shape(X)[0],1)
+            yfit = clf.predict(xfit)
+            plt.plot(xfit, yfit,label=indoor)
+
+            plt.legend(bbox_to_anchor=(1, 1), loc=1, borderaxespad=0)
+
+        break
+
+
+    plt.figure()
+    plt.scatter(coef,inter,marker='.')
+
+    plt.show()

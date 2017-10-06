@@ -73,6 +73,9 @@ __What do these sensors collect?__
     - Temperature at the main building with building floor plan
     ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")
     
+    - Clustering the room by temperature at the main building with building floor plan
+    ![4 weeks Temperature](./image/19640%20Temperature0_cluster.png?raw=true"")
+    
     - Humidity at the main building with building floor plan
     ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
 
@@ -378,8 +381,39 @@ However the real data is not all-zeros in https://console.sparkworks.net/resourc
 
     Resource  historical data resource ID: 155918 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour [32.34, 32.34, 32.34, 32.473637, 33.4425, 34.259167, 34.75733, 34.365334, 33.32, 32.764668, 32.570587, 32.36722, 32.3155, 32.3068, 32.241306, 31.868149, 31.868149, 31.85, 31.838118, 31.808867, 31.826338, 31.822662, 31.832302, 31.852188, 31.842134, 31.841246, 31.85319, 32.140522, 33.013374, 33.919827, 34.664608, 34.72307, 32.34, 32.34, 32.34, 31.85, 31.85, 32.34, 31.85, 31.85, 31.85, 31.85, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 31.367912, 31.374935, 31.410751, 31.416487, 31.51673, 31.94285, 32.77366, 33.64148, 34.232605, 33.768044, 32.68922, 32.30267, 32.140594, 31.958946, 31.87191, 31.852951, 31.830269, 31.64, 31.46889, 31.456898, 31.3657, 31.385254, 31.381018, 31.41322, 31.534771, 31.668463, 31.79291, 31.836, 31.869188, 32.38108, 33.044456, 33.666306, 33.827496, 32.96945, 32.38393, 32.23478, 32.038074, 31.907423, 31.856163, 31.844433, 31.838556, 31.69923, 31.6932, 31.511343, 31.412098, 31.391008, 31.380096, 31.443954, 31.619139, 31.776262, 31.830036, 31.832235, 31.799591, 31.84828, 32.09569, 32.928936, 33.33732, 33.126163, 32.188957, 31.83223, 31.623442, 31.422161, 31.361742, 31.356749, 31.3123, 30.906296, 30.886333, 30.878448, 30.859062, 30.843264, 30.859325, 30.861336, 30.849495, 30.85837, 30.85697]
     
-    **TODO** We will need to identify the "noise" from data
+**TODO** We will need to identify the "noise" from data
+    
+- Clean the data
 
+    - Remove outliers:
+    
+    What is outliers 
+    
+    how to identify outliers 
+    
+    clean the outliers and replace it with ....
+    
+    
+    __Extreme value analysis__ is a very specific kind of outlier analysis where the data points at the outskirts of the data are reported as outliers. 
+    Such outliers correspond to the statistical tails of probability distributions
+
+    Output Two ways to indicate a data point is an outlier
+     - Real-valued outlier score, higher values of the score make the point more like an outlier
+     - Binary label binary value yes or no for an data point to be outlier
+
+    - moving average
+    The SMA is the most straightforward calculation, the average price over a chosen time period. 
+    The main advantage of the SMA is that it offers a smoothed line, less prone to whipsawing up and down in response to slight, 
+    temporary price swings back and forth. Therefore, it provides a more stable level indicating support or resistance. 
+    
+    The SMA's weakness is that it is slower to respond to rapid price changes that often occur at market reversal points. 
+    The SMA is often favored by traders or analysts operating on longer time frames, such as daily or weekly charts.
+   
+   - Linear fit 
+    Linear regression
+    In statistics, linear regression is a linear approach 
+    for modeling the relationship between a scalar dependent variable y 
+    and one or more explanatory variables (or independent variables) denoted X.
 
 ## Reference
 1. [The building data genome project](https://github.com/buds-lab/the-building-data-genome-project)
