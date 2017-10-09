@@ -1,6 +1,6 @@
 
 # Thesis
-    This will be a story about "data"
+    This will be a story about "data" from sensors in schools
     
 ## "Gazing at" the data
       When you gaze long into an abyss, the abyss also gazes into you
@@ -71,7 +71,7 @@ __What do these sensors collect?__
     - Clustering luminosity for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
     
-    - Clustering mition(vs site-noise) for 4 weeks in the main building with building floor plan 
+    - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
         
     - Luminosity 
