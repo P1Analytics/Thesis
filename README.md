@@ -101,7 +101,7 @@ __What do these sensors collect?__
     ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
     
     - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
-    ![4 weeks motion](./image/19640 Motion.png?raw=true"")
+    ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
 
     - Luminosity at the main building 
     ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
