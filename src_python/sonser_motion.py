@@ -58,8 +58,8 @@ def clean_data(filename):
 
 
 if __name__ == "__main__":
-    df, working = clean_data("27827_motion.csv")
-    df_reference, working_reference = clean_data("27827_Noise.csv")
+    df, working = clean_data("19640_Motion.csv")
+    df_reference, working_reference = clean_data("19640_Noise.csv")
     coef = []
     inter = []
     for ref in working_reference:

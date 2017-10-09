@@ -70,13 +70,14 @@ __What do these sensors collect?__
     
     - Clustering luminosity for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
-    
+
+    - Luminosity 
+        ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
+         
     - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
         
-    - Luminosity 
-        ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
-            
+       
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
     - Temperature at the main building with building floor plan
     ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")
@@ -99,6 +100,9 @@ __What do these sensors collect?__
     - Motion at the main building 
     ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
     
+    - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
+    ![4 weeks motion](./image/19640 Motion.png?raw=true"")
+        
     - Luminosity at the main building 
     ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
         
