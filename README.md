@@ -56,6 +56,7 @@ __What do these sensors collect?__
     - Temperature 
         ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
         
+<!--- 
     - Calculated Power Consumption 
         ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
     
@@ -67,7 +68,7 @@ __What do these sensors collect?__
     
     - Temperature for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
-    
+-- >
     - Clustering luminosity for 4 weeks in the main building with building floor plan 
         ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
 
@@ -89,8 +90,8 @@ __What do these sensors collect?__
     ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
 
     - Temperature inside & outside of the building
-    ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")
-    
+    ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
+<!--
     - Calculated Power Consumption at the main building 
     ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")
     
@@ -99,19 +100,20 @@ __What do these sensors collect?__
         
     - Motion at the main building 
     ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
-    
+-- >
+
     - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
     ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
 
     - Luminosity at the main building 
     ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
-        
+<!--
     - Noise at the main building 
     ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
-        
+-- >
     - Rain Height and Relative Humidity at the main building
     ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
-
+<!--
     - Motion at the sub-site building
     ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
     
@@ -126,9 +128,10 @@ __What do these sensors collect?__
 
     - Temperature at the sub-site building
     ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
-            
+       
     - Relative Humidity at the sub-site building
     ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
+--> 
     
 - Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
     - Temperature inside and outside of the main building with building floor plan
@@ -405,10 +408,25 @@ However the real data is not all-zeros in https://console.sparkworks.net/resourc
     
     What is outliers 
     
+        In statistics, an outlier is an observation point that is distant from other observations.
+        An outlier may be due to variability in the measurement or it may indicate experimental error; 
+        the latter are sometimes excluded from the data set.[3] Outliers can occur by chance in any distribution, 
+        but they often indicate either measurement error or that the population has a heavy-tailed distribution. 
+        In the former case one wishes to discard them or use statistics that are robust to outliers, 
+        while in the latter case they indicate that the distribution has high skewness 
+        and that one should be very cautious in using tools or intuitions that assume a normal distribution. 
+        A frequent cause of outliers is a mixture of two distributions, which may be two distinct sub-populations, 
+        or may indicate 'correct trial' versus 'measurement error'; this is modeled by a mixture model.
+    
     how to identify outliers 
     
+        Q1 = First Quartile
+        Q3 = Third Quartile
+        Inter-quartile Range (IQR) = Q3 - Q1
+        Lower Outlier Boundary = Q1 - 1.5 * IQR
+        Upper Outlier Boundary = Q3 + 1.5 * IQR 
+        
     clean the outliers and replace it with ....
-    
     
     __Extreme value analysis__ is a very specific kind of outlier analysis where the data points at the outskirts of the data are reported as outliers. 
     Such outliers correspond to the statistical tails of probability distributions
