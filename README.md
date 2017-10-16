@@ -50,33 +50,32 @@ __What do these sensors collect?__
     There are 3 other schools without power consumption sensors or no data.
     
     - Temperature, 12 schools in Greece
-      ![greece one year](./image/Greece%20Temperature.png?raw=true "")
+    ![greece one year](./image/Greece%20Temperature.png?raw=true "")
         
 - Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
     - Temperature 
-        ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
+    ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
         
-<!--- 
     - Calculated Power Consumption 
-        ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
+    ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
     
     - Main building Motion 
-        ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
+    ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
      
     - Subsite building(Αίθουσα ισόγειο) Motion
-        ![3 weeks motion ](./image/Mo2.png?raw=true"")
+    ![3 weeks motion ](./image/Mo2.png?raw=true"")
     
     - Temperature for 4 weeks in the main building with building floor plan 
-        ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
--- >
+    ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
+    
     - Clustering luminosity for 4 weeks in the main building with building floor plan 
-        ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
+    ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
 
     - Luminosity 
-        ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
+    ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
          
     - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
-        ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
+    ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
         
        
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
@@ -91,7 +90,7 @@ __What do these sensors collect?__
 
     - Temperature inside & outside of the building
     ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
-<!--
+
     - Calculated Power Consumption at the main building 
     ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")
     
@@ -100,20 +99,19 @@ __What do these sensors collect?__
         
     - Motion at the main building 
     ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
--- >
 
     - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
     ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
 
     - Luminosity at the main building 
     ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
-<!--
+
     - Noise at the main building 
     ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
--- >
+
     - Rain Height and Relative Humidity at the main building
     ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
-<!--
+
     - Motion at the sub-site building
     ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
     
@@ -131,7 +129,6 @@ __What do these sensors collect?__
        
     - Relative Humidity at the sub-site building
     ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
---> 
     
 - Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
     - Temperature inside and outside of the main building with building floor plan
@@ -139,8 +136,8 @@ __What do these sensors collect?__
     It is not so obvious for the orientation
     - Clustering the temperature inside and outside of the main building with building floor plan
     ![4 weeks Temperature](./image/144243Temperature_cluster.png?raw=true"")
-     Now, it is easy to see the orientation 
-     
+     Now, it is easy to see the orientation
+
 **TODO** More visualization for the data comparing with the ground truth 
 
 __Where are these data from?__

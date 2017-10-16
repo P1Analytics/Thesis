@@ -42,13 +42,14 @@ public class SocketWindowWordCountDemo {
 
 		// parse the data, group it, window it, and aggregate the counts
 		DataStream<WordWithCount> windowCounts = text
-				.flatMap(new FlatMapFunction<String, WordWithCount>() {
-					public void flatMap(String value, Collector<WordWithCount> out) {
+				.flatMap(
+						new FlatMapFunction<String, WordWithCount>() {
+						public void flatMap(String value, Collector<WordWithCount> out) 
+						{
 						for (String word : value.split("\\s")) {
-							out.collect(new WordWithCount(word, 1L));
-						}
-					}
-				})
+							out.collect(new WordWithCount(word, 1L));}
+							}
+						})
 				.keyBy("word")
 				.timeWindow(Time.seconds(5))
 				.reduce(new ReduceFunction<WordWithCount>() {

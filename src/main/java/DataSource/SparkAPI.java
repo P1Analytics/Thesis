@@ -201,7 +201,7 @@ public class SparkAPI {
         }
     }
 
-    public void getResourceSummary(Long resourceId,String frequency) throws Exception,AssertionError {
+    public String getResourceSummary(Long resourceId,String frequency) throws Exception,AssertionError {
 //        GET /v1/resource/{resourceId}/summary Retrieve latest summary values of a Resource
 //        GET /v1/resource/{resourceId}/summary/{targetUom} Retrieve latest summary values of a Resource
 //        TODO same out for adding Uom with ID
@@ -217,14 +217,17 @@ public class SparkAPI {
                     .body().asString();
             if ("min" == frequency || "max" == frequency || "average" == frequency) {
                 Map<String, Integer> data = from(response).getMap(frequency);
-                System.out.println("Resource " + resourceId + " in  \"" + frequency + "\": " + data);
+//                System.out.println("Resource " + resourceId + " in  \"" + frequency + "\": " + data);
             } else {
                 List<Long> data = from(response).getList(frequency);
-                System.out.println("Resource " + resourceId + " in  \"" + frequency + "\": " + data);
+//                System.out.println("Resource " + resourceId + " in  \"" + frequency + "\": " + data);
             }
+            String id = from(response).get("keyName").toString().split("/")[1];
+            return id;
         }
         catch(AssertionError e){
             System.out.println("getResourceSummary " + resourceId + " " + e);
+            return null;
         }
     }
 
