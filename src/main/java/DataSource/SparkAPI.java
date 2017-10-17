@@ -4,14 +4,17 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.path.json.config.JsonPathConfig;
-
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 import static io.restassured.RestAssured.*;
 import static io.restassured.path.json.JsonPath.from;
@@ -22,15 +25,7 @@ public class SparkAPI {
 
     private final  String accessTokenUrl = "https://sso.sparkworks.net/aa/oauth/token";
     private final  String grantType ="password";
-
-    private final  String clientId = "spark";
-    private final  String clientSecret = "spark";
-
-    private final  String username = "ro_schools";
-    private final  String password="Readonly1234";
-
     private static String accessToken;
-
     private RequestSpecBuilder requestSpecBuilder;
 
     public void setUp() throws Exception {
@@ -41,16 +36,32 @@ public class SparkAPI {
         requestSpecBuilder.setAccept(ContentType.JSON);
     }
 
+    private List<String> GetUserInfo() throws Exception {
+        try{
+            DataInputStream in = new DataInputStream(new FileInputStream("UserInfo"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String username = br.readLine();
+            String password = br.readLine();
+            String clientId = br.readLine();
+            String clientSecret = br.readLine();
+            in.close();
+            List<String> UserInfo = Arrays.asList(username, password,clientId,clientSecret);
+            return UserInfo;
+        }catch (Exception e){//Catch exception if any
+            System.err.println("Error: " + e.getMessage());
+        }
+        return null;
+    }
     public void authenticate() throws Exception {
         useRelaxedHTTPSValidation();
+        List<String> UserInfo = GetUserInfo();
         JsonPath.config = new JsonPathConfig("UTF-8");
         String response = given().accept(ContentType.JSON)
-                .params("username", username, "password", password, "grant_type", grantType, "scope", "read")
-                .auth().preemptive().basic(clientId, clientSecret)
+                .params("username", UserInfo.get(0), "password", UserInfo.get(1), "grant_type", grantType, "scope", "read")
+                .auth().preemptive().basic(UserInfo.get(2), UserInfo.get(3))
                 .when()
                 .post(accessTokenUrl).asString();
         accessToken = new JsonPath(response).getString("access_token");
-//        System.out.println("Access_token: "+ accessToken);
     }
 
     public List<Long> listSitesIds() throws Exception, AssertionError {
@@ -66,8 +77,14 @@ public class SparkAPI {
                 .extract()
                 .body().asString();
         List<Long> siteIds = from(response).getList("sites.id", Long.class);
-        System.out.println("CHECKOUT the siteIds list " + siteIds);
+        List<String> sitesNames = from(response).getList("sites.name", String.class);
+        List<Float> siteslongtitude = from(response).getList("sites.longtitude", Float.class);
+        List<Float> siteslatitude = from(response).getList("sites.latitude", Float.class);
 
+        for (int i = 0;i<siteIds.size();i++){
+//            System.out.println(Long.toString(siteIds.get(i))+"\t"+ sitesNames.get(i)+"\t"+siteslongtitude.get(i)+"\t"+siteslatitude.get(i));
+            System.out.println(Long.toString(siteIds.get(i))+"\t"+siteslongtitude.get(i)+"\t"+siteslatitude.get(i));
+        }
         return siteIds;
     }
 
@@ -83,8 +100,6 @@ public class SparkAPI {
                 .extract()
                 .body().asString();
         List<Long> resourceIds = from(response).getList("resources.resourceId", Long.class);
-//        System.out.println("CHECKOUT site／subsite " + siteId + " the resourcesIds list " + resourceIds);
-
         return resourceIds;
     }
 
@@ -119,8 +134,10 @@ public class SparkAPI {
                 .extract()
                 .body().asString();
         List<Long> subsitesIds = from(response).getList("sites.id", Long.class);
-//        System.out.println("CHECKOUT subsite " + siteId + " the subsite list " + subsitesIds);
-
+        List<String> subsitesNames = from(response).getList("sites.name", String.class);
+        for (int i = 0;i<subsitesIds.size();i++){
+            System.out.println(Long.toString(subsitesIds.get(i))+"\t"+ subsitesNames.get(i));
+        }
         return subsitesIds;
     }
 
@@ -158,7 +175,6 @@ public class SparkAPI {
     public String getResourceIdDetails(Long resourceId, String detail) throws Exception, AssertionError {
 //        GET /v1/resource/{resourceId} Retrieve a Spark Works Resource Details by its unique identifier
 //       TODO GET /v1/resource/{resourceId}/property Retrieve the properties of a Resource by the resource unique identifier
-//       TODO since all the information we need could be retrieved from the first API i dont get why we need the second one
         try{
 //            System.out.println("CHECKOUT the resouceId " + resourceId + " with details "+ detail);
             String get_str = "/resource/" + Long.toString(resourceId);
@@ -170,8 +186,6 @@ public class SparkAPI {
                     .body("resourceId", equalTo(resourceId.intValue()))
                     .extract()
                     .body().asString();
-//            System.out.println("resouceId "+ resourceId + " : " + from(response).get(detail));
-//            System.out.println((String) from(response).get(detail));
             return (String)from(response).get(detail);
         }
         catch(Exception e){
@@ -231,8 +245,8 @@ public class SparkAPI {
         }
     }
 
-    public Matcher getResourceDataByDayRange(Long resourceId, ZonedDateTime start, ZonedDateTime end, String frequency) throws Exception,AssertionError {
-
+    public Matcher getResourceDataByDayRange(Long resourceId, ZonedDateTime start, ZonedDateTime end, String frequency)
+            throws Exception,AssertionError {
 //        System.out.println("Resource  historical data resource ID: "+ resourceId +" from : " +  start.toInstant()+" to "
 //                +  end.toInstant() + " with steps per " + frequency );
         String requestBody = "" +
