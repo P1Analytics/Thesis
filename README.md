@@ -215,7 +215,7 @@ __Question 1 : what is the orientation for this room ?__
     - Simply match Orientation into :
             0-90 degree: North-East, 90-180 degree: South-East
             180-270 degree: South-West, 270-360 degree: North-West
-        ![](./image/comp1.jpg)
+        (./image/comp1.jpg)
    - If the temperature are stable for days.
         During one day, the highest temperature will reach around noon maybe later,even around the sunset time.
         In this case, it is reasonable to predict "the room is facing to the south or south-west"
