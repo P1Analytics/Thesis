@@ -1,9 +1,30 @@
 
 # Thesis
-    This will be a story about "data" from sensors in schools
+    This will be a story about mining "data" from sensors in schools
     
 ## "Gazing at" the data
-      When you gaze long into an abyss, the abyss also gazes into you
+
+__Where are these data from?__
+
+ - Locations in [Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
+![map](./image/map.png?raw=true"")
+
+| Country  | Parameter | Number | Comment | 
+| ------------- | ------------- | ------------- | ------------- |
+| Greece  | Sensing endpoints | 872 | Each sensor equals 1 sensing endpoint | 
+| | Sensing rate | 1 minute | Can be modified | 
+| | Educators | 294 | Greek public schools in GAIA| 
+| |Students | 2267 | Greek public schools in GAIA | 
+| Italy (Sapienza,Roma) | Sensing endpoints  | 118 |Will soon be augmented|
+| | Sensing rate | 1 minute | Can be modified | 
+| | Educators | 120 | University faculty and Post Doc |
+| | Students | 1706 | University students | 
+|Italy(Prato)|Sensing endpoints |117 |
+| Sweden(Soderhamn)|Sensing endpoints |3 | create on 2017-07-12T12 more to add, no data yet| 
+
+Total : 16 sites and 1922 sensors are on the record till 2017/09/16.
+Part of them are newly installed in this year and some have history data from 2015.
+
 __What do these sensors collect?__
 
 - Power consumption
@@ -42,7 +63,10 @@ __What do these sensors collect?__
     - Wind Speed : m/sec
     - Temperature : Centigrade
     - External Temperature : C
+    
+![sensor](./image/sensorType.png?raw=true "")
 
+__Look Closer at the data__
 
 - Demo on all the schools in Greece, for one year, time interval: day
     - Power Consumption, 10 schools in Greece 
@@ -53,6 +77,15 @@ __What do these sensors collect?__
     ![greece one year](./image/Greece%20Temperature.png?raw=true "")
         
 - Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
+    - Temperature for 4 weeks in the main building with building floor plan 
+    ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
+        
+    - Clustering luminosity for 4 weeks in the main building with building floor plan 
+    ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
+
+    - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
+    ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
+     
     - Temperature 
     ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
         
@@ -62,74 +95,49 @@ __What do these sensors collect?__
     - Main building Motion 
     ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
      
-    - Subsite building(Αίθουσα ισόγειο) Motion
+    - Subsite Motion (Αίθουσα ισόγειο) 
     ![3 weeks motion ](./image/Mo2.png?raw=true"")
     
-    - Temperature for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
-    
-    - Clustering luminosity for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
-
     - Luminosity 
     ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
-         
-    - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
-        
-       
+
 - Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
     - Temperature at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")
-    
+    ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
     - Clustering the room by temperature at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20Temperature0_cluster.png?raw=true"")
-    
-    - Humidity at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
-
-    - Temperature inside & outside of the building
-    ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
-
-    - Calculated Power Consumption at the main building 
-    ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")
-    
-    - Electrical Current at the main building 
-    ![4 weeks ElectricalCurrent](./image/19640%20ElectricalCurrent.png?raw=true"")
-        
-    - Motion at the main building 
-    ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
-
+    ![4 weeks Temperature](./image/19640%20Temperature0_cluster.png?raw=true"")    
     - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
     ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
-
+    - Humidity at the main building with building floor plan
+    ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
+    
+    - Temperature inside & outside of the building
+    ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
+    - Temperature at the sub-site building
+    ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
+    - Calculated Power Consumption at the main building 
+    ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")  
+    - Electrical Current at the main building 
+    ![4 weeks ElectricalCurrent](./image/19640%20ElectricalCurrent.png?raw=true"")
     - Luminosity at the main building 
     ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
-
-    - Noise at the main building 
-    ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
-
+    - Luminosity at the sub-site building
+    ![4 weeks](./image/19640%20Luminosity2.png?raw=true"")
     - Rain Height and Relative Humidity at the main building
     ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
-
+    - Relative Humidity at the sub-site building
+    ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
+     - Motion at the main building 
+    ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
     - Motion at the sub-site building
     ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
-    
-    - Motion at the sub-site building
-    ![4 weeks Luminosity](./image/19640%20Luminosity2.png?raw=true"")
-        
+    - Noise at the main building 
+    ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
     - Noise at the sub-site building
     ![4 weeks motion](./image/19640%20noise2.png?raw=true"")
-    
     - Motion and Noise at the sub-site building
     ![4 weeks motion](./image/19640%20subsite%20motion%20noise.png?raw=true"")
 
-    - Temperature at the sub-site building
-    ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
-       
-    - Relative Humidity at the sub-site building
-    ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
-    
 - Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
     - Temperature inside and outside of the main building with building floor plan
     ![4 weeks Temperature](./image/144243Temperature.png?raw=true"")
@@ -140,30 +148,116 @@ __What do these sensors collect?__
 
 **TODO** More visualization for the data comparing with the ground truth 
 
-__Where are these data from?__
+ 
+__Target No.1 : what orientation for this room ?__
+```
+Write down a description of your algorithm
+- give a high-level view of your approach - 2-3 sentences
+~~describe the processing of the data that you have done~~
+- produce a simple example/plot 
+from 1 room for 1 day with good resolution 
++ pointers on what you mean "peak"
++ raw data vs processed data
+- explain the formula 
+- produce a figure (e.g., using visio) with the circle/angles/orientation/blah...
+- give an example - of the formula - using the example/plot produced + the real data of the location of the room (lat/long?)
+```
+- Assuming the indoor temperature should rise as the day time passing by. 
+  We do not put human activity or others into the consideration, for now
+- ETL for raw data: 
+    - remove the dead sensors
+    - clear the long-time power off missing data(optional)
+    - remove the outliers with Turkey's fences and replace with min/max value
+        ```
+        What is outliers 
+            In statistics, an outlier is an observation point that is distant from other observations.
+            An outlier may be due to variability in the measurement or it may indicate experimental error; 
+            the latter are sometimes excluded from the data set.[3] Outliers can occur by chance in any distribution, 
+            but they often indicate either measurement error or that the population has a heavy-tailed distribution. 
+            In the former case one wishes to discard them or use statistics that are robust to outliers, 
+            while in the latter case they indicate that the distribution has high skewness 
+            and that one should be very cautious in using tools or intuitions that assume a normal distribution. 
+            A frequent cause of outliers is a mixture of two distributions, which may be two distinct sub-populations, 
+            or may indicate 'correct trial' versus 'measurement error'; this is modeled by a mixture model.
+        
+            Output Two ways to indicate a data point is an outlier
+             - Real-valued outlier score, higher values of the score make the point more like an outlier
+             - Binary label binary value yes or no for an data point to be outlier
+         ``` 
+        - how to identify outliers by using Turkey's fences, aka inter quartile range, 
+            
+            `Q1 = First Quartile`
+            
+            `Q3 = Third Quartile`
+            
+            `Inter-quartile Range (IQR) = Q3 - Q1`
+            
+            `Lower Outlier Boundary = Q1 - 1.5 * IQR`
+            
+            `Upper Outlier Boundary = Q3 + 1.5 * IQR`
+    - moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
+        ```
+        The SMA is the most straightforward calculation, the average over a chosen time period. 
+        The main advantage of the SMA is that it offers a smoothed line, less prone to whipsawing up and down in response to slight, 
+        temporary price swings back and forth. Therefore, it provides a more stable level indicating support or resistance. 
+        The SMA's weakness is that it is slower to respond to rapid changes that often occur at market reversal points. 
+        The SMA is often favored by analysts operating on longer time frames, such as daily or weekly charts.
+        ``` 
+    - refill the NaN with mean of the series values
+    - Linear fit 
+        ```Linear regression
+        In statistics, linear regression is a linear approach for modeling the relationship 
+        between a scalar dependent variable y and one or more explanatory variables 
+        (or independent variables) denoted X.```
+    - Visualize one day temperature data after processes mentioned above
+    ![trend](./image/ELT.png?raw=true"")
 
- - Locations in [Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
-
-| Country  | Parameter | Number | Comment | 
-| ------------- | ------------- | ------------- | ------------- |
-| Greece  | Sensing endpoints | 872 | Each sensor equals 1 sensing endpoint | 
-| | Sensing rate | 1 minute | Can be modified | 
-| | Educators | 294 | Greek public schools in GAIA| 
-| |Students | 2267 | Greek public schools in GAIA | 
-| Italy (Sapienza,Roma) | Sensing endpoints  | 118 |Will soon be augmented|
-| | Sensing rate | 1 minute | Can be modified | 
-| | Educators | 120 | University faculty and Post Doc |
-| | Students | 1706 | University students | 
-|Italy(Prato)|Sensing endpoints |117 |
-| Sweden(Soderhamn)|Sensing endpoints |3 | create on 2017-07-12T12 more to add, no data yet| 
-Total : 16 sites and 1922 sensors are on the record till 2017/09/16.
-Part of them are newly installed in this year and some have history data from 2015.
-
-__GAIA Architecture design overview__
- ![archetecture](./image/GAIAarchitecturedesignOverview.jpg?raw=true "")
-
-__Cloud platform__
- ![cloud](./image/GAIAcloudplatform.png?raw=true "")
+- Identify patten:
+    - Intuitively while observing the temperature peak for different rooms: 
+        - East: the peak temperature arrives at the early day
+        - West: the peak  at the late of the day
+        - South: the peak should be at the mid-noon or later 
+        - Rest: room facing north/music room/computer lab/basement room will have relatively low variation and average of the temperature
+    - **TODO** Also we can use slope for the temperature trend to detect orientation 
+    
+- Predicting orientation by using peak temperature :
+    - Using RESTful API to retrieve the time : [sunrise , noon ,and sunset],unit: hour.
+    - Only check the temperature during the daytime between [sunrise,sunset]
+    - __Orientation = sum( peak_at_hour /24hour *360degree)/lenght(list_peak_at_hour)__ _(unit:degree)_   
+    - Simply match Orientation into :
+            0-90 degree: North-East, 90-180 degree: South-East
+            180-270 degree: South-West, 270-360 degree: North-West
+        ![](./image/comp1.jpg)
+   - If the temperature are stable for days.
+        During one day, the highest temperature will reach around noon maybe later,even around the sunset time.
+        In this case, it is reasonable to predict "the room is facing to the south or south-west"
+        So we might pick the top N highest temperature from the whole sampled as a list 
+        and try to find out the orietation by sue the formular mentioned above.
+   - If the temperature changes fast day by day,like spring or autumn in the subtropics and temperate area.
+        We should pick the top temperature per day as a list and do the same
+    ``` 
+    Exmaple: Sep12-Oct10 2017 8ο Γυμνάσιο Πατρών, Room 1
+    the classroom reach the highest temperature at hour: 
+    peak_at_hour_list = [ 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+    17, 17, 17, 16, 16, 16, 16, 18, 17, 16, 16, 17, 16, 17, 16, 16, 17, 16, 18, 17, 17, 17, 16, 16, 17, 17, 16, 17,17, 
+    16, 16, 17, 17, 17, 16, 17, 17, 18, 17, 17, 16, 16, 17, 17, 17, 17,17, 17, 16, 17, 17, 16, 17, 15, 16, 17, 16, 16, 
+    16, 16, 16, 16, 17, 17, 16, 17, 16, 17, 17, 15, 16, 17, 17, 17, 16, 16, 16] 
+    in total: 
+    [(16 o'clock, 33times), (18 o'clock, 5times),(15 o'clock, 2times), (17 o'clock, 60times)]
+    Orientation = sum(16/24*360*26+...+15/24*360*2+17/24*360*60)/Length(peak_at_hour_list) = 250.2 degree
+    So we got the orientation is 250.2 degrees which looks like south-west. 
+    
+    But ... if there are also a lot of peaks happened in the morning like room Classl1 id :0xe28.
+    This room gets enough exposed in the sunshine/high temperature during the morning and also likely it facing to the south-east.
+    [18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 18, 16, 17, 16, 16, 17, 16, 17, 16, 16,
+     17, 15, 15, 15, 17, 15, 15, 17, 17, 17, 17, 17, 17, 17, 17, 17, 15, 17, 18, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16,
+     15, 16, 16, 15, 18, 17, 16, 16, 11, 16, 17, 7, 11, 15, 7, 11, 11, 7, 16, 7, 17, 7, 7, 7, 7, 15, 7, 7, 11, 7, 7, 17,
+      8, 15, 8, 8, 8, 15, 8, 8, 8, 8] 
+    in total: [(17, 35), (16, 24), (15, 12), (7, 12), (8, 8), (11, 5), (18, 4)] 
+    Orientation = 215.1 degree
+    ```
+     ![3 weeks motion ](./image/27827_peak_perday.png?raw=true"") 
+    
 
 
 ## Setup enviroment on mac OS Sierra 10
@@ -218,8 +312,7 @@ __Cloud platform__
 
     __Challenge__:
     - Unlike in the SQL world where you model your data first and then write the queries, in Cassandra you need to figure out all the queries that will be done and model your data accordingly.
-    It means you need to think twice when [building the data model](https://medium.com/@jscarp)
-    Now we just use a very simple table as below for current phase
+    It means you need to think twice when [building the data model](https://medium.com/@jscarp). Now we just use a very simple table as below for current phase
     
     | ResourceID  | Reading | timestamp | 
     | ----------  | --------| ----------| 
@@ -325,12 +418,6 @@ __Cloud platform__
 ### Batch
 
 ## Process the data on Flink
-__Target__ : 
-- Visualize and Identify the user patten
-- Predict abnormal case 
-- Data ETL , including matching the ground truth.  
-
-
 Flink has the special classes DataSet and DataStream to represent data in a program. 
 You can think of them as immutable collections of data that can contain duplicates. 
 In the case of DataSet the data is finite while for a DataStream the number of elements can be unbounded.
@@ -397,56 +484,16 @@ However the real data is not all-zeros in https://console.sparkworks.net/resourc
 
     Resource  historical data resource ID: 155918 from : 2017-08-24T09:25:49.323Z to 2017-08-31T09:25:49.080Z with steps per hour [32.34, 32.34, 32.34, 32.473637, 33.4425, 34.259167, 34.75733, 34.365334, 33.32, 32.764668, 32.570587, 32.36722, 32.3155, 32.3068, 32.241306, 31.868149, 31.868149, 31.85, 31.838118, 31.808867, 31.826338, 31.822662, 31.832302, 31.852188, 31.842134, 31.841246, 31.85319, 32.140522, 33.013374, 33.919827, 34.664608, 34.72307, 32.34, 32.34, 32.34, 31.85, 31.85, 32.34, 31.85, 31.85, 31.85, 31.85, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 31.367912, 31.374935, 31.410751, 31.416487, 31.51673, 31.94285, 32.77366, 33.64148, 34.232605, 33.768044, 32.68922, 32.30267, 32.140594, 31.958946, 31.87191, 31.852951, 31.830269, 31.64, 31.46889, 31.456898, 31.3657, 31.385254, 31.381018, 31.41322, 31.534771, 31.668463, 31.79291, 31.836, 31.869188, 32.38108, 33.044456, 33.666306, 33.827496, 32.96945, 32.38393, 32.23478, 32.038074, 31.907423, 31.856163, 31.844433, 31.838556, 31.69923, 31.6932, 31.511343, 31.412098, 31.391008, 31.380096, 31.443954, 31.619139, 31.776262, 31.830036, 31.832235, 31.799591, 31.84828, 32.09569, 32.928936, 33.33732, 33.126163, 32.188957, 31.83223, 31.623442, 31.422161, 31.361742, 31.356749, 31.3123, 30.906296, 30.886333, 30.878448, 30.859062, 30.843264, 30.859325, 30.861336, 30.849495, 30.85837, 30.85697]
     
-**TODO** We will need to identify the "noise" from data
-    
-- Clean the data
-
-    - Remove outliers:
-    
-    What is outliers 
-    
-        In statistics, an outlier is an observation point that is distant from other observations.
-        An outlier may be due to variability in the measurement or it may indicate experimental error; 
-        the latter are sometimes excluded from the data set.[3] Outliers can occur by chance in any distribution, 
-        but they often indicate either measurement error or that the population has a heavy-tailed distribution. 
-        In the former case one wishes to discard them or use statistics that are robust to outliers, 
-        while in the latter case they indicate that the distribution has high skewness 
-        and that one should be very cautious in using tools or intuitions that assume a normal distribution. 
-        A frequent cause of outliers is a mixture of two distributions, which may be two distinct sub-populations, 
-        or may indicate 'correct trial' versus 'measurement error'; this is modeled by a mixture model.
-    
-    how to identify outliers 
-    
-        Q1 = First Quartile
-        Q3 = Third Quartile
-        Inter-quartile Range (IQR) = Q3 - Q1
-        Lower Outlier Boundary = Q1 - 1.5 * IQR
-        Upper Outlier Boundary = Q3 + 1.5 * IQR 
-        
-    clean the outliers and replace it with ....
-    
-    __Extreme value analysis__ is a very specific kind of outlier analysis where the data points at the outskirts of the data are reported as outliers. 
-    Such outliers correspond to the statistical tails of probability distributions
-
-    Output Two ways to indicate a data point is an outlier
-     - Real-valued outlier score, higher values of the score make the point more like an outlier
-     - Binary label binary value yes or no for an data point to be outlier
-
-    - moving average
-    The SMA is the most straightforward calculation, the average price over a chosen time period. 
-    The main advantage of the SMA is that it offers a smoothed line, less prone to whipsawing up and down in response to slight, 
-    temporary price swings back and forth. Therefore, it provides a more stable level indicating support or resistance. 
-    
-    The SMA's weakness is that it is slower to respond to rapid price changes that often occur at market reversal points. 
-    The SMA is often favored by traders or analysts operating on longer time frames, such as daily or weekly charts.
-   
-   - Linear fit 
-    Linear regression
-    In statistics, linear regression is a linear approach 
-    for modeling the relationship between a scalar dependent variable y 
-    and one or more explanatory variables (or independent variables) denoted X.
 
 ## Reference
 1. [The building data genome project](https://github.com/buds-lab/the-building-data-genome-project)
 2. [Big data computing](https://piazza.com/uniroma1.it/spring2017/1044406/resources) 
 3. [Naked Statistics: Stripping the Dread from the Data by Charles Wheelan](https://www.goodreads.com/book/show/17986418-naked-statistics)
+4. Bird view for the GAIA project : 
+
+__GAIA Architecture design overview__
+ ![archetecture](./image/GAIAarchitecturedesignOverview.jpg?raw=true "")
+
+__Cloud platform__
+ ![cloud](./image/GAIAcloudplatform.png?raw=true "")
+
