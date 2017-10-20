@@ -67,7 +67,7 @@ __What do these sensors collect?__
     
 ![sensor](./image/sensorType.png?raw=true "")
 
-__Look Closer at the data__
+__Observation for raw data__
 
 - Demo on all the schools in Greece, for one year, time interval: day
     - Power Consumption, 10 schools in Greece 
@@ -147,22 +147,9 @@ __Look Closer at the data__
     ![4 weeks Temperature](./image/144243Temperature_cluster.png?raw=true"")
      Now, it is easy to see the orientation
 
-**TODO** More visualization for the data comparing with the ground truth 
-
  
-__Target No.1 : what orientation for this room ?__
-```
-Write down a description of your algorithm
-- give a high-level view of your approach - 2-3 sentences
-~~describe the processing of the data that you have done~~
-- produce a simple example/plot 
-from 1 room for 1 day with good resolution 
-+ pointers on what you mean "peak"
-+ raw data vs processed data
-- explain the formula 
-- produce a figure (e.g., using visio) with the circle/angles/orientation/blah...
-- give an example - of the formula - using the example/plot produced + the real data of the location of the room (lat/long?)
-```
+__Question 1 : what is the orientation for this room ?__
+
 - Assuming the indoor temperature should rise as the day time passing by. 
   We do not put human activity or others into the consideration, for now
 - ETL for raw data: 
