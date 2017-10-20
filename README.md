@@ -206,7 +206,8 @@ __Question 1 : what is the orientation for this room ?__
         - West: the peak  at the late of the day
         - South: the peak should be at the mid-noon or later 
         - Rest: room facing north/music room/computer lab/basement room will have relatively low variation and average of the temperature
-    - **TODO** Also we can use slope for the temperature trend to detect orientation 
+    - **TODO** Also we can use slope for the temperature trend to detect orientation with another pattern
+    ![trend](./image/slope.png?raw=true"")
     
 - Predicting orientation by using peak temperature :
     - Using RESTful API to retrieve the time : [sunrise , noon ,and sunset],unit: hour.
@@ -244,7 +245,7 @@ __Question 1 : what is the orientation for this room ?__
     in total: [(17, 35), (16, 24), (15, 12), (7, 12), (8, 8), (11, 5), (18, 4)] 
     Orientation = 215.1 degree
     ```
-     ![3 weeks motion ](./image/27827_peak_perday.png?raw=true"") 
+    ![3 weeks motion ](./image/27827_peak_perday.png?raw=true"") 
     
 
 
