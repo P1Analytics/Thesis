@@ -245,7 +245,7 @@ __Question 1 : what is the orientation for this room ?__
     in total: [(17, 35), (16, 24), (15, 12), (7, 12), (8, 8), (11, 5), (18, 4)] 
     Orientation = 215.1 degree
     ```
-    ![3 weeks motion ](./image/27827_peak_perday.png?raw=true"") 
+    ![peak ](./image/27827_peak_perday.png?raw=true"") 
     
 
 
