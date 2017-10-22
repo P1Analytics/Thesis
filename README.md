@@ -200,53 +200,71 @@ __Question 1 : what is the orientation for this room ?__
     - Visualize one day temperature data after processes mentioned above
     ![trend](./image/ELT.png?raw=true"")
 
-- Identify patten:
+- __Identify patten by peak time:__
     - Intuitively while observing the temperature peak for different rooms: 
         - East: the peak temperature arrives at the early day
         - West: the peak  at the late of the day
         - South: the peak should be at the mid-noon or later 
         - Rest: room facing north/music room/computer lab/basement room will have relatively low variation and average of the temperature
-    - **TODO** Also we can use slope for the temperature trend to detect orientation with another pattern
+    - Predicting orientation by using peak temperature :
+        - Using RESTful API to retrieve the time : [sunrise , noon ,and sunset],unit: hour.
+        - Only check the temperature during the daytime between [sunrise,sunset]
+        - __Orientation = sum( peak_at_hour /24hour *360degree)/lenght(list_peak_at_hour)__ _(unit:degree)_   
+        - Simply match Orientation into :
+                0-90 degree: North-East, 90-180 degree: South-East
+                180-270 degree: South-West, 270-360 degree: North-West
+            (./image/comp1.jpg)
+       - If the temperature are stable for days.
+            During one day, the highest temperature will reach around noon maybe later,even around the sunset time.
+            In this case, it is reasonable to predict "the room is facing to the south or south-west"
+            So we might pick the top N highest temperature from the whole sampled as a list 
+            and try to find out the orietation by sue the formular mentioned above.
+       - If the temperature changes fast day by day,like spring or autumn in the subtropics and temperate area.
+            We should pick the top temperature per day as a list and do the same
+        ``` 
+        Exmaple: Sep12-Oct10 2017 8ο Γυμνάσιο Πατρών, Room 1
+        the classroom reach the highest temperature at hour: 
+        peak_at_hour_list = [ 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
+        17, 17, 17, 16, 16, 16, 16, 18, 17, 16, 16, 17, 16, 17, 16, 16, 17, 16, 18, 17, 17, 17, 16, 16, 17, 17, 16, 17,17, 
+        16, 16, 17, 17, 17, 16, 17, 17, 18, 17, 17, 16, 16, 17, 17, 17, 17,17, 17, 16, 17, 17, 16, 17, 15, 16, 17, 16, 16, 
+        16, 16, 16, 16, 17, 17, 16, 17, 16, 17, 17, 15, 16, 17, 17, 17, 16, 16, 16] 
+        in total: 
+        [(16 o'clock, 33times), (18 o'clock, 5times),(15 o'clock, 2times), (17 o'clock, 60times)]
+        Orientation = sum(16/24*360*26+...+15/24*360*2+17/24*360*60)/Length(peak_at_hour_list) = 250.2 degree
+        So we got the orientation is 250.2 degrees which looks like south-west. 
+        
+        But ... if there are also a lot of peaks happened in the morning like room Classl1 id :0xe28.
+        This room gets enough exposed in the sunshine/high temperature during the morning and also likely it facing to the south-east.
+        [18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 18, 16, 17, 16, 16, 17, 16, 17, 16, 16,
+         17, 15, 15, 15, 17, 15, 15, 17, 17, 17, 17, 17, 17, 17, 17, 17, 15, 17, 18, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16,
+         15, 16, 16, 15, 18, 17, 16, 16, 11, 16, 17, 7, 11, 15, 7, 11, 11, 7, 16, 7, 17, 7, 7, 7, 7, 15, 7, 7, 11, 7, 7, 17,
+          8, 15, 8, 8, 8, 15, 8, 8, 8, 8] 
+        in total: [(17, 35), (16, 24), (15, 12), (7, 12), (8, 8), (11, 5), (18, 4)] 
+        Orientation = 215.1 degree
+        ```
+        ![peak ](./image/27827_peak_perday.png?raw=true"") 
+
+- **TODO** __Identify patten by slope = delta(temperature)/delta(time):__ 
+    
+    - slope for one room,first pictures is the data after ETL , second is the slop for the data
     ![trend](./image/slope.png?raw=true"")
+    But we can't see pattern so obviously
+    - if it is not easy to see the patten,then put several subsites in one day together
     
-- Predicting orientation by using peak temperature :
-    - Using RESTful API to retrieve the time : [sunrise , noon ,and sunset],unit: hour.
-    - Only check the temperature during the daytime between [sunrise,sunset]
-    - __Orientation = sum( peak_at_hour /24hour *360degree)/lenght(list_peak_at_hour)__ _(unit:degree)_   
-    - Simply match Orientation into :
-            0-90 degree: North-East, 90-180 degree: South-East
-            180-270 degree: South-West, 270-360 degree: North-West
-        (./image/comp1.jpg)
-   - If the temperature are stable for days.
-        During one day, the highest temperature will reach around noon maybe later,even around the sunset time.
-        In this case, it is reasonable to predict "the room is facing to the south or south-west"
-        So we might pick the top N highest temperature from the whole sampled as a list 
-        and try to find out the orietation by sue the formular mentioned above.
-   - If the temperature changes fast day by day,like spring or autumn in the subtropics and temperate area.
-        We should pick the top temperature per day as a list and do the same
-    ``` 
-    Exmaple: Sep12-Oct10 2017 8ο Γυμνάσιο Πατρών, Room 1
-    the classroom reach the highest temperature at hour: 
-    peak_at_hour_list = [ 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
-    17, 17, 17, 16, 16, 16, 16, 18, 17, 16, 16, 17, 16, 17, 16, 16, 17, 16, 18, 17, 17, 17, 16, 16, 17, 17, 16, 17,17, 
-    16, 16, 17, 17, 17, 16, 17, 17, 18, 17, 17, 16, 16, 17, 17, 17, 17,17, 17, 16, 17, 17, 16, 17, 15, 16, 17, 16, 16, 
-    16, 16, 16, 16, 17, 17, 16, 17, 16, 17, 17, 15, 16, 17, 17, 17, 16, 16, 16] 
-    in total: 
-    [(16 o'clock, 33times), (18 o'clock, 5times),(15 o'clock, 2times), (17 o'clock, 60times)]
-    Orientation = sum(16/24*360*26+...+15/24*360*2+17/24*360*60)/Length(peak_at_hour_list) = 250.2 degree
-    So we got the orientation is 250.2 degrees which looks like south-west. 
-    
-    But ... if there are also a lot of peaks happened in the morning like room Classl1 id :0xe28.
-    This room gets enough exposed in the sunshine/high temperature during the morning and also likely it facing to the south-east.
-    [18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 18, 16, 17, 16, 16, 17, 16, 17, 16, 16,
-     17, 15, 15, 15, 17, 15, 15, 17, 17, 17, 17, 17, 17, 17, 17, 17, 15, 17, 18, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16,
-     15, 16, 16, 15, 18, 17, 16, 16, 11, 16, 17, 7, 11, 15, 7, 11, 11, 7, 16, 7, 17, 7, 7, 7, 7, 15, 7, 7, 11, 7, 7, 17,
-      8, 15, 8, 8, 8, 15, 8, 8, 8, 8] 
-    in total: [(17, 35), (16, 24), (15, 12), (7, 12), (8, 8), (11, 5), (18, 4)] 
-    Orientation = 215.1 degree
-    ```
-    ![peak ](./image/27827_peak_perday.png?raw=true"") 
-    
+        raw data
+    ![](./image/27827_raw.png?raw=true"")
+    slope of the data
+    ![](./image/27827_diff.png?raw=true"")
+    heatmap for the slop of the data
+    ![](./image/27827_diff_heatmap.png?raw=true"")
+
+__Question 2 : Is this room comfortable ?__
+
+According to wikipedie, when we talk about ___thermal comfort___
+
+Thermal comfort is the condition of __mind that expresses satisfaction__ with the thermal environment 
+and is assessed by subjective evaluation (ANSI/ASHRAE Standard 55).
+
 
 
 ## Setup enviroment on mac OS Sierra 10
