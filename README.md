@@ -246,7 +246,7 @@ __Question 1 : what is the orientation for this room ?__
 
 - **TODO** __Identify patten by slope = delta(temperature)/delta(time):__ 
     
-    - slope for one room,first pictures is the data after ETL , second is the slop for the data
+    - slope for one room,first picture is the data after ETL, second is the slop for the data
     ![trend](./image/slope.png?raw=true"")
     But we can't see pattern so obviously
     - if it is not easy to see the patten,then put several subsites in one day together
@@ -260,12 +260,34 @@ __Question 1 : what is the orientation for this room ?__
 
 __Question 2 : Is this room comfortable ?__
 
-According to wikipedie, when we talk about ___thermal comfort___
+From Wikipedia
+        
+ > __Thermal comfort__
 
-Thermal comfort is the condition of __mind that expresses satisfaction__ with the thermal environment 
-and is assessed by subjective evaluation (ANSI/ASHRAE Standard 55).
+    Thermal comfort is the condition of __mind that expresses satisfaction__ with the thermal environment 
+    and is assessed by subjective evaluation (ANSI/ASHRAE Standard 55).
+        
+ > __ANSI/ASHRAE Standard 55__
+        
+    (Thermal Environmental Conditions for Human Occupancy) is a standard 
+    that provides minimum requirements for acceptable thermal indoor environments. 
+    The purpose of the standard is to specify the combinations of indoor thermal environmental factors 
+    and personal factors that will produce thermal environmental conditions 
+    acceptable to a majority of the occupants within the space
+    
+    The standard addresses the four primary environmental factors 
+    (temperature, thermal radiation, humidity, and air speed) 
+    and two personal factors (activity and clothing) that affect thermal comfort. 
+    It is applicable for healthy adults at atmospheric pressures in altitudes up to (or equivalent to) 3,000 m (9,800 ft), 
+    and for indoor spaces designed for occupancy of at least 15 minutes.
 
+ > Comfort zone 
+ 
+    Refers to the combinations of air temperature, mean radiant temperature (tr), 
+    and humidity that are predicted to be an acceptable thermal environment at particular values of 
+    air speed, metabolic rate, and clothing insulation (Icl)
 
+Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
 
 ## Setup enviroment on mac OS Sierra 10
 ### Cassandra and Flink 
