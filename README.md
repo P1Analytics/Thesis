@@ -287,6 +287,11 @@ From Wikipedia
     and humidity that are predicted to be an acceptable thermal environment at particular values of 
     air speed, metabolic rate, and clothing insulation (Icl)
 
+Intuitively, we want the temperature indoor in the certain range like [18,24]
+during Monday to Friday , at 8:00 to 18:00
+Obviously, the truth is not always what we wish for 
+![hist](./image/27827_hist.png?raw=true"")
+
 Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
 
 ## Setup enviroment on mac OS Sierra 10
