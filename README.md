@@ -231,7 +231,6 @@ __Question 1 : what is the orientation for this room ?__
         Orientation = sum(16/24*360*26+...+15/24*360*2+17/24*360*60)/Length(peak_at_hour_list) = 250.2 degree
         So we got the orientation is 250.2 degrees which looks like south-west. 
         ```
-        
         ![peak ](./image/27827_peak_perday.png?raw=true"") 
         ```
         But ... if there are also a lot of peaks happened in the morning  
@@ -245,7 +244,7 @@ __Question 1 : what is the orientation for this room ?__
         ```
         ![peak ](./image/27827classB2_peak.png?raw=true"") 
         
-    |ID|School |Error ratio |
+    |ID|School |Correct |
     | ------------- | ------------- | ------------- |
     |144024|Elementary School of Lygia	|100%|
     |144243	|Primary School of Megisti	|50%|
