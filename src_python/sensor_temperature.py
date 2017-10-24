@@ -45,51 +45,6 @@ def sun_rise_set(lat, lng, timestamp):
     return sunrise, noon, sunset
 
 
-def Orient(df, lat, lng):
-    # Orientation level 1  only check the day time peak
-    sunrise, noon, sunset = sun_rise_set(lng, lat, df.index[0].timestamp())
-    start = datetime.time(sunrise, 0, 0)
-    end = datetime.time(sunset, 0, 0)
-    df_daytime = df.between_time(start, end)
-
-    peak_list = []
-    for index, value in df_daytime.nlargest(100).iteritems():
-        peak_list.append(index.hour)
-
-    sum = 0
-    east = False
-    morning = []
-    morning_counter = 0
-    for hour in peak_list:
-        sum += hour / 24 * 360
-        if sunrise <= hour < noon - 2:
-            east = True
-            morning.append(hour)
-            morning_counter += 1
-
-    peak_in_morning_ratio = morning_counter / len(peak_list)
-    if east:
-        print("Might facing to east, we have warming mornings at", sorted(set(morning)), "ratio:",
-              peak_in_morning_ratio * 100, "%")
-    Ori = sum / len(peak_list)
-    #
-    # print ("debug",
-    #        sunrise, noon, sunset, "\n",
-    #        peak_list, "\n",
-    #        Ori, "\n",
-    #        sorted(dict(Counter(peak_list)).items(), key=operator.itemgetter(1), reverse=True))
-
-    if 0 <= Ori < sunrise / 24 * 360:
-        return "North|North-East"
-    if 0.5 < peak_in_morning_ratio or sunrise / 24 * 360 <= Ori < noon / 24 * 360:
-        return "East|South-East"
-    if noon / 24 * 360 <= Ori < sunset / 24 * 360:
-        return "South|South-West"
-    if sunset / 24 * 360 <= Ori < 359:
-        return "West|North-West"
-    return "NULL"
-
-
 def clean_data(filename, sensor_type="temperature"):
     df = pd.read_csv(filename, delimiter=";", index_col='timestamps', parse_dates=True)
     header = list(df)
@@ -109,10 +64,11 @@ def clean_data(filename, sensor_type="temperature"):
 
         df_col = df_col.rolling(window=36, center=False, min_periods=0).mean()
         df_col = df_col.fillna(mean)
-        df[head] = df_col
+        window_col = head+"window36"
+        df[window_col] = df_col
         working_sensors.append(head)
 
-    # df.to_csv(filename.split(".")[0] + "_output.csv", sep=";")
+    # df.to_csv(filename.split(".")[0] + "_output.csv", sep=";") # to save the after-ETL data
     return df, working_sensors
 
 
@@ -130,39 +86,82 @@ def coordinate_dicts():
 if __name__ == "__main__":
 
     coordinate_dict = coordinate_dicts()
-
-    df_indoor, working_indoor = clean_data("27827_Temperature_indoor.csv")
-    df_outdoor, working_outdoor = clean_data("27827_Temperature_outdoor.csv")
+    df_indoor, working_indoor = clean_data("155877_Temperature_indoor.csv")
+    df_outdoor, working_outdoor = clean_data("155877_Temperature_outdoor.csv")
 
     site = working_outdoor[0].split("_")[0]
     lat, lng = coordinate_dict[site][0], coordinates[site][1]
 
+    sunrise, noon, sunset = sun_rise_set(lng, lat, df_indoor[working_indoor[0]].index[0].timestamp())
+    print(sunrise, noon, sunset)
+    start = datetime.time(sunrise, 0, 0)
+    end = datetime.time(sunset, 0, 0)
+
     coef = []
     inter = []
-    check = True
     for outdoor in working_outdoor:
         X = df_outdoor[outdoor]
-        print(Orient(X, lat, lng), outdoor)
         X = X.values.reshape(np.shape(X)[0], 1)
-        # print("unbiased variance", outdoor, np.std(X))
         for indoor in working_indoor:
             Y = df_indoor[indoor]
-            if check:
-                print(Orient(Y, lat, lng), indoor)
-            # print("unbiased variance", indoor, np.std(Y))
             Y = Y.values.reshape(np.shape(Y)[0], 1)
             clf = LinearRegression().fit(X, Y)
             coef.append(clf.coef_[0][0])
             inter.append(clf.intercept_[0])
+            # print(clf.coef_[0][0],clf.intercept_[0],indoor)
 
             label_trend = "trend_" + indoor
             df_indoor[label_trend] = clf.predict(X)
             label_detrend = "detrend" + indoor
             df_indoor[label_detrend] = df_indoor[indoor] - df_indoor[label_trend] + df_indoor[label_trend].mean()
             rms = np.std(df_indoor[label_detrend])
-        check = False
         # plt.scatter(coef, inter, marker='.')
         # df_indoor.to_csv(indoor.split("_")[0] + "_trend.csv", sep=";")
-    # plt.show()
 
+    head = list(df_indoor)
+    print(list(df_indoor))
+    print("********* Orientation *************")
+
+    for id in [1,]:
+        for x in range(3,6):
+            begin =df_indoor.index.get_loc(pd.Timestamp('15/09/2017 07:00'))+2
+            end =df_indoor.index.get_loc(pd.Timestamp('15/09/2017 20:00'))+2
+            gap = 288 # one day for 5 mins 12*5*
+            peak=[]
+            marker=[]
+            bx = 0
+            for i in range(28): # for 28days,4weeks
+                delta = i*gap
+                df = df_indoor.iloc[begin+delta:end+delta]
+                peak.append(df[head[x]].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
+                marker.append(np.datetime64(df[head[x]].groupby(pd.TimeGrouper('D')).idxmax().dt.to_pydatetime()[0]))
+            # print(marker)
+            print("new peak list",sorted(dict(Counter(peak)).items(), key=operator.itemgetter(1), reverse=True))
+            print(head[x])
+            sum = 0
+            east = False
+            morning = []
+            morning_counter = 0
+            for hour in peak:
+                sum += hour / 24 * 360
+                if sunrise <= hour <= noon - 1:
+                    east = True
+                    morning.append(hour)
+                    morning_counter += 1
+            peak_in_morning_ratio = morning_counter / len(peak)
+            if east:
+                print("Might facing to east, we have warming mornings at",sorted(set(morning)),"ratio:",peak_in_morning_ratio * 100, "%")
+            Ori = sum / len(peak)
+            print(Ori)
+            if 0 <= Ori < sunrise / 24 * 360:
+                print("North|North-East")
+            if 0.5 < peak_in_morning_ratio or sunrise / 24 * 360 <= Ori < noon / 24 * 360:
+                print("East|South-East")
+            if noon / 24 * 360 <= Ori < sunset / 24 * 360:
+                print("South|South-West")
+            if sunset / 24 * 360 <= Ori < 359:
+                print("West|North-West")
+            print("**********************")
+
+    plt.show()
 
