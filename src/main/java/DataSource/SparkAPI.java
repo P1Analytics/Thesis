@@ -47,7 +47,7 @@ public class SparkAPI {
             in.close();
             List<String> UserInfo = Arrays.asList(username, password,clientId,clientSecret);
             return UserInfo;
-        }catch (Exception e){//Catch exception if any
+        }catch (Exception e){
             System.err.println("Error: " + e.getMessage());
         }
         return null;
@@ -77,14 +77,15 @@ public class SparkAPI {
                 .extract()
                 .body().asString();
         List<Long> siteIds = from(response).getList("sites.id", Long.class);
-        List<String> sitesNames = from(response).getList("sites.name", String.class);
-        List<Float> siteslongtitude = from(response).getList("sites.longtitude", Float.class);
-        List<Float> siteslatitude = from(response).getList("sites.latitude", Float.class);
 
-        for (int i = 0;i<siteIds.size();i++){
+//      TODO  System.out.println("Here is the latitude and longtitude list: ");
+//        List<String> sitesNames = from(response).getList("sites.name", String.class);
+//        List<Float> siteslongtitude = from(response).getList("sites.longtitude", Float.class);
+//        List<Float> siteslatitude = from(response).getList("sites.latitude", Float.class);
+//        for (int i = 0;i<siteIds.size();i++){
 //            System.out.println(Long.toString(siteIds.get(i))+"\t"+ sitesNames.get(i)+"\t"+siteslongtitude.get(i)+"\t"+siteslatitude.get(i));
-            System.out.println(Long.toString(siteIds.get(i))+"\t"+siteslongtitude.get(i)+"\t"+siteslatitude.get(i));
-        }
+//            System.out.println(Long.toString(siteIds.get(i))+"\t"+siteslongtitude.get(i)+"\t"+siteslatitude.get(i));
+//        }
         return siteIds;
     }
 
@@ -117,7 +118,6 @@ public class SparkAPI {
                 .body("id", equalTo(siteId.intValue()))
                 .extract()
                 .body().asString();
-        System.out.println(response);
 //        System.out.println(from(response).getList("subsites.user.username"));
         return siteId;
     }
@@ -135,9 +135,9 @@ public class SparkAPI {
                 .body().asString();
         List<Long> subsitesIds = from(response).getList("sites.id", Long.class);
         List<String> subsitesNames = from(response).getList("sites.name", String.class);
-        for (int i = 0;i<subsitesIds.size();i++){
-            System.out.println(Long.toString(subsitesIds.get(i))+"\t"+ subsitesNames.get(i));
-        }
+//        for (int i = 0;i<subsitesIds.size();i++){
+//            System.out.println(Long.toString(subsitesIds.get(i))+"\t"+ subsitesNames.get(i));
+//        }
         return subsitesIds;
     }
 
