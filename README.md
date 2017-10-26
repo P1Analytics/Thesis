@@ -52,7 +52,7 @@ __What do these sensors collect?__
     - Methane Concentration : Raw Value
     - Power Factor : Raw Value
     - Atmospheric Pressure : kPa
-    - Radiation ：uSv/h
+    - Radiation ：uSv/h 😵
     - Reactive Energy : VARh
     - Reactive Power : VAR
     
@@ -304,6 +304,37 @@ Obviously, the truth is not always what we wish for
 ![hist](./image/27827_hist.png?raw=true"")
 
 Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
+    How to use:
+     
+    By choosing the Adaptive method at the very top of the user interface, 
+    the chart changes and the input variables include air temperature, mean radiant temperature and prevailing mean outdoor temperature. 
+    This is because the personal factors and humidity are not significant in this method since adaptation is considered, and the only variable is the outdoor temperature.
+    See above for explanation of the first two variables, air and mean radiant temperature.
+    
+    Prevailing mean outdoor temperature
+    Here you can type the outdoor temperature averaged as explained on the standard. 
+    See the Wikipedia link for a brief explanation.
+    Changing this variable makes the dot representing the current condition move horizontally. 
+    The meaning of this chart is that certain conditions of indoor-outdoor temperature fall inside the comfort zone, 
+    which in this case is static.
+
+    But we dont have radiation temperature data from sensor
+    
+__Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
+
+__Question 4 : Can we retrieve outdoor weather through API ?  YES!__ 
+   
+[Openweathermap for real-time data](https://openweathermap.org/current#current_JSON)
+
+But this response is only for the real time request.
+
+[Worldweatheronline for hisotry data](https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx#hourly_element)
+
+Both of APIs response : 
+
+| Temperature | Wind | Humidity | Pressure | Cloud...|
+| ----------  | --------| ----------| ----------|----------|
+
 
 ## Setup enviroment on mac OS Sierra 10
 ### Cassandra and Flink 
