@@ -338,7 +338,7 @@ Both of APIs response :
 What about the accuracy between data retrieved from API and sensors?
 ![hist](./image/APIvsSensor.png?raw=true"") 
 
-Conclusion : Yes we can retrieve both realtime and history 
+Conclusion : Yes we can retrieve both realtime and history,but the accuracy is not pretty enough
 
 ## Setup enviroment on mac OS Sierra 10
 ### Cassandra and Flink 
