@@ -328,7 +328,7 @@ __Question 4 : Can we retrieve outdoor weather through API ?  YES!__
 
 But this response is only for the real time request.
 
-[Worldweatheronline for hisotry data](https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx#hourly_element)
+[Worldweatheronline for history data](https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx#hourly_element)
 
 Both of APIs response : 
 
