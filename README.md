@@ -275,7 +275,7 @@ From Wikipedia
         
  > __Thermal comfort__
 
-    Thermal comfort is the condition of __mind that expresses satisfaction__ with the thermal environment 
+    Thermal comfort is the condition of mind that expresses satisfaction with the thermal environment 
     and is assessed by subjective evaluation (ANSI/ASHRAE Standard 55).
         
  > __ANSI/ASHRAE Standard 55__
@@ -335,6 +335,10 @@ Both of APIs response :
 | Temperature | Wind | Humidity | Pressure | Cloud...|
 | ----------  | --------| ----------| ----------|----------|
 
+What about the accuracy between data retrieved from API and sensors?
+![hist](./image/APIvsSensor.png?raw=true"") 
+
+Conclusion : Yes we can retrieve both realtime and history 
 
 ## Setup enviroment on mac OS Sierra 10
 ### Cassandra and Flink 

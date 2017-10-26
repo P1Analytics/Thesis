@@ -186,16 +186,19 @@ if __name__ == "__main__":
     # history
     # TODO API KEY expired on Dec25 https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx
     URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
-    params = {'q': lat + "," + lng, 'date': '2017-07-20', 'enddate': '2017-10-21',
+    params = {'q': "36.14792,29.5892", 'date': '2017-10-01', 'enddate': '2017-10-05',
               'key': '612818efa9204368a1785431172610', 'format': 'json',
               'includelocation': 'yes', 'tp': '1'}
     r = requests.get(URL, params).json()
+    # print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
+
     feel_like_temp_list = []
     for i in r["data"]["weather"]:
+        print(i["date"])
         for j in i["hourly"]:
-            feel_like_temp_list.append(j["FeelsLikeC"])
-    print(feel_like_temp_list)
-    # print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
+            feel_like_temp_list.append(int(j["tempC"]))
+            print(j["time"],int(j["tempC"]))
+    print(feel_like_temp_list,len(feel_like_temp_list))
 
 
     plt.show()
