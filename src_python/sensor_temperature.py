@@ -9,6 +9,7 @@ import operator
 import requests
 import time
 from comfort_models import *
+import json
 
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
@@ -165,21 +166,36 @@ if __name__ == "__main__":
                 print("West|North-West")
             print("**********************")
 
-
     print("********* Comfortable *************")
     for i in range(5, 50):
         print(i, comfAdaptiveComfortASH55(ta=29.4, tr=i, runningMean=25.6, vel=1, eightyOrNinety=True,
                                           levelOfConditioning=0)[4])
-
 
     print("********* similarity for rooms *************")
     # TODO find the similarity for rooms
 
 
     print("********* replace outdoor with API *************")
+
+    # real-time
     r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
-                     params={'lat': lat,'lon': lng,'units': 'metric',
+                     params={'lat': lat, 'lon': lng, 'units': 'metric',
                              'APPID': 'bd859500535f9871a59b2fa52547516e'}).json()
-    print("the real time query:\n",r)
+    print("the real time query:\n", r)
+
+    # history
+    # TODO API KEY expired on Dec25 https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx
+    URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
+    params = {'q': lat + "," + lng, 'date': '2017-07-20', 'enddate': '2017-10-21',
+              'key': '612818efa9204368a1785431172610', 'format': 'json',
+              'includelocation': 'yes', 'tp': '1'}
+    r = requests.get(URL, params).json()
+    feel_like_temp_list = []
+    for i in r["data"]["weather"]:
+        for j in i["hourly"]:
+            feel_like_temp_list.append(j["FeelsLikeC"])
+    print(feel_like_temp_list)
+    # print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
+
 
     plt.show()
