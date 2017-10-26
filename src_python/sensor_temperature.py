@@ -8,7 +8,10 @@ from collections import Counter
 import operator
 import requests
 import time
+from comfort_models import *
+
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
+
 
 def outliers_Q1_Q3(df, head):
     try:
@@ -64,7 +67,7 @@ def clean_data(filename, sensor_type="temperature"):
 
         df_col = df_col.rolling(window=36, center=False, min_periods=0).mean()
         df_col = df_col.fillna(mean)
-        window_col = head+"window36"
+        window_col = head + "_window36"
         df[window_col] = df_col
         working_sensors.append(head)
 
@@ -85,17 +88,8 @@ def coordinate_dicts():
 
 if __name__ == "__main__":
 
-    coordinate_dict = coordinate_dicts()
     df_indoor, working_indoor = clean_data("155877_Temperature_indoor.csv")
     df_outdoor, working_outdoor = clean_data("155877_Temperature_outdoor.csv")
-
-    site = working_outdoor[0].split("_")[0]
-    lat, lng = coordinate_dict[site][0], coordinates[site][1]
-
-    sunrise, noon, sunset = sun_rise_set(lng, lat, df_indoor[working_indoor[0]].index[0].timestamp())
-    print(sunrise, noon, sunset)
-    start = datetime.time(sunrise, 0, 0)
-    end = datetime.time(sunset, 0, 0)
 
     coef = []
     inter = []
@@ -112,31 +106,38 @@ if __name__ == "__main__":
 
             label_trend = "trend_" + indoor
             df_indoor[label_trend] = clf.predict(X)
-            label_detrend = "detrend" + indoor
+            label_detrend = "detrend_" + indoor
             df_indoor[label_detrend] = df_indoor[indoor] - df_indoor[label_trend] + df_indoor[label_trend].mean()
             rms = np.std(df_indoor[label_detrend])
-        # plt.scatter(coef, inter, marker='.')
-        # df_indoor.to_csv(indoor.split("_")[0] + "_trend.csv", sep=";")
+            # plt.scatter(coef, inter, marker='.')
+            # df_indoor.to_csv(indoor.split("_")[0] + "_trend.csv", sep=";")
 
     head = list(df_indoor)
-    print(list(df_indoor))
-    print("********* Orientation *************")
+    coordinate_dict = coordinate_dicts()
+    site = working_outdoor[0].split("_")[0]
+    lng, lat = coordinate_dict[site][0], coordinates[site][1]
 
-    for id in [1,]:
-        for x in range(3,6):
-            begin =df_indoor.index.get_loc(pd.Timestamp('15/09/2017 07:00'))+2
-            end =df_indoor.index.get_loc(pd.Timestamp('15/09/2017 20:00'))+2
-            gap = 288 # one day for 5 mins 12*5*
-            peak=[]
-            marker=[]
+    sunrise, noon, sunset = sun_rise_set(lat, lng, df_indoor[working_indoor[0]].index[0].timestamp())
+    print(list(df_indoor), "\n", sunrise, noon, sunset, lat, lng)
+
+    print("********* Orientation *************")
+    start = datetime.time(sunrise, 0, 0)
+    end = datetime.time(sunset, 0, 0)
+    for id in [1, ]:
+        for x in range(3, 6):
+            begin = df_indoor.index.get_loc(pd.Timestamp('15/09/2017 07:00')) + 2
+            end = df_indoor.index.get_loc(pd.Timestamp('15/09/2017 20:00')) + 2
+            gap = 288  # one day for 5 mins 12*5*
+            peak = []
+            marker = []
             bx = 0
-            for i in range(28): # for 28days,4weeks
-                delta = i*gap
-                df = df_indoor.iloc[begin+delta:end+delta]
+            for i in range(28):  # for 28days,4weeks
+                delta = i * gap
+                df = df_indoor.iloc[begin + delta:end + delta]
                 peak.append(df[head[x]].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
                 marker.append(np.datetime64(df[head[x]].groupby(pd.TimeGrouper('D')).idxmax().dt.to_pydatetime()[0]))
             # print(marker)
-            print("new peak list",sorted(dict(Counter(peak)).items(), key=operator.itemgetter(1), reverse=True))
+            print("new peak list", sorted(dict(Counter(peak)).items(), key=operator.itemgetter(1), reverse=True))
             print(head[x])
             sum = 0
             east = False
@@ -150,7 +151,8 @@ if __name__ == "__main__":
                     morning_counter += 1
             peak_in_morning_ratio = morning_counter / len(peak)
             if east:
-                print("Might facing to east, we have warming mornings at",sorted(set(morning)),"ratio:",peak_in_morning_ratio * 100, "%")
+                print("Might facing to east, we have warming mornings at", sorted(set(morning)), "ratio:",
+                      peak_in_morning_ratio * 100, "%")
             Ori = sum / len(peak)
             print(Ori)
             if 0 <= Ori < sunrise / 24 * 360:
@@ -163,5 +165,21 @@ if __name__ == "__main__":
                 print("West|North-West")
             print("**********************")
 
-    plt.show()
 
+    print("********* Comfortable *************")
+    for i in range(5, 50):
+        print(i, comfAdaptiveComfortASH55(ta=29.4, tr=i, runningMean=25.6, vel=1, eightyOrNinety=True,
+                                          levelOfConditioning=0)[4])
+
+
+    print("********* similarity for rooms *************")
+    # TODO find the similarity for rooms
+
+
+    print("********* replace outdoor with API *************")
+    r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
+                     params={'lat': lat,'lon': lng,'units': 'metric',
+                             'APPID': 'bd859500535f9871a59b2fa52547516e'}).json()
+    print("the real time query:\n",r)
+
+    plt.show()
