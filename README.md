@@ -1,6 +1,6 @@
 
 # Thesis
-    This will be a story about mining "data" from sensors in schools
+    
     
 ## "Gazing at" the data
 
@@ -154,7 +154,28 @@ __Question 1 : what is the orientation for this room ?__
   We do not put human activity or others into the consideration, for now
 - ETL for raw data: 
     - remove the dead sensors
-    - clear the long-time power off missing data(optional)
+    - clear the long-time "power off" missing data(optional)
+        
+         - In this table, statistic for sensors not working well  
+         
+            |ID |	Name	|All sensors "OFF" in 2 years |	Dead sensors |
+            | ------------- | ------------- | -------------| ------------- |
+            |144024	|Δημοτικό Σχολείο Λυγιάς|	29.78%|	1.00%|
+            |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.19%|0.77%|
+            |144243	|Δημοτικό Σχολείο Μεγίστης	|23.63%|	1.12%|
+            |155076	|Gramsci-Keynes School	|40.57%	|0.61%|
+            |155077	|Sapienza	|63.11%	|43.21%|
+            |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	0.00%|	18.06%|
+            |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|56.01%|	0.00%|
+            |155865	|46ο Δημοτικό Σχολείο Πατρών	|65.71%	|1.37%|
+            |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|75.14%	|3.13%|
+            |157185	|Ελληνογερμανική Αγωγή	|64.07%|	0.00%|
+            |159705	|Soderhamn	|94.54%	|0.00%|
+            |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|0.96%	|0.65%|
+            |27827	|8ο Γυμνάσιο Πατρών	|3.69%	|0.00%|
+            |28843	|2ο ΕΠΑΛ Λάρισας	|41.26%	|3.11%|
+            |28850	|55o Δημοτικό Σχολείο Αθηνών	|5.33%	|16.80%|
+    
     - remove the outliers with Turkey's fences and replace with min/max value
         ```
         What is outliers 
