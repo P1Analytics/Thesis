@@ -175,7 +175,8 @@ __Question 1 : what is the orientation for this room ?__
             |27827	|8ο Γυμνάσιο Πατρών	|3.69%	|0.00%|
             |28843	|2ο ΕΠΑΛ Λάρισας	|41.26%	|3.11%|
             |28850	|55o Δημοτικό Σχολείο Αθηνών	|5.33%	|16.80%|
-    
+            ![active](./image/active_15sites.png?raw=true"")
+            
     - remove the outliers with Turkey's fences and replace with min/max value
         ```
         What is outliers 
