@@ -171,7 +171,6 @@ if __name__ == "__main__":
     plt.show()
 
 
-"""
     df_indoor, working_indoor, outliers_indoor = clean_data("19640_Temp.csv")
     df_outdoor, working_outdoor, outliers_outdoor = clean_data("19640_Temp_outdoor.csv")
     coef = []
@@ -283,5 +282,3 @@ if __name__ == "__main__":
 
 
     plt.show()
-
-    """
