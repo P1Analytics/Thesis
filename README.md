@@ -185,8 +185,15 @@ __Question 1 : what is the orientation for this room ?__
             |27827	|8ο Γυμνάσιο Πατρών	|3.69%	|0.00%|
             |28843	|2ο ΕΠΑΛ Λάρισας	|41.26%	|3.11%|
             |28850	|55o Δημοτικό Σχολείο Αθηνών	|5.33%	|16.80%|
-    ![active](./image/active_15sites.png?raw=true"")
-            
+        ![active](./image/active_15sites.png?raw=true"")
+         - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
+
+         | Name	|All sensors "OFF" in 2 years |	Dead sensors| 
+         | ------------- | ------------- | -------------| 
+         | Libelium for outdoor weather  | 15.163934426229508 % | 0.0 %| 
+         | Synfield for outdoor weather | 1.2295081967213073 %| 13.333333333333334 %| 
+         | Electrical Power Consumption |49.45355191256831 % |  0.0 %| 
+     ![active](./image/active_3types.png?raw=true"")
     - remove the outliers with Turkey's fences and replace with min/max value
         ```
         What is outliers 
