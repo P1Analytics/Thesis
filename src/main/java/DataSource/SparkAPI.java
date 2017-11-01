@@ -159,7 +159,6 @@ public class SparkAPI {
 
     public void getresouceIDTag(Long resourceId) throws Exception, AssertionError {
 //      GET /v1/resource/{resourceId}/tag Retrieve the tags of a Resource by the resource unique identifier
-//      TODO  no tag in the raw data yet
         String get_str = "/resource/"+ Long.toString(resourceId)+"/tag";
         String response = given().spec(requestSpecBuilder.build())
                 .auth().preemptive().oauth2(accessToken)
@@ -174,7 +173,6 @@ public class SparkAPI {
 
     public String getResourceIdDetails(Long resourceId, String detail) throws Exception, AssertionError {
 //        GET /v1/resource/{resourceId} Retrieve a Spark Works Resource Details by its unique identifier
-//       TODO GET /v1/resource/{resourceId}/property Retrieve the properties of a Resource by the resource unique identifier
         try{
 //            System.out.println("CHECKOUT the resouceId " + resourceId + " with details "+ detail);
             String get_str = "/resource/" + Long.toString(resourceId);
@@ -186,7 +184,11 @@ public class SparkAPI {
                     .body("resourceId", equalTo(resourceId.intValue()))
                     .extract()
                     .body().asString();
-            return (String)from(response).get(detail);
+
+            if (detail != "") { // avoid the nullpoint from sepcific items when retrieving the type of sensor
+                return (String)from(response).get(detail);
+            }
+            return response;
         }
         catch(Exception e){
             System.out.println("getResourceIdDetails " + resourceId + " " + e);
