@@ -163,29 +163,33 @@ __Question 1 : what is the orientation for this room ?__
 - Assuming the indoor temperature should rise as the day time passing by. 
   We do not put human activity or others into the consideration, for now
 - ETL for raw data: 
-    - remove the dead sensors
-    - clear the long-time "power off" missing data(optional)
+    - Clean the __times period__ which all the sensors are __inactive__.
+    - Clean the __sensors__ which are always __inactive__   
+         - If the site is not kick-off yet, it will not be counted as inactive
+         - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
+         - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
+         - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
+            during [2015-Nov-1,2017-Oct-30]
+                        
+        |ID |	Name	| Missing Data | start time  | 
+        | ------------- | ------------- | -------------| -------------|
+        |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30	
+        |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30
+        |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30
+        |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04
+        |155077	|Sapienza	|58.22 %	| 2016-10-29
+        |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30
+        |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02
+        |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22
+        |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01
+        |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01
+        |159705	|Soderhamn	|0.00 %|2017-09-21
+        |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30
+        |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30
+        |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30
+        |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30
         
-         - In this table, statistic for sensors not working well  
-         
-            |ID |	Name	|All sensors "OFF" in 2 years |	Dead sensors | | 
-            | ------------- | ------------- | -------------| ------------- |--------| 
-            |144024	|Δημοτικό Σχολείο Λυγιάς|	29.78%|	1.00%|30.004%| 
-            |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.19%|0.77%|36.355% | 
-            |144243	|Δημοτικό Σχολείο Μεγίστης	|23.63%|	1.12%| 31.651%| 
-            |155076	|Gramsci-Keynes School	|40.57%	|0.61%| 30.686%| 
-            |155077	|Sapienza	|63.11%	|43.21%|74.899%| 74.899 %|
-            |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	0.00%|	18.06%|54.871%|
-            |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|56.01%|	0.00%|38.525|
-            |155865	|46ο Δημοτικό Σχολείο Πατρών	|65.71%	|1.37%|41.808%|
-            |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|75.14%	|3.13%|43.229%| 
-            |157185	|Ελληνογερμανική Αγωγή	|64.07%|	0.00%|40.589%|
-            |159705	|Soderhamn	|94.54%	|0.00%|48.391%| 
-            |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|0.96%	|0.65%|25.924%|
-            |27827	|8ο Γυμνάσιο Πατρών	|3.69%	|0.00%|39.252%|
-            |28843	|2ο ΕΠΑΛ Λάρισας	|41.26%	|3.11%|35.785%|
-            |28850	|55o Δημοτικό Σχολείο Αθηνών	|5.33%	|16.80%|46.641%|
-        ![active](./image/active_15sites.png?raw=true"")
+        ![active](./image/active_15sites.png)
          - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
 
          | Name	|All sensors "OFF" in 2 years |	Dead sensors| 
@@ -194,7 +198,8 @@ __Question 1 : what is the orientation for this room ?__
          | Synfield for outdoor weather | 1.2295081967213073 %| 13.333333333333334 %| 
          | Electrical Power Consumption |49.45355191256831 % |  0.0 %| 
      ![active](./image/active_3types.png?raw=true"")
-    - remove the outliers with Turkey's fences and replace with min/max value
+    - There are some "0"s, could be the missing data or the true value. **TODO**  HOW TO ID THEM ?
+    - Remove the outliers with Turkey's fences and replace with min/max value
         ```
         What is outliers 
             In statistics, an outlier is an observation point that is distant from other observations.
@@ -211,7 +216,7 @@ __Question 1 : what is the orientation for this room ?__
              - Real-valued outlier score, higher values of the score make the point more like an outlier
              - Binary label binary value yes or no for an data point to be outlier
          ``` 
-        - how to identify outliers by using Turkey's fences, aka inter quartile range, 
+        - identify outliers by using Turkey's fences, aka inter quartile range, 
             
             `Q1 = First Quartile`
             
@@ -222,6 +227,10 @@ __Question 1 : what is the orientation for this room ?__
             `Lower Outlier Boundary = Q1 - 1.5 * IQR`
             
             `Upper Outlier Boundary = Q3 + 1.5 * IQR`
+        - identify outliers by using a sliding windows W holds last W values
+            
+            **TODO**
+           
     - moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
         ```
         The SMA is the most straightforward calculation, the average over a chosen time period. 
