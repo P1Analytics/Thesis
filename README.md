@@ -1,9 +1,9 @@
 
 # Thesis
 
-Collected data from various types of sensors installed in school facilities, spread in  three different European countries  
+Collect data from various types of sensors installed in school facilities, spread in  three different European countries  
 
-Analysis the data to :   
+Analyze the data :   
 - find out the thermal patterns based on the orientation of the classroom 
 - indicate comfortable environment based on different thermal patterns
 - find similarity in the same building, remove duplicated sensors 
