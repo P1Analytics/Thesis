@@ -189,7 +189,7 @@ __Question 1 : what is the orientation for this room ?__
         |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30
         |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30
         
-        ![active](./image/active_15sites.png)
+        ![active](./image/active_15sites.png?raw=true"")
          - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
 
          | Name	|All sensors "OFF" in 2 years |	Dead sensors| 
