@@ -129,48 +129,52 @@ def count_missing(filename):
 if __name__ == "__main__":
 
 
-    # heatmap
+    # heatmap for STATISTIC of MISSING DATA
     # for sites , active vs inactive for 2 years
     TwoYEARs_list = [
-        "Libelium.csv",
-        "Electrical.csv",
-        "Synfield.csv"
+        # "Libelium.csv",
+        # "Electrical.csv",
+        # "Synfield.csv"
 
-        # "144024_2YEARS.csv",
-        # "144242_2YEARS.csv",
-        # "144243_2YEARS.csv",
-        # "155076_2YEARS.csv",
-        # "155077_2YEARS.csv",
-        # "155849_2YEARS.csv",
-        # "155851_2YEARS.csv",
-        # "155865_2YEARS.csv",
-        # "155877_2YEARS.csv",
-        # "157185_2YEARS.csv",
-        # "159705_2YEARS.csv",
-        # "19640_2YEARS.csv",
-        # "27827_2YEARS.csv",
-        # "28843_2YEARS.csv",
-        # "28850_2YEARS.csv"
+        "144024_2YEARS.csv",
+        "144242_2YEARS.csv",
+        "144243_2YEARS.csv",
+        "155076_2YEARS.csv",
+        "155077_2YEARS.csv",
+        "155849_2YEARS.csv",
+        "155851_2YEARS.csv",
+        "155865_2YEARS.csv",
+        "155877_2YEARS.csv",
+        "157185_2YEARS.csv",
+        "159705_2YEARS.csv",
+        "19640_2YEARS.csv",
+        "27827_2YEARS.csv",
+        "28843_2YEARS.csv",
+        "28850_2YEARS.csv"
     ]
     fig, axn = plt.subplots(len(TwoYEARs_list), 1, sharex=True)
     cbar_ax = fig.add_axes([.92, .3, .03, .4]) # [left, bottom, width, height]
-    fig.suptitle("Sensor activity per month from 2016Nov01-2017Oct30", fontsize=14)
+    fig.suptitle("Sensor activity per month from 2015Nov01-2017Oct30", fontsize=14)
     file_i = 0
     for i, ax in enumerate(axn.flat):
         df, new_x = count_missing(TwoYEARs_list[file_i])
-        label = "Type_"+TwoYEARs_list[file_i].split(".")[0]
-        df,_,outliers = clean_data(TwoYEARs_list[file_i])
-        file_i += 1
-        print(outliers * 100/df.shape[0]/df.shape[1],"%", "of outliers")
+        label = "Type_"+TwoYEARs_list[file_i].split("_")[0]
+        ax.locator_params(tight=False, nbins=4)
         sns.heatmap(df.iloc[2:].T, ax=ax,
                     xticklabels=31,yticklabels=False,
-                    cbar =i == 0,cbar_ax=None if i else cbar_ax,
+                    cbar=i == 0,cbar_ax=None if i else cbar_ax,
                     cbar_kws={'label': 'inactive(0)------->active(1)'})
         ax.set_ylabel(label, rotation=0,labelpad=50)
+        df,_,outliers = clean_data(TwoYEARs_list[file_i]) # FOR THIS , YOU CAN'T CLEAN TWICE IN THE FOLLOWING CODE
+        print(outliers * 100/df.shape[0]/df.shape[1],"%", "of outliers")
+        file_i += 1
     ax.set_xlabel('month')
     plt.show()
+    # heatmap for STATISTIC of MISSING DATA END
 
 
+
+    """
     df_indoor, working_indoor, outliers_indoor = clean_data("19640_Temp.csv")
     df_outdoor, working_outdoor, outliers_outdoor = clean_data("19640_Temp_outdoor.csv")
     coef = []
@@ -282,3 +286,4 @@ if __name__ == "__main__":
 
 
     plt.show()
+    """
