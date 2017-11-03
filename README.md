@@ -171,32 +171,32 @@ __Question 1 : what is the orientation for this room ?__
          - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
             during [2015-Nov-1,2017-Oct-30]
                         
-        |ID |	Name	| Missing Data | start time  | 
-        | ------------- | ------------- | -------------| -------------|
-        |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30	
-        |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30
-        |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30
-        |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04
-        |155077	|Sapienza	|58.22 %	| 2016-10-29
-        |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30
-        |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02
-        |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22
-        |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01
-        |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01
-        |159705	|Soderhamn	|0.00 %|2017-09-21
-        |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30
-        |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30
-        |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30
-        |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30
+        |ID |	Name	| Inactive | start time  | outlier|
+        | ------------- | ------------- | -------------| -------------|-------------|
+        |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30| 16.49%
+        |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30|10.90%
+        |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30|15.80%
+        |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04|39.77%|39.77% 
+        |155077	|Sapienza	|58.22 %	| 2016-10-29|51.01%
+        |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30|16.76%
+        |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02|39.25%
+        |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22|38.28%
+        |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01|45.80%
+        |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01|40.50%
+        |159705	|Soderhamn	|0.00 %|2017-09-21|48.24%
+        |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30 | 20.34%
+        |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30|10.71%
+        |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17%
+        |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36%
         
         ![active](./image/active_15sites.png?raw=true"")
          - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
 
-         | Name	|All sensors "OFF" in 2 years |	Dead sensors| 
+         | Name	|Inactive |   outlier|
          | ------------- | ------------- | -------------| 
-         | Libelium for outdoor weather  | 15.163934426229508 % | 0.0 %| 
-         | Synfield for outdoor weather | 1.2295081967213073 %| 13.333333333333334 %| 
-         | Electrical Power Consumption |49.45355191256831 % |  0.0 %| 
+         | Libelium for outdoor weather  | 15.16% |  10.61%        
+         | Synfield for outdoor weather | 14.40 %| 9.28%| 
+         | Electrical Power Consumption |18.68 % |  33.40 %| 
      ![active](./image/active_3types.png?raw=true"")
     - There are some "0"s, could be the missing data or the true value. **TODO**  HOW TO ID THEM ?
     - Remove the outliers with Turkey's fences and replace with min/max value

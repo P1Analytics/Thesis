@@ -23,17 +23,75 @@ def outliers_Q1_Q3(df, head):
         lower = Q1 - (Q3 - Q1) * 3
         mean = df.mean()
     except TypeError:
-        print("here is the problem of Type Error from: ", head)
+        print("TypeError from: ", head)
     pd.options.mode.chained_assignment = None  # TODO is there a better solution ?
+
     outliers = 0
     if df[upper < df].size > 0:
+        outliers += df[upper < df].size
         df[upper < df] = df.quantile(1)
-        outliers +=1
+
     if df[lower > df].size > 0:
+        outliers += df[lower > df].size
         df[lower > df] = df.quantile(0)
-        outliers +=1
 
     return df, mean, outliers
+
+
+def outliers_sliding_window(df,window_number):
+    window = []
+    outlier = 0
+    max_range = 0
+    for i in range(df.size):
+        item = df[i]
+        if len(window) == window_number:
+            window.pop(0)
+        window.append(item)
+        previous = window[:-1]
+        if len(previous) == 0:
+            continue
+
+        # print(window)
+        average = mean(previous)
+        if len(previous) < window_number - 1:
+            if np.isnan(item):
+                outlier += 1
+                window[-1] = average
+                df[i] = average
+                # print(item, "change to mean", average)
+            continue
+
+        min = np.percentile(previous, 0)
+        Q1 = np.percentile(previous, 25)
+        Q3 = np.percentile(previous, 75)
+        max = np.percentile(previous, 100)
+        upper = Q3 + (Q3 - Q1) * 3
+        lower = Q1 - (Q3 - Q1) * 3
+        now_range = max - min
+        if max_range < now_range:
+            max_range = now_range
+
+        if np.isnan(item):
+            outlier += 1
+            window[-1] = average
+            df[i] = average
+            # print(item, "change to mean", average)
+            continue
+        if now_range == max_range:  # new peak comes out, OTHERWISE keep calm and carry on
+            if item < lower:
+                # print(item, "change to min", min)
+                window[-1] = min
+                df[i] = min
+                outlier += 1
+                continue
+            if item > upper:
+                # print(item, "change to max", max)
+                window[-1] = max
+                df[i] = max
+                outlier += 1
+                continue
+
+    return df, outlier, average
 
 
 def sun_rise_set(lat, lng, timestamp):
@@ -59,37 +117,64 @@ def sun_rise_set(lat, lng, timestamp):
     return sunrise, noon, sunset
 
 
-def clean_data(filename, sensor_type="temperature"):
-    df = pd.read_csv(filename, delimiter=";", index_col='timestamps', parse_dates=True)
-    header = list(df)
-    working_sensors = []
+def ETL(filename, statistic=False):
+    df = pd.read_csv(filename, delimiter=";", index_col='timestamps', parse_dates=True)  #
 
-    # clear the rows with all 0s due to power-off,also we might don't need it due to moving windows
-    # print(df[(df.T != 0).any()].shape)
+    if statistic:
+        df_norm = (df - df.min()) / (df.max() - df.min())
+        index_month = [int(str(i).split("-")[1]) for i in df.index.date]
+        df_norm.index = index_month
 
-    total_outliers = 0
-    for head in header:
-        df_col = df[head]
-        if (df_col[df_col != 0]).size == 0 or df_col.isnull().all():
-            df = df.drop(head, 1)
-            total_outliers += df_col.size
+    active_time = []  # some sensors are 0
+    dfT = df.T
+    for head in list(dfT):
+        df_col = dfT[head]
+        try:
+            if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
+                dfT[head] = dfT[head].replace(0, np.nan)
+                # print("inactive time",head,head.date(),"\n",head.time())
+            else:
+                active_time.append(head)
+        except ValueError:
             continue
+    df = dfT.T
+    # print("POWER OFF time", (1 - df[(df.T != 0).any()].shape[0] / df.shape[0]) * 100, "%") # could be easier ?
 
-        if "temperature" == sensor_type or "humidity" == sensor_type:
-            total_outliers += df_col[df_col == 0].size
-            df_col = df_col.replace(0, np.nan)
+    active_sensor = []  # sometimes is 0
+    for head in list(df):
+        df_col = df[head]
+        if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
+            df[head] = df[head].replace(0, np.nan)
+            # print("dead sensor ", head)
+        else:
+            active_sensor.append(head)
 
-        df_col, mean, outliers = outliers_Q1_Q3(df_col, head)
-        total_outliers += outliers
+    if statistic:
+        begin = df.index.get_loc(active_time[0])
+        print(filename, begin, active_time[0])
+        sum_nan = sum(df.iloc[begin:].isnull().sum().values)
+        power_on = df.iloc[begin:].shape
+        result = sum_nan / power_on[0] / power_on[1] * 100
+        miss_ratio = ("%.2f" % result, "%")
+        return df_norm, miss_ratio
+
+    # Here is the smooth out : delete outliers + rolling windows
+    sum_outliers = 0
+    for head in list(df):
+        df_col = df[head]
+        if df_col.isnull().sum() == df_col.size:
+            df = df.drop(head, 1)
+
+        df_col, outliers, average = outliers_sliding_window(df_col,window_number = 10)
+        sum_outliers += outliers
 
         df_col = df_col.rolling(window=36, center=False, min_periods=0).mean()
-        df_col = df_col.fillna(mean)
-        window_col = head + "_window36"
-        df[window_col] = df_col
-        working_sensors.append(head)
-
-    # df.to_csv(filename.split(".")[0] + "_output.csv", sep=";") # to save the after-ETL data
-    return df, working_sensors,total_outliers
+        df_col = df_col.fillna(average)
+        df[head + "_window36"] = df_col
+    result = sum_outliers/df.shape[0]/df.shape[1]*100
+    outlierS = ("%.2f" % result, "%")
+    # df.to_csv(filename.split(".")[0] + "_XXX.csv", sep=";")
+    return df, active_sensor, outlierS
 
 
 def coordinate_dicts():
@@ -103,39 +188,13 @@ def coordinate_dicts():
     return coordinates
 
 
-def count_missing(filename):
-    df = pd.read_csv(filename, delimiter=";", index_col='timestamps', parse_dates=True)
-
-    new_x = [int(str(i).split("-")[1]) for i in df.index.date]
-    df.index = new_x
-
-    print("POWER OFF time", (1 - df[(df.T != 0).any()].shape[0] / df.shape[0]) * 100, "%")
-    count = 0
-    dead = []
-    for head in list(df):
-        df_col = df[head]
-        if (df_col[df_col != 0]).size == 0 or df_col.isnull().all():
-            count += 1
-            dead.append(head)
-    # print(dead)
-    print("POWER OFF sensors",count / df.shape[1] * 100, "%")
-
-    # active :  1  inactive : 0 or NaN
-    df[(df.T != 0).any()] = 1
-    df[df != 0] = 1
-    return df, new_x
-
-
 if __name__ == "__main__":
 
-
-    # heatmap for STATISTIC of MISSING DATA
-    # for sites , active vs inactive for 2 years
+    # heatmap for STATISTIC of MISSING DATA  for 15 sites , active vs inactive for 2 years
     TwoYEARs_list = [
         # "Libelium.csv",
+        # "Synfield.csv",
         # "Electrical.csv",
-        # "Synfield.csv"
-
         "144024_2YEARS.csv",
         "144242_2YEARS.csv",
         "144243_2YEARS.csv",
@@ -154,29 +213,27 @@ if __name__ == "__main__":
     ]
     fig, axn = plt.subplots(len(TwoYEARs_list), 1, sharex=True)
     cbar_ax = fig.add_axes([.92, .3, .03, .4]) # [left, bottom, width, height]
-    fig.suptitle("Sensor activity per month from 2015Nov01-2017Oct30", fontsize=14)
+    fig.suptitle("Sensor Activity 2015.Nov.01-2017.Oct.30", fontsize=14)
     file_i = 0
     for i, ax in enumerate(axn.flat):
-        df, new_x = count_missing(TwoYEARs_list[file_i])
-        label = "Type_"+TwoYEARs_list[file_i].split("_")[0]
-        ax.locator_params(tight=False, nbins=4)
-        sns.heatmap(df.iloc[2:].T, ax=ax,
+        df_norm,miss_ratio = ETL(TwoYEARs_list[file_i],statistic=True)
+        print(miss_ratio)
+        label = ""+TwoYEARs_list[file_i].split(".")[0]
+        sns.heatmap(df_norm.iloc[2:].T, ax=ax,
                     xticklabels=31,yticklabels=False,
                     cbar=i == 0,cbar_ax=None if i else cbar_ax,
                     cbar_kws={'label': 'inactive(0)------->active(1)'})
         ax.set_ylabel(label, rotation=0,labelpad=50)
-        df,_,outliers = clean_data(TwoYEARs_list[file_i]) # FOR THIS , YOU CAN'T CLEAN TWICE IN THE FOLLOWING CODE
-        print(outliers * 100/df.shape[0]/df.shape[1],"%", "of outliers")
+        _,_,outliers = ETL(TwoYEARs_list[file_i])
+        print(TwoYEARs_list[file_i],outliers)
         file_i += 1
     ax.set_xlabel('month')
-    plt.show()
+
     # heatmap for STATISTIC of MISSING DATA END
 
 
-
-    """
-    df_indoor, working_indoor, outliers_indoor = clean_data("19640_Temp.csv")
-    df_outdoor, working_outdoor, outliers_outdoor = clean_data("19640_Temp_outdoor.csv")
+    df_indoor, working_indoor, outliers_indoor = ETL("19640_Temp.csv")
+    df_outdoor, working_outdoor, outliers_outdoor = ETL("19640_Temp_outdoor.csv")
     coef = []
     inter = []
     for outdoor in working_outdoor:
@@ -286,4 +343,4 @@ if __name__ == "__main__":
 
 
     plt.show()
-    """
+
