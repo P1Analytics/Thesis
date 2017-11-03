@@ -371,11 +371,9 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     The meaning of this chart is that certain conditions of indoor-outdoor temperature fall inside the comfort zone, 
     which in this case is static.
 
-
 ![hist](./image/144243Comfort.png?raw=true"")
 
 
-    
 __Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
 
 __Question 4 : Can we retrieve outdoor weather through API ?  YES!__ 
