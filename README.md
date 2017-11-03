@@ -224,14 +224,14 @@ __Question 1 : what is the orientation for this room ?__
             
             `Inter-quartile Range (IQR) = Q3 - Q1`
             
-            `Lower Outlier Boundary = Q1 - 1.5 * IQR`
+            `Lower Outlier Boundary = Q1 - 3 * IQR`
             
-            `Upper Outlier Boundary = Q3 + 1.5 * IQR`
+            `Upper Outlier Boundary = Q3 + 3 * IQR`
         - identify outliers by using a sliding windows W holds last W values
             Moving windows through data from beginning
             - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers:replace it with min or max. 
             - If the new value is NaN, it is also an outlier : replace it with average
-            min/max/average = min/max/average (previous W-1 values)
+            - min/max/average = min/max/average (previous W-1 values)
         
     - moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
         ```
