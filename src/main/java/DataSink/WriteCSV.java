@@ -38,30 +38,42 @@ public class WriteCSV {
         instance.authenticate();
 
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String freq = "5min"; //5min,hour,day,
+        String freq = "hour"; //5min,hour,day,
         ZonedDateTime end = ZonedDateTime.now();
-        int gap = 10;
+        int gap = 3;
         ZonedDateTime start = end.minusMonths(gap);
 
         String folder = "./src_python/";
 
-//        List<Long> siteIds = Arrays.asList(
-//                                           144242L, 27827L,144024L, 155076L,
-//                                           155849L, 155077L, 155865L, 155877L,
-//                                           28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L);
+//        List<Long> siteIds = Arrays.asList();
+//          [144242L, 27827L, 144024L, 155076L, 155849L, 155077L, 155865L, 155877L, 28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L]
 
         for (Long siteId : instance.listSitesIds()) {
+//        for (Long siteId : siteIds) {
             String property = "Temperature";
-            siteId = 155076L; // when only one site
+//            siteId = 144243L;
             List<Long> resourcesIds = instance.listResourcesIds(siteId);
             for (Long resourceId : resourcesIds) {
                 try{
-                    if (instance.getResourceIdDetails(resourceId,"property").matches(property)){
-                        String id = instance.getResourceSummary(resourceId,freq);
-                        String file_name = folder + siteId + "_" + resourceId +"_"+ id+".csv";
-                        WriteCSV(instance, format, freq, start,end, resourceId, file_name);
-                        System.out.println("\""+siteId+"_"+resourceId+"_"+ id+".csv\",");
+//                    if (
+//                       (instance.getResourceIdDetails(resourceId,"").contains("libelium"))
+//                            ||
+//                       (instance.getResourceIdDetails(resourceId,"").contains("synfield"))
+//                            ||
+//                        (instance.getResourceIdDetails(resourceId,"").contains("meas"))
+//                        )
+//                    {
+//                        String id = instance.getResourceSummary(resourceId,freq);
+//                        System.out.println("\""+siteId + "_" + resourceId +"_"+ id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
+//                    }
 
+                    if (instance.getResourceIdDetails(resourceId,"property").contains(property)){
+                        String id = instance.getResourceSummary(resourceId,freq);
+                        String file_name = folder + siteId + "_"
+                                + resourceId +"_"+ id+"_"
+                                +instance.getResourceIdDetails(resourceId,"property")+".csv";
+                        WriteCSV(instance, format, freq, start,end, resourceId, file_name);
+                        System.out.println("\""+siteId + "_" + resourceId +"_"+ id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
                     }
                 }
                 catch (Exception e){
@@ -69,16 +81,30 @@ public class WriteCSV {
                     continue;
                 }
             }
+
             List<Long> subsitesIds = instance.listSubsites(siteId);
             for (Long subsiteId : subsitesIds) {
                 List<Long> sub_resourcesIds = instance.listResourcesIds(subsiteId);
                 for (Long resourceId : sub_resourcesIds) {
                     try{
+//                        if (
+//                          (instance.getResourceIdDetails(resourceId,"").contains("libelium"))
+//                                ||
+//                          (instance.getResourceIdDetails(resourceId,"").contains("synfield"))
+//                                ||
+//                            (instance.getResourceIdDetails(resourceId,"").contains("meas"))
+//                            )
+//                        {
+//                            String id = instance.getResourceSummary(resourceId,freq);
+//                            System.out.println("\""+siteId+"_"+subsiteId+"_"+resourceId+"_"+id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
+//                        }
                         if (instance.getResourceIdDetails(resourceId,"property").contains(property)){
                             String id = instance.getResourceSummary(resourceId,freq);
-                            String file_name = folder + siteId + "_" + subsiteId + "_" + resourceId +"_"+id+".csv";
+                            String file_name = folder + siteId + "_"
+                                    + subsiteId + "_" + resourceId +"_"+id+"_"
+                                    +instance.getResourceIdDetails(resourceId,"property")+".csv";
                             WriteCSV(instance, format, freq, start,end,  resourceId, file_name);
-                            System.out.println("\""+siteId+"_"+subsiteId+"_"+resourceId+"_"+id+".csv\",");
+                            System.out.println("\""+siteId+"_"+subsiteId+"_"+resourceId+"_"+id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
                         }
                     }
                     catch (Exception e){

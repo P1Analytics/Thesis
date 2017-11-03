@@ -358,7 +358,7 @@ Obviously, the truth is not always what we wish for
 
 Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     How to use:
-     
+    
     By choosing the Adaptive method at the very top of the user interface, 
     the chart changes and the input variables include air temperature, mean radiant temperature and prevailing mean outdoor temperature. 
     This is because the personal factors and humidity are not significant in this method since adaptation is considered, and the only variable is the outdoor temperature.
@@ -371,7 +371,10 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     The meaning of this chart is that certain conditions of indoor-outdoor temperature fall inside the comfort zone, 
     which in this case is static.
 
-    But we dont have radiation temperature data from sensor
+
+![hist](./image/144243Comfort.png?raw=true"")
+
+
     
 __Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
 

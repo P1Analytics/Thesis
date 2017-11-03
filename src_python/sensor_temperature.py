@@ -10,6 +10,7 @@ from collections import Counter
 from pylab import *
 from sklearn.linear_model import LinearRegression
 from comfort_models import *
+import json
 
 sns.set()
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
@@ -38,7 +39,7 @@ def outliers_Q1_Q3(df, head):
     return df, mean, outliers
 
 
-def outliers_sliding_window(df,window_number):
+def outliers_sliding_window(df, window_number):
     window = []
     outlier = 0
     max_range = 0
@@ -51,7 +52,6 @@ def outliers_sliding_window(df,window_number):
         if len(previous) == 0:
             continue
 
-        # print(window)
         average = mean(previous)
         if len(previous) < window_number - 1:
             if np.isnan(item):
@@ -61,12 +61,14 @@ def outliers_sliding_window(df,window_number):
                 # print(item, "change to mean", average)
             continue
 
-        min = np.percentile(previous, 0)
         Q1 = np.percentile(previous, 25)
         Q3 = np.percentile(previous, 75)
-        max = np.percentile(previous, 100)
         upper = Q3 + (Q3 - Q1) * 3
         lower = Q1 - (Q3 - Q1) * 3
+        last_min = np.percentile(previous, 0)
+        last_max = np.percentile(previous, 100)
+        min = np.percentile(window, 0)
+        max = np.percentile(window, 100)
         now_range = max - min
         if max_range < now_range:
             max_range = now_range
@@ -77,20 +79,19 @@ def outliers_sliding_window(df,window_number):
             df[i] = average
             # print(item, "change to mean", average)
             continue
-        if now_range == max_range:  # new peak comes out, OTHERWISE keep calm and carry on
-            if item < lower:
+        if now_range > max_range * 0.85:  # new peak comes out, OTHERWISE keep calm and carry on
+            if item < lower :
                 # print(item, "change to min", min)
-                window[-1] = min
-                df[i] = min
+                window[-1] = last_min
+                df[i] = last_min
                 outlier += 1
                 continue
             if item > upper:
                 # print(item, "change to max", max)
-                window[-1] = max
-                df[i] = max
+                window[-1] = last_max
+                df[i] = last_max
                 outlier += 1
                 continue
-
     return df, outlier, average
 
 
@@ -132,7 +133,6 @@ def ETL(filename, statistic=False):
         try:
             if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
                 dfT[head] = dfT[head].replace(0, np.nan)
-                # print("inactive time",head,head.date(),"\n",head.time())
             else:
                 active_time.append(head)
         except ValueError:
@@ -155,7 +155,7 @@ def ETL(filename, statistic=False):
         sum_nan = sum(df.iloc[begin:].isnull().sum().values)
         power_on = df.iloc[begin:].shape
         result = sum_nan / power_on[0] / power_on[1] * 100
-        miss_ratio = ("%.2f" % result, "%")
+        miss_ratio = ("%.2f" % result)+ "%"
         return df_norm, miss_ratio
 
     # Here is the smooth out : delete outliers + rolling windows
@@ -165,15 +165,16 @@ def ETL(filename, statistic=False):
         if df_col.isnull().sum() == df_col.size:
             df = df.drop(head, 1)
 
-        df_col, outliers, average = outliers_sliding_window(df_col,window_number = 10)
+        df_col, outliers, average = outliers_sliding_window(df_col, window_number=20)
         sum_outliers += outliers
 
-        df_col = df_col.rolling(window=36, center=False, min_periods=0).mean()
+
+        df_col = df_col.rolling(window=6, center=False, min_periods=0).mean()
         df_col = df_col.fillna(average)
-        df[head + "_window36"] = df_col
-    result = sum_outliers/df.shape[0]/df.shape[1]*100
-    outlierS = ("%.2f" % result, "%")
-    # df.to_csv(filename.split(".")[0] + "_XXX.csv", sep=";")
+        df[head + "_rollingwindow"] = df_col
+    result = sum_outliers / df.shape[0] / df.shape[1] * 100
+    outlierS = ("%.2f" % result)+ "%"
+    df.to_csv(filename.split(".")[0] + "_XXX.csv", sep=";")
     return df, active_sensor, outlierS
 
 
@@ -231,8 +232,11 @@ if __name__ == "__main__":
     # heatmap for STATISTIC of MISSING DATA END
 
 
-    df_indoor, working_indoor, outliers_indoor = ETL("19640_Temp.csv")
-    df_outdoor, working_outdoor, outliers_outdoor = ETL("19640_Temp_outdoor.csv")
+
+
+    """
+    df_indoor, working_indoor, _ = ETL("19640_Temp.csv")
+    df_outdoor, working_outdoor, _ = ETL("19640_Temp_outdoor.csv")
     coef = []
     inter = []
     for outdoor in working_outdoor:
@@ -261,7 +265,7 @@ if __name__ == "__main__":
     lng, lat = 23.8888985,37.9997385 # Ellinogermaniki Agogi S.A.  do not have this data
     sunrise, noon, sunset = sun_rise_set(lat, lng, df_indoor[working_indoor[0]].index[0].timestamp())
     print(list(df_indoor), "\n", sunrise, noon, sunset, lat, lng)
-
+    
     
     print("********* Orientation *************")
     for x in range(26, 52):  # TODO change
@@ -304,42 +308,47 @@ if __name__ == "__main__":
         if sunset / 24 * 360 <= Ori < 359:
             print("West|North-West")
         print("**********************")
+    """
+
 
 
     print("********* Comfortable *************")
-    for i in range(5, 50):
-        print(i, comfAdaptiveComfortASH55(ta=29.4, tr=i, runningMean=25.6, vel=1, eightyOrNinety=True,
-                                          levelOfConditioning=0)[4])
+    df,_,_ = ETL("demo.csv")
+    heads = list(df)
+    index = df.index.values
+    outdoor = df[heads[2]].values
+    indoor = df[heads[3]].values
+    comfort=[]
+    for ind,ta,out in zip(index,indoor,outdoor):
+        comfort.append(comfAdaptiveComfortASH55(ta,ta,out)[5])
+    com_df=pd.DataFrame(comfort,index=index,columns=["comfort"])
+    # com_df.to_csv("comfort.csv", sep=";")
 
-    print("********* similarity for rooms *************")
-    # TODO find the similarity for rooms
-
-
+  
     print("********* replace outdoor with API *************")
-
+    lng, lat  = 29.589258,36.147923
     # real-time
-    r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
-                     params={'lat': lat, 'lon': lng, 'units': 'metric',
-                             'APPID': 'bd859500535f9871a59b2fa52547516e'}).json()
-    print("the real time query:\n", r)
+    # r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
+    #                  params={'lat': lat, 'lon': lng, 'units': 'metric',
+    #                          'APPID': 'bd859500535f9871a59b2fa52547516e'}).json()
+    # print("the real time query:\n", r)
 
     # history
     # TODO API KEY expired on Dec25 https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx
     URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
-    params = {'q': "36.14792,29.5892", 'date': '2017-10-01', 'enddate': '2017-10-05',
-              'key': '612818efa9204368a1785431172610', 'format': 'json',
-              'includelocation': 'yes', 'tp': '1'}
+    params = {'q': "36.14792,29.5892",  # TODO need to change
+            'date': '2017-10-1', 'enddate': '2017-10-30',
+            'key': '612818efa9204368a1785431172610', 'format': 'json',
+            'includelocation': 'yes', 'tp': '24'}
     r = requests.get(URL, params).json()
-    # print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
+    print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
 
-    feel_like_temp_list = []
+    list_weather = []
     for i in r["data"]["weather"]:
-        print(i["date"])
-        for j in i["hourly"]:
-            feel_like_temp_list.append(int(j["tempC"]))
-            print(j["time"],int(j["tempC"]))
-    print(feel_like_temp_list,len(feel_like_temp_list))
+      for j in i["hourly"]:
+          list_weather.append(int(j["humidity"]))
+          print(i["date"],int(j["humidity"]))
+    print(list_weather,len(list_weather))
 
 
     plt.show()
-
