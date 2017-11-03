@@ -216,7 +216,7 @@ __Question 1 : what is the orientation for this room ?__
              - Real-valued outlier score, higher values of the score make the point more like an outlier
              - Binary label binary value yes or no for an data point to be outlier
          ``` 
-        - identify outliers by using Turkey's fences, aka inter quartile range, 
+        - identify outliers by using Turkey's fences, aka __inter quartile range__ 
             
             `Q1 = First Quartile`
             
@@ -228,9 +228,11 @@ __Question 1 : what is the orientation for this room ?__
             
             `Upper Outlier Boundary = Q3 + 1.5 * IQR`
         - identify outliers by using a sliding windows W holds last W values
-            
-            **TODO**
-           
+            Moving windows through data from beginning
+            - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers:replace it with min or max. 
+            - If the new value is NaN, it is also an outlier : replace it with average
+            min/max/average = min/max/average (previous W-1 values)
+        
     - moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
         ```
         The SMA is the most straightforward calculation, the average over a chosen time period. 
@@ -239,7 +241,8 @@ __Question 1 : what is the orientation for this room ?__
         The SMA's weakness is that it is slower to respond to rapid changes that often occur at market reversal points. 
         The SMA is often favored by analysts operating on longer time frames, such as daily or weekly charts.
         ``` 
-    - refill the NaN with mean of the series values
+    - refill the NaN with average of the whole series values
+     ![ETL](./image/ETL_demo.png?raw=true"")
     - Linear fit 
         ```Linear regression
         In statistics, linear regression is a linear approach for modeling the relationship 

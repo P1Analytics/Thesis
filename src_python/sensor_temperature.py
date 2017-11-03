@@ -218,7 +218,7 @@ if __name__ == "__main__":
     for i, ax in enumerate(axn.flat):
         df_norm,miss_ratio = ETL(TwoYEARs_list[file_i],statistic=True)
         print(miss_ratio)
-        label = ""+TwoYEARs_list[file_i].split(".")[0]
+        label = ""+TwoYEARs_list[file_i].split("_")[0]
         sns.heatmap(df_norm.iloc[2:].T, ax=ax,
                     xticklabels=31,yticklabels=False,
                     cbar=i == 0,cbar_ax=None if i else cbar_ax,
@@ -228,7 +228,6 @@ if __name__ == "__main__":
         print(TwoYEARs_list[file_i],outliers)
         file_i += 1
     ax.set_xlabel('month')
-
     # heatmap for STATISTIC of MISSING DATA END
 
 
