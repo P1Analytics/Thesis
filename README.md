@@ -1,7 +1,7 @@
 
 # Thesis
 
-Collect data from various types of sensors installed in school facilities, spread in  three different European countries  
+Collect data from various types of sensors installed in school facilities, spread in  three European countries  
 
 Extract, Transform and Load the data
 
