@@ -380,7 +380,7 @@ def comfPierceSET(ta, tr, vel, rh, met, clo, wme):
     return X
 
 
-def comfAdaptiveComfortASH55( ta, tr, runningMean, vel, eightyOrNinety, levelOfConditioning=0):
+def comfAdaptiveComfortASH55( ta, tr, runningMean, vel=0.6, eightyOrNinety=False, levelOfConditioning=0):
     # Define the variables that will be used throughout the calculation.
     r = []
     coolingEffect = 0
