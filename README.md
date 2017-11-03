@@ -158,99 +158,100 @@ __Observation for raw data__
      Now, it is easy to see the orientation
 
  
+__ETL for raw data__
+- Clean the __times period__ which all the sensors are __inactive__.
+- Clean the __sensors__ which are always __inactive__   
+     - If the site is not kick-off yet, it will not be counted as inactive
+     - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
+     - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
+     - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
+        during [2015-Nov-1,2017-Oct-30]
+                    
+    |ID |	Name	| Inactive | start time  | outlier|
+    | ------------- | ------------- | -------------| -------------|-------------|
+    |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30| 16.49%
+    |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30|10.90%
+    |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30|15.80%
+    |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04|39.77%|39.77% 
+    |155077	|Sapienza	|58.22 %	| 2016-10-29|51.01%
+    |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30|16.76%
+    |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02|39.25%
+    |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22|38.28%
+    |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01|45.80%
+    |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01|40.50%
+    |159705	|Soderhamn	|0.00 %|2017-09-21|48.24%
+    |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30 | 20.34%
+    |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30|10.71%
+    |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17%
+    |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36%
+    
+    ![active](./image/active_15sites.png?raw=true"")
+     - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
+
+     | Name	|Inactive |   outlier|
+     | ------------- | ------------- | -------------| 
+     | Libelium for outdoor weather  | 15.16% |  10.61%        
+     | Synfield for outdoor weather | 14.40 %| 9.28%| 
+     | Electrical Power Consumption |18.68 % |  33.40 %| 
+ ![active](./image/active_3types.png?raw=true"")
+
+- Remove the outliers with Turkey's fences and replace with min/max value
+    ```
+    What is outliers 
+        In statistics, an outlier is an observation point that is distant from other observations.
+        An outlier may be due to variability in the measurement or it may indicate experimental error; 
+        the latter are sometimes excluded from the data set.[3] Outliers can occur by chance in any distribution, 
+        but they often indicate either measurement error or that the population has a heavy-tailed distribution. 
+        In the former case one wishes to discard them or use statistics that are robust to outliers, 
+        while in the latter case they indicate that the distribution has high skewness 
+        and that one should be very cautious in using tools or intuitions that assume a normal distribution. 
+        A frequent cause of outliers is a mixture of two distributions, which may be two distinct sub-populations, 
+        or may indicate 'correct trial' versus 'measurement error'; this is modeled by a mixture model.
+    
+        Output Two ways to indicate a data point is an outlier
+         - Real-valued outlier score, higher values of the score make the point more like an outlier
+         - Binary label binary value yes or no for an data point to be outlier
+     ``` 
+    - identify outliers by using Turkey's fences, aka __inter quartile range__ 
+        
+        `Q1 = First Quartile`
+        
+        `Q3 = Third Quartile`
+        
+        `Inter-quartile Range (IQR) = Q3 - Q1`
+        
+        `Lower Outlier Boundary = Q1 - 3 * IQR`
+        
+        `Upper Outlier Boundary = Q3 + 3 * IQR`
+    - identify outliers by using a sliding windows W holds last W values
+        Moving windows through data from beginning
+        - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers:replace it with min or max. 
+        - If the new value is NaN, it is also an outlier : replace it with average
+        - min/max/average = min/max/average (previous W-1 values)
+    
+- moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
+    ```
+    The SMA is the most straightforward calculation, the average over a chosen time period. 
+    The main advantage of the SMA is that it offers a smoothed line, less prone to whipsawing up and down in response to slight, 
+    temporary price swings back and forth. Therefore, it provides a more stable level indicating support or resistance. 
+    The SMA's weakness is that it is slower to respond to rapid changes that often occur at market reversal points. 
+    The SMA is often favored by analysts operating on longer time frames, such as daily or weekly charts.
+    ``` 
+- refill the NaN with average of the whole series values
+ ![ETL](./image/ETL_demo.png?raw=true"")
+- Linear fit 
+    ```Linear regression
+    In statistics, linear regression is a linear approach for modeling the relationship 
+    between a scalar dependent variable y and one or more explanatory variables 
+    (or independent variables) denoted X.```
+- Visualize one day temperature data after processes mentioned above
+![trend](./image/ELT.png?raw=true"")
+
 __Question 1 : what is the orientation for this room ?__
 
 - Assuming the indoor temperature should rise as the day time passing by. 
   We do not put human activity or others into the consideration, for now
-- ETL for raw data: 
-    - Clean the __times period__ which all the sensors are __inactive__.
-    - Clean the __sensors__ which are always __inactive__   
-         - If the site is not kick-off yet, it will not be counted as inactive
-         - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
-         - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
-         - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
-            during [2015-Nov-1,2017-Oct-30]
-                        
-        |ID |	Name	| Inactive | start time  | outlier|
-        | ------------- | ------------- | -------------| -------------|-------------|
-        |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30| 16.49%
-        |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30|10.90%
-        |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30|15.80%
-        |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04|39.77%|39.77% 
-        |155077	|Sapienza	|58.22 %	| 2016-10-29|51.01%
-        |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30|16.76%
-        |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02|39.25%
-        |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22|38.28%
-        |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01|45.80%
-        |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01|40.50%
-        |159705	|Soderhamn	|0.00 %|2017-09-21|48.24%
-        |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30 | 20.34%
-        |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30|10.71%
-        |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17%
-        |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36%
-        
-        ![active](./image/active_15sites.png?raw=true"")
-         - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
-
-         | Name	|Inactive |   outlier|
-         | ------------- | ------------- | -------------| 
-         | Libelium for outdoor weather  | 15.16% |  10.61%        
-         | Synfield for outdoor weather | 14.40 %| 9.28%| 
-         | Electrical Power Consumption |18.68 % |  33.40 %| 
-     ![active](./image/active_3types.png?raw=true"")
-    - There are some "0"s, could be the missing data or the true value. **TODO**  HOW TO ID THEM ?
-    - Remove the outliers with Turkey's fences and replace with min/max value
-        ```
-        What is outliers 
-            In statistics, an outlier is an observation point that is distant from other observations.
-            An outlier may be due to variability in the measurement or it may indicate experimental error; 
-            the latter are sometimes excluded from the data set.[3] Outliers can occur by chance in any distribution, 
-            but they often indicate either measurement error or that the population has a heavy-tailed distribution. 
-            In the former case one wishes to discard them or use statistics that are robust to outliers, 
-            while in the latter case they indicate that the distribution has high skewness 
-            and that one should be very cautious in using tools or intuitions that assume a normal distribution. 
-            A frequent cause of outliers is a mixture of two distributions, which may be two distinct sub-populations, 
-            or may indicate 'correct trial' versus 'measurement error'; this is modeled by a mixture model.
-        
-            Output Two ways to indicate a data point is an outlier
-             - Real-valued outlier score, higher values of the score make the point more like an outlier
-             - Binary label binary value yes or no for an data point to be outlier
-         ``` 
-        - identify outliers by using Turkey's fences, aka __inter quartile range__ 
-            
-            `Q1 = First Quartile`
-            
-            `Q3 = Third Quartile`
-            
-            `Inter-quartile Range (IQR) = Q3 - Q1`
-            
-            `Lower Outlier Boundary = Q1 - 3 * IQR`
-            
-            `Upper Outlier Boundary = Q3 + 3 * IQR`
-        - identify outliers by using a sliding windows W holds last W values
-            Moving windows through data from beginning
-            - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers:replace it with min or max. 
-            - If the new value is NaN, it is also an outlier : replace it with average
-            - min/max/average = min/max/average (previous W-1 values)
-        
-    - moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
-        ```
-        The SMA is the most straightforward calculation, the average over a chosen time period. 
-        The main advantage of the SMA is that it offers a smoothed line, less prone to whipsawing up and down in response to slight, 
-        temporary price swings back and forth. Therefore, it provides a more stable level indicating support or resistance. 
-        The SMA's weakness is that it is slower to respond to rapid changes that often occur at market reversal points. 
-        The SMA is often favored by analysts operating on longer time frames, such as daily or weekly charts.
-        ``` 
-    - refill the NaN with average of the whole series values
-     ![ETL](./image/ETL_demo.png?raw=true"")
-    - Linear fit 
-        ```Linear regression
-        In statistics, linear regression is a linear approach for modeling the relationship 
-        between a scalar dependent variable y and one or more explanatory variables 
-        (or independent variables) denoted X.```
-    - Visualize one day temperature data after processes mentioned above
-    ![trend](./image/ELT.png?raw=true"")
-
+  
 - __Identify patten by peak time:__
     - Intuitively while observing the temperature peak for different rooms: 
         - East: the peak temperature mostly arrives at the early day
