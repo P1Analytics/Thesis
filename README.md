@@ -3,12 +3,13 @@
 
 Collect data from various types of sensors installed in school facilities, spread in  three different European countries  
 
+Extract, Transform and Load the data
+
 Analyze the data :   
 - find out the thermal patterns based on the orientation of the classroom 
 - indicate comfortable environment based on different thermal patterns
 - find similarity in the same building, remove duplicated sensors 
 - find the replacement for outdoor weather station by retrieving data from  web API  
-- _TBD_
 
 To reach the ultimate target __Save the energy Save the world__   
     
