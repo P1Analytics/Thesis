@@ -389,7 +389,9 @@ Both of APIs response :
 
 What about the accuracy between data retrieved from API and sensors?
 ![hist](./image/APIvsSensor.png?raw=true"") 
-
+![hist](./image/144243External%20Relative%20HumidityAPI.png?raw=true"")
+__Notice__ API from worldweatheronline does not provide longer than 32days data
+ 
 Conclusion : Yes we can retrieve both realtime and history,but the accuracy is not pretty enough
 
 ## Setup enviroment on mac OS Sierra 10
