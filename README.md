@@ -239,7 +239,7 @@ __ETL for raw data__
     The SMA is often favored by analysts operating on longer time frames, such as daily or weekly charts.
     ``` 
 - refill the NaN with average of the whole series values
- ![ETL](./image/ETL_demo.png?raw=true"")
+ ![ETL](./image/ETL_demo1.png?raw=true"")
 - Linear fit 
     ```Linear regression
     In statistics, linear regression is a linear approach for modeling the relationship 
@@ -393,9 +393,9 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     
     - The following two pictures are comfortness ratio per day is based on hourly temperature from site ID 19640,Γυμνάσιο Πενταβρύσου Καστοριάς
             - use libelium sensor as outdoor temperature source 
-    ![heatmap](./image/19640_comfortable.png?raw=true"")
-            - Use Worldweatheronline API as outdoor temperature.
-    ![heatmap](./image/19640_comfortableAPI.png?raw=true"")
+![heatmap](./image/19640_comfortable.png?raw=true"")
+        - Use Worldweatheronline API as outdoor temperature.
+![heatmap](./image/19640_comfortableAPI.png?raw=true"")
     
     Since we do not have good stable outdoor temperature resource,API could be an idealy option.   
      
