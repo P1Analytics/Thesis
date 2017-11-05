@@ -1,15 +1,15 @@
 
 # Thesis
 
-Collect data from various types of sensors installed in school facilities, spread in  three European countries  
+In this project, we will collect, extract, transform, load, and analyse sensor data transmitted 
+from large amount of sensors installed in school buildings across three European countries. 
+The sensor data report multiple types of information including temperature, humidity, outdoor weather, 
+electronic consumption, human activities, and etc. 
 
-Extract, Transform and Load the data
+Using python library such as Pandas, matplotlib, numpy and comfort tools from Berkeley , 
+we aim to predict the overall comfortness of the room. 
 
-Analyze the data :   
-- find out the thermal patterns based on the orientation of the classroom 
-- indicate comfortable environment based on different thermal patterns
-- find similarity in the same building, remove duplicated sensors 
-- find the replacement for outdoor weather station by retrieving data from  web API  
+Based on our findings, school management can optimise the energy consumption.
 
 To reach the ultimate target __Save the energy Save the world__   
     
@@ -372,7 +372,9 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     which in this case is static.
 
 ![hist](./image/144243Comfort.png?raw=true"")
-
+![heatmap](./image/27827_comfortable.png?raw=true"")
+when we use Worldweatheronline API as outdoor temperature 
+![heatmap](./image/27827_comfortableAPI.png?raw=true"")
 
 __Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
 

@@ -2,41 +2,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import operator
 import pandas as pd
+from pandas.tseries.offsets import *
 import requests
-import seaborn as sns
-import time
-import warnings
-from collections import Counter
-from pylab import *
-from sklearn.linear_model import LinearRegression
-from comfort_models import *
-import json
+import seaborn as sns;
 
 sns.set()
+import time, warnings, json
+import pytz
+from collections import Counter, defaultdict
+from pylab import *
+from sklearn.linear_model import LinearRegression
+from pandas.tseries.offsets import BDay
+
+from comfort_models import *
+
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
-
-
-def outliers_Q1_Q3(df, head):
-    try:
-        Q1 = df.quantile(0.25)
-        Q3 = df.quantile(0.75)
-        upper = Q3 + (Q3 - Q1) * 3
-        lower = Q1 - (Q3 - Q1) * 3
-        mean = df.mean()
-    except TypeError:
-        print("TypeError from: ", head)
-    pd.options.mode.chained_assignment = None  # TODO is there a better solution ?
-
-    outliers = 0
-    if df[upper < df].size > 0:
-        outliers += df[upper < df].size
-        df[upper < df] = df.quantile(1)
-
-    if df[lower > df].size > 0:
-        outliers += df[lower > df].size
-        df[lower > df] = df.quantile(0)
-
-    return df, mean, outliers
 
 
 def outliers_sliding_window(df, window_number):
@@ -53,14 +33,6 @@ def outliers_sliding_window(df, window_number):
             continue
 
         average = mean(previous)
-        if len(previous) < window_number - 1:
-            if np.isnan(item):
-                outlier += 1
-                window[-1] = average
-                df[i] = average
-                # print(item, "change to mean", average)
-            continue
-
         Q1 = np.percentile(previous, 25)
         Q3 = np.percentile(previous, 75)
         upper = Q3 + (Q3 - Q1) * 3
@@ -73,17 +45,25 @@ def outliers_sliding_window(df, window_number):
         if max_range < now_range:
             max_range = now_range
 
-        if np.isnan(item):
+        if len(previous) < window_number - 1:
+            if np.isnan(item) or item == 0:
+                outlier += 1
+                window[-1] = last_max
+                df[i] = average
+                # print(item, "change to mean", average)
+            continue
+
+        if np.isnan(item) or item == 0:
             outlier += 1
-            window[-1] = average
-            df[i] = average
+            window[-1] = last_max
+            df[i] = last_max
             # print(item, "change to mean", average)
             continue
         if now_range > max_range * 0.85:  # new peak comes out, OTHERWISE keep calm and carry on
-            if item < lower :
-                # print(item, "change to min", min)
-                window[-1] = last_min
-                df[i] = last_min
+            if item < lower:
+                # print(item, "change to min", average)
+                window[-1] = average
+                df[i] = average
                 outlier += 1
                 continue
             if item > upper:
@@ -120,7 +100,6 @@ def sun_rise_set(lat, lng, timestamp):
 
 def ETL(filename, statistic=False):
     df = pd.read_csv(filename, delimiter=";", index_col='timestamps', parse_dates=True)  #
-
     if statistic:
         df_norm = (df - df.min()) / (df.max() - df.min())
         index_month = [int(str(i).split("-")[1]) for i in df.index.date]
@@ -137,6 +116,7 @@ def ETL(filename, statistic=False):
                 active_time.append(head)
         except ValueError:
             continue
+        pd.options.mode.chained_assignment = None
     df = dfT.T
     # print("POWER OFF time", (1 - df[(df.T != 0).any()].shape[0] / df.shape[0]) * 100, "%") # could be easier ?
 
@@ -155,7 +135,7 @@ def ETL(filename, statistic=False):
         sum_nan = sum(df.iloc[begin:].isnull().sum().values)
         power_on = df.iloc[begin:].shape
         result = sum_nan / power_on[0] / power_on[1] * 100
-        miss_ratio = ("%.2f" % result)+ "%"
+        miss_ratio = ("%.2f" % result) + "%"
         return df_norm, miss_ratio
 
     # Here is the smooth out : delete outliers + rolling windows
@@ -168,12 +148,12 @@ def ETL(filename, statistic=False):
         df_col, outliers, average = outliers_sliding_window(df_col, window_number=20)
         sum_outliers += outliers
 
-
         df_col = df_col.rolling(window=6, center=False, min_periods=0).mean()
         df_col = df_col.fillna(average)
-        df[head + "_rollingwindow"] = df_col
+        # df[head + "_rollingwindow"] = df_col
+        df[head] = df_col  # only save data after ETL
     result = sum_outliers / df.shape[0] / df.shape[1] * 100
-    outlierS = ("%.2f" % result)+ "%"
+    outlierS = ("%.2f" % result) + "%"
     df.to_csv(filename.split(".")[0] + "_XXX.csv", sep=";")
     return df, active_sensor, outlierS
 
@@ -190,7 +170,100 @@ def coordinate_dicts():
 
 
 if __name__ == "__main__":
+    # print("********* Comfortable *************")
+    df_original, _, _ = ETL("27827_Temperature.csv")
+    heads = list(df_original)
+    indoor_list = heads[1:]
+    fig, axn = plt.subplots(len(indoor_list), 1, sharex=True)
+    cbar_ax = fig.add_axes([.92, .3, .03, .4]) # [left, bottom, width, height]
+    fig.suptitle("Room comfortable  2017.Sep.05-2017.Nov.04", fontsize=14)
 
+    for o in [heads[0],]:
+        for j, ax in enumerate(axn.flat): #for i in heads[1:]:
+            i = indoor_list[0]
+            indoor_list.pop(0)
+            indoor = df_original[i].values
+            outdoor = df_original[o].values
+            index = df_original[o].index.tz_localize('CET', ambiguous='infer')
+
+            comfort = []
+            for ta, out in zip(indoor, outdoor):
+                comfort.append(comfAdaptiveComfortASH55(ta, ta, out)[5])
+            com_df = pd.DataFrame(comfort, index=index, columns=["comfort KPI"])
+            date_list = sorted(set([str(i).split()[0] for i in com_df.index]))
+
+            map_weekday = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+            comfort_ratio = defaultdict(list)
+            week_index = []
+            for date in date_list:
+                begin = com_df.index.get_loc(
+                    pd.Timestamp(date + ' 08:00:00'))  # no need to worry daylight saving change
+                if 0 <= com_df.index[begin].dayofweek < 5:  # only Monday-Friday
+                    end = com_df.index.get_loc(pd.Timestamp(date + ' 16:00:00'))
+                    head = map_weekday[com_df.index[begin].dayofweek]
+                    week_index.append(com_df.index[begin].weekofyear)
+                    comfort = sum(com_df.iloc[begin:end + 1].values) / com_df.iloc[begin:end + 1].size
+                    comfort_ratio[head].append(comfort)
+            # print(comfort_ratio.items())
+
+            df_ratio = pd.DataFrame(columns=map_weekday)
+            head = map_weekday[0]
+            map_weekday.pop(0)
+            df = pd.DataFrame(comfort_ratio[head], columns=[head])
+            while map_weekday:
+                head = map_weekday[0]
+                df1 = pd.DataFrame(comfort_ratio[head], columns=[head])
+                df = pd.concat([df, df1], axis=1)
+                map_weekday.pop(0)
+
+            w_index = sorted(set(week_index))
+            index = pd.DataFrame(w_index, columns=['week of year'])
+            df = pd.concat([df, index], axis=1)
+            df = df.set_index('week of year')
+            print(df)
+            mask = df.isnull()
+            sns.heatmap(df,
+                        ax=ax,
+                        cmap="YlGnBu",
+                        xticklabels=True,
+                        yticklabels=True,
+                        cbar=j == 0,
+                        cbar_ax=None if j else cbar_ax,
+                        mask=mask,
+                        # cbar_kws={'label': 'ratio : uncomfortable------->comfortable,unit:%'}
+                        )
+            label = "RoomID_"+str(i.split('_')[1])
+            ax.set_ylabel(label, rotation=0,labelpad=50)
+
+    plt.show()
+
+    '''
+    print("********* replace outdoor with API *************")
+    lng, lat  = 21.74013,38.232475
+    # real-time
+    # r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
+    #                  params={'lat': lat, 'lon': lng, 'units': 'metric',
+    #                          'APPID': 'bd859500535f9871a59b2fa52547516e'}).json()
+    # print("the real time query:\n", r)
+
+    # history
+    # TODO API KEY expired on Dec25 https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx
+    URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
+    params = {'q': "38.232475,21.74013",  # TODO need to change
+            'date': '2017-10-5', 'enddate': '2017-11-4',
+            'key': '612818efa9204368a1785431172610', 'format': 'json',
+            'includelocation': 'yes', 'tp': '1'}
+    r = requests.get(URL, params).json()
+    # print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
+
+    list_weather = []
+    for i in r["data"]["weather"]:
+      for j in i["hourly"]:
+          list_weather.append(int(j["tempC"]))
+          print(i["date"],int(j["tempC"]))
+    print(list_weather,len(list_weather))
+
+    
     # heatmap for STATISTIC of MISSING DATA  for 15 sites , active vs inactive for 2 years
     TwoYEARs_list = [
         # "Libelium.csv",
@@ -230,11 +303,11 @@ if __name__ == "__main__":
         file_i += 1
     ax.set_xlabel('month')
     # heatmap for STATISTIC of MISSING DATA END
-
-
-
-
-    """
+    
+    
+    
+    
+    
     df_indoor, working_indoor, _ = ETL("19640_Temp.csv")
     df_outdoor, working_outdoor, _ = ETL("19640_Temp_outdoor.csv")
     coef = []
@@ -256,7 +329,7 @@ if __name__ == "__main__":
             rms = np.std(df_indoor[label_detrend])
             # plt.scatter(coef, inter, marker='.')
             # df_indoor.to_csv(indoor.split("_")[0] + "_trend.csv", sep=";")
-
+    
     head = list(df_indoor)
     coordinate_dict = coordinate_dicts()
     site = working_outdoor[0].split("_")[0]
@@ -308,47 +381,7 @@ if __name__ == "__main__":
         if sunset / 24 * 360 <= Ori < 359:
             print("West|North-West")
         print("**********************")
-    """
+    
+    '''
 
 
-
-    print("********* Comfortable *************")
-    df,_,_ = ETL("demo.csv")
-    heads = list(df)
-    index = df.index.values
-    outdoor = df[heads[2]].values
-    indoor = df[heads[3]].values
-    comfort=[]
-    for ind,ta,out in zip(index,indoor,outdoor):
-        comfort.append(comfAdaptiveComfortASH55(ta,ta,out)[5])
-    com_df=pd.DataFrame(comfort,index=index,columns=["comfort"])
-    # com_df.to_csv("comfort.csv", sep=";")
-
-  
-    print("********* replace outdoor with API *************")
-    lng, lat  = 29.589258,36.147923
-    # real-time
-    # r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
-    #                  params={'lat': lat, 'lon': lng, 'units': 'metric',
-    #                          'APPID': 'bd859500535f9871a59b2fa52547516e'}).json()
-    # print("the real time query:\n", r)
-
-    # history
-    # TODO API KEY expired on Dec25 https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx
-    URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
-    params = {'q': "36.14792,29.5892",  # TODO need to change
-            'date': '2017-10-1', 'enddate': '2017-10-30',
-            'key': '612818efa9204368a1785431172610', 'format': 'json',
-            'includelocation': 'yes', 'tp': '24'}
-    r = requests.get(URL, params).json()
-    print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
-
-    list_weather = []
-    for i in r["data"]["weather"]:
-      for j in i["hourly"]:
-          list_weather.append(int(j["humidity"]))
-          print(i["date"],int(j["humidity"]))
-    print(list_weather,len(list_weather))
-
-
-    plt.show()

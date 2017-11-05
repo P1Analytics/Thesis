@@ -37,19 +37,19 @@ public class WriteCSV {
         instance.setUp();
         instance.authenticate();
 
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String freq = "hour"; //5min,hour,day,
         ZonedDateTime end = ZonedDateTime.now();
-        int gap = 3;
+        int gap = 2;
         ZonedDateTime start = end.minusMonths(gap);
 
         String folder = "./src_python/";
 
-//        List<Long> siteIds = Arrays.asList();
+        List<Long> siteIds = Arrays.asList(28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L);
 //          [144242L, 27827L, 144024L, 155076L, 155849L, 155077L, 155865L, 155877L, 28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L]
 
-        for (Long siteId : instance.listSitesIds()) {
-//        for (Long siteId : siteIds) {
+//        for (Long siteId : instance.listSitesIds()) {
+        for (Long siteId : siteIds) {
             String property = "Temperature";
 //            siteId = 144243L;
             List<Long> resourcesIds = instance.listResourcesIds(siteId);

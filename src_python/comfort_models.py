@@ -420,9 +420,9 @@ def comfAdaptiveComfortASH55( ta, tr, runningMean, vel=0.6, eightyOrNinety=False
         r.append(acceptability)
 
         # Append a number to the result list to show whether the values are too hot, too cold, or comfortable.
-        if acceptability == True: r.append(0)
-        elif to > tComfUpper: r.append(1)
-        else: r.append(-1)
+        if acceptability == True: r.append(1) # TODO we change from 3claasifers into 2 classifiers
+        elif to > tComfUpper: r.append(0)
+        else: r.append(0)
 
     elif runningMean < 10.0:
         # The prevailing temperature is too cold for the adaptive standard but we will use some correlations from adaptive-style surveys of conditioned buildings to give a good guess.
@@ -436,9 +436,9 @@ def comfAdaptiveComfortASH55( ta, tr, runningMean, vel=0.6, eightyOrNinety=False
         tComfUpper = tComf + offset
         if to > tComfLower and to < tComfUpper: acceptability = True
         else: acceptability = False
-        if acceptability == True: condit = 0
-        elif to > tComfUpper: condit = 1
-        else: condit = -1
+        if acceptability == True: condit = 1# 0 # TODO we change from 3claasifers into 2 classifiers
+        elif to > tComfUpper: condit = 0# 1
+        else: condit = 0# -1
         outputs = [tComf, tempDiff, tComfLower, tComfUpper, acceptability, condit]
         r.extend(outputs)
     else:
@@ -457,9 +457,9 @@ def comfAdaptiveComfortASH55( ta, tr, runningMean, vel=0.6, eightyOrNinety=False
         tComfUpper = tComf + offset + coolingEffect
         if to > tComfLower and to < tComfUpper: acceptability = True
         else: acceptability = False
-        if acceptability == True: condit = 0
-        elif to > tComfUpper: condit = 1
-        else: condit = -1
+        if acceptability == True: condit = 1 # 0
+        elif to > tComfUpper: condit = 0# 1
+        else: condit = 0#-1 TODO we change from 3claasifers into 2 classifiers
         outputs = [tComf, tempDiff, tComfLower, tComfUpper, acceptability, condit]
         r.extend(outputs)
 
