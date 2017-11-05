@@ -76,88 +76,7 @@ __What do these sensors collect?__
     - Temperature : Centigrade
     - External Temperature : C
     
-![sensor](./image/sensorType.png?raw=true "")
-
-__Observation for raw data__
-
-- Demo on all the schools in Greece, for one year, time interval: day
-    - Power Consumption, 10 schools in Greece 
-    ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
-    There are 3 other schools without power consumption sensors or no data.
-    
-    - Temperature, 12 schools in Greece
-    ![greece one year](./image/Greece%20Temperature.png?raw=true "")
-        
-- Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
-    - Temperature for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
-        
-    - Clustering luminosity for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
-
-    - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
-     
-    - Temperature 
-    ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
-        
-    - Calculated Power Consumption 
-    ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
-    
-    - Main building Motion 
-    ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
-     
-    - Subsite Motion (Αίθουσα ισόγειο) 
-    ![3 weeks motion ](./image/Mo2.png?raw=true"")
-    
-    - Luminosity 
-    ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
-
-- Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
-    - Temperature at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
-    - Clustering the room by temperature at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20Temperature0_cluster.png?raw=true"")    
-    - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
-    ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
-    - Humidity at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
-    
-    - Temperature inside & outside of the building
-    ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
-    - Temperature at the sub-site building
-    ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
-    - Calculated Power Consumption at the main building 
-    ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")  
-    - Electrical Current at the main building 
-    ![4 weeks ElectricalCurrent](./image/19640%20ElectricalCurrent.png?raw=true"")
-    - Luminosity at the main building 
-    ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
-    - Luminosity at the sub-site building
-    ![4 weeks](./image/19640%20Luminosity2.png?raw=true"")
-    - Rain Height and Relative Humidity at the main building
-    ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
-    - Relative Humidity at the sub-site building
-    ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
-     - Motion at the main building 
-    ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
-    - Motion at the sub-site building
-    ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
-    - Noise at the main building 
-    ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
-    - Noise at the sub-site building
-    ![4 weeks motion](./image/19640%20noise2.png?raw=true"")
-    - Motion and Noise at the sub-site building
-    ![4 weeks motion](./image/19640%20subsite%20motion%20noise.png?raw=true"")
-
-- Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
-    - Temperature inside and outside of the main building with building floor plan
-    ![4 weeks Temperature](./image/144243Temperature.png?raw=true"")
-    It is not so obvious for the orientation
-    - Clustering the temperature inside and outside of the main building with building floor plan
-    ![4 weeks Temperature](./image/144243Temperature_cluster.png?raw=true"")
-     Now, it is easy to see the orientation
-
+![sensortype](./image/sensorType.png?raw=true "")
  
 __ETL for raw data__
 - Clean the __times period__ which all the sensors are __inactive__.
@@ -420,6 +339,89 @@ What about the accuracy between data retrieved from API and sensors?
 __Notice__ API from worldweatheronline does not provide longer than 32days data
  
 Conclusion : Yes we can retrieve both realtime and history,but the accuracy is not pretty enough
+
+
+__Observation for raw data__
+
+- Demo on all the schools in Greece, for one year, time interval: day
+    - Power Consumption, 10 schools in Greece 
+    ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
+    There are 3 other schools without power consumption sensors or no data.
+    
+    - Temperature, 12 schools in Greece
+    ![greece one year](./image/Greece%20Temperature.png?raw=true "")
+        
+- Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
+    - Temperature for 4 weeks in the main building with building floor plan 
+    ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
+        
+    - Clustering luminosity for 4 weeks in the main building with building floor plan 
+    ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
+
+    - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
+    ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
+     
+    - Temperature 
+    ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
+        
+    - Calculated Power Consumption 
+    ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
+    
+    - Main building Motion 
+    ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
+     
+    - Subsite Motion (Αίθουσα ισόγειο) 
+    ![3 weeks motion ](./image/Mo2.png?raw=true"")
+    
+    - Luminosity 
+    ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
+
+- Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
+    - Temperature at the main building with building floor plan
+    ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
+    - Clustering the room by temperature at the main building with building floor plan
+    ![4 weeks Temperature](./image/19640%20Temperature0_cluster.png?raw=true"")    
+    - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
+    ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
+    - Humidity at the main building with building floor plan
+    ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
+    
+    - Temperature inside & outside of the building
+    ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
+    - Temperature at the sub-site building
+    ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
+    - Calculated Power Consumption at the main building 
+    ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")  
+    - Electrical Current at the main building 
+    ![4 weeks ElectricalCurrent](./image/19640%20ElectricalCurrent.png?raw=true"")
+    - Luminosity at the main building 
+    ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
+    - Luminosity at the sub-site building
+    ![4 weeks](./image/19640%20Luminosity2.png?raw=true"")
+    - Rain Height and Relative Humidity at the main building
+    ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
+    - Relative Humidity at the sub-site building
+    ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
+     - Motion at the main building 
+    ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
+    - Motion at the sub-site building
+    ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
+    - Noise at the main building 
+    ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
+    - Noise at the sub-site building
+    ![4 weeks motion](./image/19640%20noise2.png?raw=true"")
+    - Motion and Noise at the sub-site building
+    ![4 weeks motion](./image/19640%20subsite%20motion%20noise.png?raw=true"")
+
+- Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
+    - Temperature inside and outside of the main building with building floor plan
+    ![4 weeks Temperature](./image/144243Temperature.png?raw=true"")
+    It is not so obvious for the orientation
+    - Clustering the temperature inside and outside of the main building with building floor plan
+    ![4 weeks Temperature](./image/144243Temperature_cluster.png?raw=true"")
+     Now, it is easy to see the orientation
+
+
 
 ## Setup enviroment on mac OS Sierra 10
 ### Cassandra and Flink 
