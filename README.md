@@ -372,10 +372,33 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     which in this case is static.
 
 ![hist](./image/144243Comfort.png?raw=true"")
-![heatmap](./image/27827_comfortable.png?raw=true"")
-when we use Worldweatheronline API as outdoor temperature 
-![heatmap](./image/27827_comfortableAPI.png?raw=true"")
 
+- Sample period 2017.Sep.05-2017.Nov.04 , weekday: Monday-Friday, Time: 8:00-16:00, week of year: 36-44
+- In daytime, this room is comforable for (n*8hours) , 0 < n < 1
+- All day comfortable = 1 all day not comfortable = 0
+
+    - The following two pictures are comfortness ratio per day is based on hourly temperature from site ID 27827 8ο Γυμνάσιο Πατρών
+        - use "Site-Temperature" sensor as outdoor temperature source 
+![heatmap](./image/27827_comfortable.png?raw=true"")
+        - Use Worldweatheronline API as outdoor temperature source 
+![heatmap](./image/27827_comfortableAPI.png?raw=true"")
+        - The difference might because of the not accuracy from "Site-Temperature"
+
+    - The following two pictures are comfortness ratio per day is based on hourly temperature from site ID 144242,1ο Γυμνάσιο Ν. Φιλαδέλφειας
+        - use libelium sensor as outdoor temperature source 
+![heatmap](./image/144242_comfortable.png?raw=true"")
+        - Use Worldweatheronline API as outdoor temperature.
+![heatmap](./image/144242_comfortableAPI.png?raw=true"")
+        - The difference might because of the "complete nonsense data" from [this libelium sensor](https://console.sparkworks.net/resource/view/145588)
+    
+    - The following two pictures are comfortness ratio per day is based on hourly temperature from site ID 19640,Γυμνάσιο Πενταβρύσου Καστοριάς
+            - use libelium sensor as outdoor temperature source 
+    ![heatmap](./image/19640_comfortable.png?raw=true"")
+            - Use Worldweatheronline API as outdoor temperature.
+    ![heatmap](./image/19640_comfortableAPI.png?raw=true"")
+    
+    Since we do not have good stable outdoor temperature resource,API could be an idealy option.   
+     
 __Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
 
 __Question 4 : Can we retrieve outdoor weather through API ?  YES!__ 

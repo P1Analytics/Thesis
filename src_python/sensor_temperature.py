@@ -170,8 +170,9 @@ def coordinate_dicts():
 
 
 if __name__ == "__main__":
+
     # print("********* Comfortable *************")
-    df_original, _, _ = ETL("27827_Temperature.csv")
+    df_original, _, _ = ETL("19640_Temperature.csv")
     heads = list(df_original)
     indoor_list = heads[1:]
     fig, axn = plt.subplots(len(indoor_list), 1, sharex=True)
@@ -196,8 +197,7 @@ if __name__ == "__main__":
             comfort_ratio = defaultdict(list)
             week_index = []
             for date in date_list:
-                begin = com_df.index.get_loc(
-                    pd.Timestamp(date + ' 08:00:00'))  # no need to worry daylight saving change
+                begin = com_df.index.get_loc(pd.Timestamp(date + ' 08:00:00'))  # no need to worry daylight saving change
                 if 0 <= com_df.index[begin].dayofweek < 5:  # only Monday-Friday
                     end = com_df.index.get_loc(pd.Timestamp(date + ' 16:00:00'))
                     head = map_weekday[com_df.index[begin].dayofweek]
@@ -236,10 +236,10 @@ if __name__ == "__main__":
             ax.set_ylabel(label, rotation=0,labelpad=50)
 
     plt.show()
+    
 
-    '''
     print("********* replace outdoor with API *************")
-    lng, lat  = 21.74013,38.232475
+    lng, lat = 21.144697,40.45832
     # real-time
     # r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
     #                  params={'lat': lat, 'lon': lng, 'units': 'metric',
@@ -249,12 +249,12 @@ if __name__ == "__main__":
     # history
     # TODO API KEY expired on Dec25 https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx
     URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
-    params = {'q': "38.232475,21.74013",  # TODO need to change
+    params = {'q': "40.45832,21.144697",  # TODO need to change
             'date': '2017-10-5', 'enddate': '2017-11-4',
             'key': '612818efa9204368a1785431172610', 'format': 'json',
             'includelocation': 'yes', 'tp': '1'}
     r = requests.get(URL, params).json()
-    # print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
+    print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
 
     list_weather = []
     for i in r["data"]["weather"]:
@@ -303,11 +303,11 @@ if __name__ == "__main__":
         file_i += 1
     ax.set_xlabel('month')
     # heatmap for STATISTIC of MISSING DATA END
-    
-    
-    
-    
-    
+
+
+
+
+    '''
     df_indoor, working_indoor, _ = ETL("19640_Temp.csv")
     df_outdoor, working_outdoor, _ = ETL("19640_Temp_outdoor.csv")
     coef = []
@@ -381,7 +381,7 @@ if __name__ == "__main__":
         if sunset / 24 * 360 <= Ori < 359:
             print("West|North-West")
         print("**********************")
-    
     '''
+
 
 
