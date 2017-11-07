@@ -178,6 +178,7 @@ __Question 1 : what is the orientation for this room ?__
         - West: the peak  at the late of the day
         - South: the peak should be at the mid-noon or later 
         - Rest: room facing north/music room/computer lab/basement room will have relatively low variation and average of the temperature
+![peak](./image/peakAfterETL.png?raw=true"")
     - Predicting orientation by using peak temperature :
         - Using RESTful API to retrieve the time : [sunrise , noon ,and sunset],unit: hour.
         - Only check the temperature during the daytime between [sunrise,sunset]
