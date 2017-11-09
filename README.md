@@ -22,7 +22,7 @@ __Where are these data from?__
 ![map](./image/map.png?raw=true"")
 
 | Country  | Parameter | Number | Comment | 
-| ------------- | ------------- | ------------- | ------------- |
+| :------: | :------: | :------: | :------: |
 | Greece  | Sensing endpoints | 872 | Each sensor equals 1 sensing endpoint | 
 | | Sensing rate | 1 minute | Can be modified | 
 | | Educators | 294 | Greek public schools in GAIA| 
@@ -87,32 +87,32 @@ __ETL for raw data__
      - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
         during [2015-Nov-1,2017-Oct-30]
                     
-    |ID |	Name	| Inactive | start time  | outlier|
-    | ------------- | ------------- | -------------| -------------|-------------|
-    |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30| 16.49%
-    |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30|10.90%
-    |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30|15.80%
-    |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04|39.77%|39.77% 
-    |155077	|Sapienza	|58.22 %	| 2016-10-29|51.01%
-    |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30|16.76%
-    |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02|39.25%
-    |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22|38.28%
-    |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01|45.80%
-    |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01|40.50%
-    |159705	|Soderhamn	|0.00 %|2017-09-21|48.24%
-    |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30 | 20.34%
-    |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30|10.71%
-    |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17%
-    |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36%
+    |ID |	Name	| Inactive | start time  | outlier| Total number of measurements | 
+    | :------------: | :------------: | :------------:| :------------:|:--------:|:------:| 
+    |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30| 16.49% | 73,000
+    |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30|10.90% |  94,900 |
+    |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30|15.80% | 64,970|
+    |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04|39.77%|39.77% |120,450|
+    |155077	|Sapienza	|58.22 %	| 2016-10-29|51.01%|177,390|
+    |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30|16.76%|52,560
+    |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02|39.25% | 75,190|
+    |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22|38.28% | 53,290 | 
+    |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01|45.80% | 46,720| 
+    |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01|40.50% | 123,370
+    |159705	|Soderhamn	|0.00 %|2017-09-21|48.24% | 70,810
+    |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30 | 20.34% | 112,420
+    |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30|10.71% | 71,540 | 
+    |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17% | 117,530
+    |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36% | 91,250
     
     ![active](./image/active_15sites.png?raw=true"")
      - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
 
-     | Name	|Inactive |   outlier|
-     | ------------- | ------------- | -------------| 
-     | Libelium for outdoor weather  | 15.16% |  10.61%        
-     | Synfield for outdoor weather | 14.40 %| 9.28%| 
-     | Electrical Power Consumption |18.68 % |  33.40 %| 
+     | Name	|Inactive |   outlier| Total number of measurements | 
+     | :------: | :------: | :------:| :------:| 
+     | Libelium for outdoor weather  | 15.16% |  10.61% | 31,390     
+     | Synfield for outdoor weather | 14.40 %| 9.28%|10,950
+     | Electrical Power Consumption |18.68 % |  33.40 %| 73010
  ![active](./image/active_3types.png?raw=true"")
 
 - Remove the outliers with Turkey's fences and replace with min/max value
