@@ -1,17 +1,17 @@
 
-# Thesis
+#  Mining Sensor Data to Evaluate Indoor Environmental Quality of Public Educational Buildings
 
 In this project, we will collect, extract, transform, load, and analyse sensor data transmitted 
 from large amount of sensors installed in school buildings across three European countries. 
 The sensor data report multiple types of information including temperature, humidity, outdoor weather, 
 electronic consumption, human activities, and etc. 
 
-Using python library such as Pandas, matplotlib, numpy and comfort tools from Berkeley , 
-we aim to predict the overall comfortness of the room. 
+Using python library such as Pandas, Matplotlib, Numpy and Comfort Tools from Berkeley , 
+we aim to predict the overall comfort and other KPI for indoor environmental quality in the school buildings 
 
 Based on our findings, school management can optimise the energy consumption.
 
-To reach the ultimate target __Save the energy Save the world__   
+The ultimate target :  __Save the energy Save the world__   
     
 ## "Gazing at" the data
 
@@ -80,7 +80,8 @@ __What do these sensors collect?__
  
 __ETL for raw data__
 - Clean the __times period__ which all the sensors are __inactive__.
-- Clean the __sensors__ which are always __inactive__   
+- Clean the __sensors__ which are always __inactive__  
+
      - If the site is not kick-off yet, it will not be counted as inactive
      - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
      - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
@@ -143,10 +144,10 @@ __ETL for raw data__
         `Lower Outlier Boundary = Q1 - 3 * IQR`
         
         `Upper Outlier Boundary = Q3 + 3 * IQR`
-    - identify outliers by using a sliding windows W holds last W values
-        Moving windows through data from beginning
-        - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers:replace it with min or max. 
-        - If the new value is NaN, it is also an outlier : replace it with average
+    - identify outliers by using a sliding windows W holds last W-1 values
+        Moving windows through data from the beginning
+        - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers : replace it with min or max 
+        - If the new value is NaN, it is also an outlier : replace it with average 
         - min/max/average = min/max/average (previous W-1 values)
     
 - moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
@@ -216,7 +217,10 @@ __Question 1 : what is the orientation for this room ?__
         we got something more like heading to the east , or south east
         ```
         ![peak ](./image/27827classB2_peak.png?raw=true"") 
-        
+    We take a close look at the distribution of site rooms in  different orientation 
+    The south-east are in lower temperature compared with south and south-west room  
+    ![hist](./image/Figure7.png?raw=true"")
+    
     |ID|School |Correct |
     | ------------- | ------------- | ------------- |
     |144024|Elementary School of Lygia	|100%|
@@ -276,6 +280,7 @@ during Monday to Friday, from 8:00 to 18:00
 Obviously, the truth is not always what we wish for 
 ![hist](./image/27827_hist.png?raw=true"")
 
+
 Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     How to use:
     
@@ -318,7 +323,8 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
 ![heatmap](./image/19640_comfortableAPI.png?raw=true"")
     
     Since we do not have good stable outdoor temperature resource,API could be an idealy option.   
-     
+    ![heatmap](./image/Comfort.png?raw=true"")
+    
 __Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
 
 __Question 4 : Can we retrieve outdoor weather through API ?  YES!__ 
