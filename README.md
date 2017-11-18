@@ -223,15 +223,21 @@ __Question 1 : what is the orientation for this room ?__
     The south-east are in lower temperature compared with south and south-west room  
     ![hist](./image/Figure7.png?raw=true"")
     
-    |ID|School |Correct |
-    | ------------- | ------------- | ------------- |
-    |144024|Elementary School of Lygia	|100%|
-    |144243	|Primary School of Megisti	|50%|
-    |155851	|5th Elementary School of Nea Smyrni	|60%|
-    |155865	|46th Elementary School of Patras|75%	|
-    |27827	|8th Gymnasium of Patras	|60%|
-    |144242	|1st Gymnasium of Philadelphia	|60%|
-    |155877	|2nd Elementary School of Patras Beach	|100%|
+    |SITE ID| Correct |
+    | :----:| :---------:  |
+    |144024| 60%
+    |144243	| 50%|
+    |155851	| 0%|
+    |155865	|50%	|
+    |19640| 0% | 
+    |27827	|25%|
+    |144242	| 0%|
+    |155877	|33%|
+    |159705| 28% | 
+    |155849 | 0%|
+    |157185| 44% | 
+    | REST (sensors dead) |   | 
+    
     
 
 - **TODO** __Identify patten by slope = delta(temperature)/delta(time):__ 
