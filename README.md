@@ -223,7 +223,7 @@ __Question 1 : what is the orientation for this room ?__
     The south-east are in lower temperature compared with south and south-west room  
     ![hist](./image/Figure7.png?raw=true"")
     
-    |SITE ID| Correct |
+    |SITE ID| Orientation Prediction Correct |
     | :----:| :---------:  |
     |144024| 60%
     |144243	| 50%|
