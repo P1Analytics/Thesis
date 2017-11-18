@@ -222,21 +222,33 @@ __Question 1 : what is the orientation for this room ?__
     We take a close look at the distribution of site rooms in  different orientation 
     The south-east are in lower temperature compared with south and south-west room  
     ![hist](./image/Figure7.png?raw=true"")
+
+         Category by site :
+     
+        |SITE ID| Orientation Prediction Correct |
+        | :----:| :---------:  |
+        |144024| 60%
+        |144243	| 50%|
+        |155851	| 0%|
+        |155865	|50%	|
+        |19640| 0% | 
+        |27827	|25%|
+        |144242	| 0%|
+        |155877	|33%|
+        |159705| 28% | 
+        |155849 | 0%|
+        |157185| 44% | 
+        | REST (sensors dead) |   
     
-    |SITE ID| Orientation Prediction Correct |
-    | :----:| :---------:  |
-    |144024| 60%
-    |144243	| 50%|
-    |155851	| 0%|
-    |155865	|50%	|
-    |19640| 0% | 
-    |27827	|25%|
-    |144242	| 0%|
-    |155877	|33%|
-    |159705| 28% | 
-    |155849 | 0%|
-    |157185| 44% | 
-    | REST (sensors dead) |   | 
+       Category by the room orientation : 
+    
+        |Orientation | Orientation Prediction Correct
+        | :----:| :---------:  |
+        |N - E|  0/12 |
+        |E - S| 6/17 | 
+        |S - W| 9/16| 
+        | W  | 0/1| 
+        | W - N| 0/11|
     
     
 
