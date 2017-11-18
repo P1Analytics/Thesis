@@ -107,6 +107,8 @@ __ETL for raw data__
     |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36% | 91,250
     
     ![active](./image/active_15sites.png?raw=true"")
+    sensor device activities  
+    ![active](./image/active15_device.png?raw=true"")
      - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
 
      | Name	|Inactive |   outlier| Total number of measurements | 
