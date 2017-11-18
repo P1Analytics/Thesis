@@ -242,13 +242,13 @@ __Question 1 : what is the orientation for this room ?__
     
        Category by the room orientation : 
     
-        |Orientation | Orientation Prediction Correct
-        | :----:| :---------:  |
-        |N - E|  0/12 |
-        |E - S| 6/17 | 
-        |S - W| 9/16| 
-        | W  | 0/1| 
-        | W - N| 0/11|
+        |Orientation | Orientation Prediction Correct | comment 
+        | :----:| :---------:  |:---------:  |
+        |N - E| 0% | 0/12 |
+        |E - S| 35% | 6/17 | 
+        |S - W| 56% | 9/16| 
+        | W  | 0%| 0/1| 
+        | W - N|0% |  0/11|
     
     
 
