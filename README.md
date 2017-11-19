@@ -510,17 +510,18 @@ __Observation for raw data__
     
     | Site ID  | ResourceID | Subsite ID | URI | Methane Concentration
     | :------:  | :------:| :------: | :------:| :------: |
-    
+     | int |  int |int | text | text | 
     Information for sites :
     
      | Site(SubSite) ID  | Latitude | Longtitude | Name |
      | :------:  | :------:| :------: | :------: | 
+     | int | float | float | text | 
             
     The data collected every 5mins from the resources:
     
-    | resource ID| timestamp |value  | 
+    | resourceid| timestamp |reading |
     | :------:| :------: | :------: |
-    
+    | int | timestamp | float | 
     
 ## Retrieve the data 
 ### Stream
