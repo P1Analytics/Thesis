@@ -238,7 +238,7 @@ __Question 1 : what is the orientation for this room ?__
         |159705| 28% | 
         |155849 | 0%|
         |157185| 44% | 
-        | REST (sensors dead) |   
+        | REST (no data) |   
     
        Category by the room orientation : 
     
