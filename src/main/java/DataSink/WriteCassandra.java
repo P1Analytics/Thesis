@@ -3,10 +3,12 @@ package DataSink;
 import DataSource.SparkAPI;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import org.apache.http.NoHttpResponseException;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -18,40 +20,78 @@ public class WriteCassandra {
         Cluster cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
         String keyspace = "GAIA";
         Session session = cluster.connect(keyspace);
-        String table_name = "reading_data";
+        String table_name = "read_data";
 
         SparkAPI instance = new SparkAPI();
         instance.setUp();
         instance.authenticate();
 
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
         ZonedDateTime end = ZonedDateTime.now();
-        ZonedDateTime start = end.minusMonths(2);
+        ZonedDateTime start = end.minusMonths(30);
+        String freq = "5min";
 
         List<Long> siteIds = instance.listSitesIds();
         for (Long siteId : siteIds){
+            System.out.println(siteId);
             List<Long> resourcesIds = instance.listResourcesIds(siteId);
             for (Long resourceId: resourcesIds){
-                String freq = "hour";
-                List<Float> matches = new ArrayList<Float>();
                 try{
+                    System.out.println(resourceId);
                     Matcher matcher = instance.getResourceDataByDayRange(resourceId, start, end, freq);
                     while (matcher.find()) {
                         String group = matcher.group();
                         String [] values = group.split(",");
-                        float reading = Float.parseFloat(values[0].split("=")[1]);
+                        float value = Float.parseFloat(values[0].split("=")[1]);
                         String timestamp = values[1].split("=")[1].split("}")[0];
+
+                        Timestamp ts=new Timestamp(Long.parseLong(timestamp));
+                        Date date=new Date(ts.getTime());
+                        String dateS = df.format(date);
+
                         String query = "INSERT INTO " + keyspace + "." + table_name
-                                + " (ResourceID, Reading,Timestamp ) VALUES("
-                                + resourceId +", "+ reading +", " + timestamp+" );" ;
+                                + " (id,date,timeindex,value) VALUES("
+                                + resourceId +", "+
+                                "\'"+dateS + "\'" +", " + timestamp+", " + value+" );" ;
                         System.out.println(query);
                         session.execute(query);
-                        matches.add(reading);
                     }
                 }
-                catch (NoHttpResponseException e){
-                    System.out.println("NoHttpResponseException"+ " on " + resourceId);
+                catch (Exception e){
+                    System.out.println("----------------------------------" + e + " on " + resourceId);
                 }
-                System.out.println(matches);
+            }
+
+            List<Long> subsitesIds = instance.listSubsites(siteId);
+            for (Long subsiteId : subsitesIds) {
+                List<Long> sub_resourcesIds = instance.listResourcesIds(subsiteId);
+                for (Long resourceId: sub_resourcesIds){
+                    try{
+                        System.out.println(resourceId);
+                        Matcher matcher = instance.getResourceDataByDayRange(resourceId, start, end, freq);
+                        while (matcher.find()) {
+                            String group = matcher.group();
+                            String [] values = group.split(",");
+                            float value = Float.parseFloat(values[0].split("=")[1]);
+                            String timestamp = values[1].split("=")[1].split("}")[0];
+
+                            Timestamp ts=new Timestamp(Long.parseLong(timestamp));
+                            Date date=new Date(ts.getTime());
+                            String dateS = df.format(date);
+
+                            String query = "INSERT INTO " + keyspace + "." + table_name
+                                    + " (id,date,timeindex,value) VALUES ("
+                                    + resourceId +", "+
+                                    "\'"+dateS + "\'" +", " + timestamp+", " + value+" );" ;
+                            System.out.println(query);
+                            session.execute(query);
+                        }
+                    }
+                    catch (Exception e){
+                        System.out.println("----------------------------------" + e + " on " + resourceId);
+                    }
+                }
             }
         }
         cluster.close();
