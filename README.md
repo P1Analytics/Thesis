@@ -504,13 +504,24 @@ __Observation for raw data__
     - Unlike in the SQL world where you model your data first and then write the queries, in Cassandra you need to figure out all the queries that will be done and model your data accordingly.
     It means you need to think twice when [building the data model](https://medium.com/@jscarp). Now we just use a very simple table as below for current phase
     
-    | ResourceID  | Reading | timestamp | 
-    | ----------  | --------| ----------| 
+    GAIA has 1841 resources including duplicated 538 data sets categorized again in subsites 
     
-
-(**_TODO_** more combinations of infrastructure MongoDB, MariaDB, Spark, Storm, Hadoop, Kafka, etc will be put on the trial list)
-
-
+    Information for resources under each site :
+    
+    | Site ID  | ResourceID | Subsite ID | URI | Methane Concentration
+    | :------:  | :------:| :------: | :------:| :------: |
+    
+    Information for sites :
+    
+     | Site(SubSite) ID  | Latitude | Longtitude | Name |
+     | :------:  | :------:| :------: | :------: | 
+            
+    The data collected every 5mins from the resources:
+    
+    | resource ID| timestamp |value  | 
+    | :------:| :------: | :------: |
+    
+    
 ## Retrieve the data 
 ### Stream
 
@@ -547,50 +558,7 @@ __Observation for raw data__
                   "timestamp": 1498942800000,
                   "reading": 35.618584889499054
                 },
-                {
-                  "timestamp": 1499029200000,
-                  "reading": 36.04129544661687
-                },
-                {
-                  "timestamp": 1499115600000,
-                  "reading": 33.757383570057335
-                },
-                {
-                  "timestamp": 1499202000000,
-                  "reading": 33.53155289889761
-                },
-                {
-                  "timestamp": 1499288400000,
-                  "reading": 33.69297495797249
-                },
-                {
-                  "timestamp": 1499374800000,
-                  "reading": 33.86900649403725
-                },
-                {
-                  "timestamp": 1499461200000,
-                  "reading": 34.38513502358479
-                },
-                {
-                  "timestamp": 1499547600000,
-                  "reading": 33.115313475098816
-                },
-                {
-                  "timestamp": 1499634000000,
-                  "reading": 35.82894403139205
-                },
-                {
-                  "timestamp": 1499720400000,
-                  "reading": 28.39513749980371
-                },
-                {
-                  "timestamp": 1499806800000,
-                  "reading": 26.729258248353453
-                },
-                {
-                  "timestamp": 1499893200000,
-                  "reading": 26.55955035714077
-                },
+                ....
                 {
                   "timestamp": 1499979600000,
                   "reading": 25.807027188020786
