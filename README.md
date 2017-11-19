@@ -507,7 +507,7 @@ __Observation for raw data__
     GAIA has 1841 resources including duplicated 538 data sets categorized again in subsites 
     Information for resources under each site :
     
-    | Site ID  | ResourceID | Subsite ID | URI | Methane Concentration
+    | Site ID  | ResourceID | Subsite ID | URI | Property
     | :------:  | :------:| :------: | :------:| :------: |
      | int |  int |int | text | text | 
     Information for sites :
@@ -516,18 +516,38 @@ __Observation for raw data__
      | :------:  | :------:| :------: | :------: | 
      | int | float | float | text | 
             
-    The data collected every 5mins from the resources:
+    The data collected every 5mins from the resources: [Version 1 ]
     
     | resourceid| timestamp |reading |
     | :------:| :------: | :------: |
     | int | timestamp | float | 
     
-    Design better for the above table which stores time series data
+    Design for the above table which stores time series data
     ![pic](./image/cassandra_table_by_date.png?raw=true "")
     Cassandra tutorials : [Basic Time Series Data](https://academy.datastax.com/resources/getting-started-time-series-data-modeling) 
     and [Advanced Time Series](https://www.datastax.com/dev/blog/advanced-time-series-with-cassandra)
+    - The Primary Key is equivalent to the Partition Key in a single-field-key table.
+    - The Composite/Compound Key is just a multiple-columns key: 
+        - The first part of the key is called PARTITION KEY
+        - The second part(the rest after first part) of the key is the CLUSTERING KEY 
+    - The Partition Key is responsible for data distribution across your nodes.
+    - The Clustering Key is responsible for data sorting within the partition.
     
-    
+    The data collected every 5mins from the resources: [Version 2]
+
+    | resourceid| date | timestamp |reading |
+    | :------:| :------: |:------: | :------: |
+    | int | text | timestamp | float | 
+        
+     ```
+    CREATE TABLE gaia.read_data (
+    id int,
+    timeindex timestamp,
+    value float,
+    date text,
+    PRIMARY KEY ((id,date), timeindex )
+    ) WITH CLUSTERING ORDER BY (timeindex ASC);
+     ```   
 ## Retrieve the data 
 ### Stream
 
