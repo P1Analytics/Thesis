@@ -10,9 +10,9 @@ import java.util.regex.Matcher;
 
 public class WriteCSV {
 
-    public static void WriteCSV(SparkAPI instance, DateFormat format, String freq,
-                                ZonedDateTime start,ZonedDateTime end,
-                                Long resourceId, String file_name) throws IOException {
+    private static void WriteToCSV(SparkAPI instance, DateFormat format, String freq,
+                                   ZonedDateTime start, ZonedDateTime end,
+                                   Long resourceId, String file_name) throws IOException {
 
         FileWriter fw = new FileWriter(file_name, true);
         try{
@@ -27,7 +27,7 @@ public class WriteCSV {
             fw.close();
         }
         catch (Exception e){
-            System.out.println(e+" SOMETHING WRONG WITH "+ resourceId);
+            System.out.println(e +" SOMETHING WRONG WITH "+ resourceId);
         }
     }
 
@@ -37,48 +37,33 @@ public class WriteCSV {
         instance.setUp();
         instance.authenticate();
 
-        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         String freq = "hour"; //5min,hour,day,
         ZonedDateTime end = ZonedDateTime.now();
-        int gap = 2;
-        ZonedDateTime start = end.minusMonths(gap);
+        ZonedDateTime start = end.minusMonths(2);
 
         String folder = "./src_python/";
+        String property = "Temperature";
 
-        List<Long> siteIds = Arrays.asList(28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L);
+//        List<Long> siteIds = Arrays.asList(28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L);
 //          [144242L, 27827L, 144024L, 155076L, 155849L, 155077L, 155865L, 155877L, 28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L]
+//        for (Long siteId : siteIds) {
 
-//        for (Long siteId : instance.listSitesIds()) {
-        for (Long siteId : siteIds) {
-            String property = "Temperature";
-//            siteId = 144243L;
+        for (Long siteId : instance.listSitesIds()) {
             List<Long> resourcesIds = instance.listResourcesIds(siteId);
             for (Long resourceId : resourcesIds) {
                 try{
-//                    if (
-//                       (instance.getResourceIdDetails(resourceId,"").contains("libelium"))
-//                            ||
-//                       (instance.getResourceIdDetails(resourceId,"").contains("synfield"))
-//                            ||
-//                        (instance.getResourceIdDetails(resourceId,"").contains("meas"))
-//                        )
-//                    {
-//                        String id = instance.getResourceSummary(resourceId,freq);
-//                        System.out.println("\""+siteId + "_" + resourceId +"_"+ id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
-//                    }
-
                     if (instance.getResourceIdDetails(resourceId,"property").contains(property)){
                         String id = instance.getResourceSummary(resourceId,freq);
                         String file_name = folder + siteId + "_"
                                 + resourceId +"_"+ id+"_"
                                 +instance.getResourceIdDetails(resourceId,"property")+".csv";
-                        WriteCSV(instance, format, freq, start,end, resourceId, file_name);
+                        WriteToCSV(instance, format, freq, start,end, resourceId, file_name);
                         System.out.println("\""+siteId + "_" + resourceId +"_"+ id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
                     }
                 }
                 catch (Exception e){
                     System.out.println(e+" "+ resourceId);
-                    continue;
                 }
             }
 
@@ -87,29 +72,17 @@ public class WriteCSV {
                 List<Long> sub_resourcesIds = instance.listResourcesIds(subsiteId);
                 for (Long resourceId : sub_resourcesIds) {
                     try{
-//                        if (
-//                          (instance.getResourceIdDetails(resourceId,"").contains("libelium"))
-//                                ||
-//                          (instance.getResourceIdDetails(resourceId,"").contains("synfield"))
-//                                ||
-//                            (instance.getResourceIdDetails(resourceId,"").contains("meas"))
-//                            )
-//                        {
-//                            String id = instance.getResourceSummary(resourceId,freq);
-//                            System.out.println("\""+siteId+"_"+subsiteId+"_"+resourceId+"_"+id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
-//                        }
                         if (instance.getResourceIdDetails(resourceId,"property").contains(property)){
                             String id = instance.getResourceSummary(resourceId,freq);
                             String file_name = folder + siteId + "_"
                                     + subsiteId + "_" + resourceId +"_"+id+"_"
                                     +instance.getResourceIdDetails(resourceId,"property")+".csv";
-                            WriteCSV(instance, format, freq, start,end,  resourceId, file_name);
+                            WriteToCSV(instance, format, freq, start,end,  resourceId, file_name);
                             System.out.println("\""+siteId+"_"+subsiteId+"_"+resourceId+"_"+id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
                         }
                     }
                     catch (Exception e){
                         System.out.println(e+" "+ resourceId);
-                        continue;
                     }
                 }
             }
