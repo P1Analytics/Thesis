@@ -505,7 +505,6 @@ __Observation for raw data__
     It means you need to think twice when [building the data model](https://medium.com/@jscarp). Now we just use a very simple table as below for current phase
     
     GAIA has 1841 resources including duplicated 538 data sets categorized again in subsites 
-    
     Information for resources under each site :
     
     | Site ID  | ResourceID | Subsite ID | URI | Methane Concentration
@@ -522,6 +521,11 @@ __Observation for raw data__
     | resourceid| timestamp |reading |
     | :------:| :------: | :------: |
     | int | timestamp | float | 
+    Design better for the above table which stores time series data
+    ![pic](./image/cassandra_table_by_date.png?raw=true "")
+    Cassandra tutorials : [Basic Time Series Data](https://academy.datastax.com/resources/getting-started-time-series-data-modeling) 
+    and [Advanced Time Series](https://www.datastax.com/dev/blog/advanced-time-series-with-cassandra)
+    
     
 ## Retrieve the data 
 ### Stream
