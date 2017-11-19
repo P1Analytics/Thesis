@@ -521,6 +521,7 @@ __Observation for raw data__
     | resourceid| timestamp |reading |
     | :------:| :------: | :------: |
     | int | timestamp | float | 
+    
     Design better for the above table which stores time series data
     ![pic](./image/cassandra_table_by_date.png?raw=true "")
     Cassandra tutorials : [Basic Time Series Data](https://academy.datastax.com/resources/getting-started-time-series-data-modeling) 
