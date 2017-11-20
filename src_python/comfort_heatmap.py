@@ -160,6 +160,8 @@ if __name__ == "__main__":
         "157185_Temperature.csv",
         "159705_Temperature.csv"
     ]
+
+    site_name = [x.split("_")[0] for x in school_list]
     site_newname = ['A',
                     # 'B',
                     'C',
@@ -185,8 +187,10 @@ if __name__ == "__main__":
             df_comfort_school_X["comfort_" + str(room_id)] = comfort
         if school == "144243_Temperature.csv":
             df_comfort_Y = df_comfort_school_X
+            xtick_comfort_Y = school.split("_")[0]
         if school == "155851_Temperature.csv": #"19640_Temperature.csv":  # ""155849_Temperature.csv":
             df_comfort_N = df_comfort_school_X
+            xtick_comfort_N = school.split("_")[0]
 
         df_all_comfort[school.split("_")[0]] = df_comfort_school_X.sum(axis=1).divide(room_num)
 
@@ -214,12 +218,28 @@ if __name__ == "__main__":
     df_comfort_N_bday = df_comfort_N_bday.groupby(pd.TimeGrouper('D')).mean().dropna(axis=0)
     df_list = [df_comfort_Y_bday, df_comfort_N_bday, df_comfort_bday]
 
-    fig, axn = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1, 2, 3]}, sharey=True)
-    cbar_ax = fig.add_axes([.91, .3, .03, .4])  # [left, bottom, width, height]
+    fig, axn = plt.subplots(1,
+                            3,
+                            gridspec_kw={'width_ratios': [1, 1, 3]},
+                            sharey=True
+                            )
+    cbar_ax = fig.add_axes([.902, .3, .03, .4])  # [left, bottom, width, height]
 
-    xticks = [range(1,len(list(df_comfort_Y_bday))),range(1,len(list(df_comfort_N_bday))),site_newname]
-    # xticks = [["R1", "R2", "R3", "R4"], ["R1", "R2", "R3", "R4", "R5"], site_newname]
-    xlabels = ["SITE C", "SITE I", "Sites"]
+    # xticks = [range(1,len(list(df_comfort_Y_bday))+1),
+    #           range(1,len(list(df_comfort_N_bday))+1),
+    #           site_name #site_newname
+    #           ]
+    # xticks = [
+    #             ["R1", "R2", "R3", "R4"],
+    #             ["R1", "R2", "R3", "R4", "R5"],
+    #             site_newname]
+
+    xticks = [
+                ["W", "SW", "SW", "NW"],
+                ["NW", "SE", "SE", "SE", "SW"],
+                site_name]
+    # xlabels = ["SITE C", "SITE I", "Sites"]
+    xlabels = ["site"+xtick_comfort_Y,"site"+xtick_comfort_N,"SITES"]
     yticks = [pd.to_datetime(str(date)).strftime('%b-%d') for date in df_comfort_bday.index.values]
 
     i = 0
@@ -230,15 +250,19 @@ if __name__ == "__main__":
                     xticklabels=xticks[i],
                     yticklabels=5,
                     cbar=j == 0,
-                    cbar_ax=None if j else cbar_ax
+                    cbar_ax=None if j else cbar_ax,
+                    cbar_kws={'label': 'uncomfortable(0)------->comfortable(1)'}
                     )
-        ax.set_xlabel(xlabels[i])
+        pos1 = ax.get_position() # get the original position
+        pos2 = [pos1.x0 - 0.02, pos1.y0,  pos1.width, pos1.height]
+        ax.set_position(pos2)
+        ax.set_xlabel(xlabels[i])#,fontsize=8)
         i += 1
-    ax.set_yticklabels(busday_list[::5],fontsize=5)#(yticks[0::5]) # ,rotation=90)
+    ax.set_yticklabels(busday_list[::5],fontsize=5) #(yticks[0::5]) # ,rotation=90)
 
     # plot.tick_params(axis='both', which='major', labelsize=10)
     # plot.tick_params(axis='both', which='minor', labelsize=8)
-    plt.rc('ytick',labelsize=7)
+
     # plt.savefig('comfort.png',dpi=4000)
     # plt.close('all')
     plt.show()
