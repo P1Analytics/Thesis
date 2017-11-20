@@ -182,6 +182,9 @@ __Question 1 : what is the orientation for this room ?__
         - South: the peak should be at the mid-noon or later 
         - Rest: room facing north/music room/computer lab/basement room will have relatively low variation and average of the temperature
     ![peak](./image/peakAfterETL.png?raw=true"")
+    ![peak](./image/peakETL.png?raw=true"")
+    ![peak](./image/peakETL_one_day.png?raw=true"")
+    
     - Predicting orientation by using peak temperature :
         - Using RESTful API to retrieve the time : [sunrise , noon ,and sunset],unit: hour.
         - Only check the temperature during the daytime between [sunrise,sunset]
@@ -343,7 +346,7 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
 ![heatmap](./image/19640_comfortableAPI.png?raw=true"")
     
     Since we do not have good stable outdoor temperature resource,API could be an idealy option.   
-    ![heatmap](./image/Comfort.png?raw=true"")
+    ![heatmap](./image/comfort_compare.png?raw=true"")
     
 __Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
 
