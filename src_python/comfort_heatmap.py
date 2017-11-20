@@ -2,37 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas.tseries.offsets import *
-import requests
 import seaborn as sns
 from math import *
 import time, warnings
 from comfort_models import *
-
 sns.set()
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
-
-
-def sun_rise_set(lat, lng, timestamp):
-    url = "https://maps.googleapis.com/maps/api/timezone/json?location=" + str(lat) + "," + str(lng) + \
-                   "&timestamp=" + str(timestamp) + \
-                   "&key=AIzaSyAI4--_x4AE2K5zZ6Z5tZafwwpVI9uYlYM"
-
-    print(url)
-    rs = requests.get(url).json()
-    # print(json.dumps(rs, sort_keys=True, indent=4))  # human-readable response :)
-    GMT = int((int(rs["dstOffset"]) + int(rs["rawOffset"])) / 3600)
-
-
-    url = "https://api.sunrise-sunset.org/json?lat=" + str(lat) + "&lng=" + str(lng) + \
-                   "&date=" + time.strftime("%D", time.localtime(timestamp))
-    rs = requests.get(url).json()
-    print(json.dumps(rs, sort_keys=True, indent=4))
-    input()
-    sunrise = int(rs["results"]["sunrise"].split(":")[0]) + GMT
-    noon = int(rs["results"]["solar_noon"].split(":")[0]) + GMT
-    sunset = int(rs["results"]["sunset"].split(":")[0]) + 12 + 1 + GMT
-
-    return sunrise, noon, sunset
 
 
 def coordinate_dicts():
