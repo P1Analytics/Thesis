@@ -509,21 +509,28 @@ __Observation for raw data__
     
     | Site ID  | ResourceID | Subsite ID | URI | Property
     | :------:  | :------:| :------: | :------:| :------: |
-     | int |  int |int | text | text | 
+    | int |  int |int | text | text | 
+    
     Information for sites :
     
      | Site(SubSite) ID  | Latitude | Longtitude | Name |
      | :------:  | :------:| :------: | :------: | 
      | int | float | float | text | 
-            
+    
+    API data for weather
+    
+    | Site ID  | Timestamp |Type| value |  
+    | :------:  | :------:| :------: | :------:| 
+        
     The data collected every 5mins from the resources: [Version 1 ]
     
-    | resourceid| timestamp |reading |
+    | Resource ID | Timestamp |reading |
     | :------:| :------: | :------: |
     | int | timestamp | float | 
     
     Design for the above table which stores time series data
     ![pic](./image/cassandra_table_by_date.png?raw=true "")
+    
     Cassandra tutorials : [Basic Time Series Data](https://academy.datastax.com/resources/getting-started-time-series-data-modeling) 
     and [Advanced Time Series](https://www.datastax.com/dev/blog/advanced-time-series-with-cassandra)
     - The Primary Key is equivalent to the Partition Key in a single-field-key table.
@@ -535,11 +542,11 @@ __Observation for raw data__
     
     The data collected every 5mins from the resources: [Version 2]
 
-    | resourceid| date | timestamp |reading |
+    |  Resource ID | Date | Timestamp |value |
     | :------:| :------: |:------: | :------: |
     | int | text | timestamp | float | 
         
-     ```
+    ```
     CREATE TABLE gaia.read_data (
     id int,
     timeindex timestamp,
@@ -547,7 +554,7 @@ __Observation for raw data__
     date text,
     PRIMARY KEY ((id,date), timeindex )
     ) WITH CLUSTERING ORDER BY (timeindex ASC);
-     ```   
+    ```   
 ## Retrieve the data 
 ### Stream
 
