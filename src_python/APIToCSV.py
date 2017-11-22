@@ -20,7 +20,7 @@ if __name__ == "__main__":
     date_list = pd.date_range('2017-9-5', periods=61, freq='D')
 
     df_peak_API = pd.DataFrame(index=date_list,columns=site_list)
-
+    df_peak_API.index.names = ['timestamps']
     for site_i in site_list:
         lng, lat = coordinate_dict[str(site_i)][0], coordinates[str(site_i)][1]
         coordinate = str(lat)+","+str(lng)
@@ -44,7 +44,7 @@ if __name__ == "__main__":
             # print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
             for i in r["data"]["weather"]:
                 for j in i["hourly"]:
-                    result_list.append(int(j["FeelsLikeC"])) # ["humidity","tempC","cloudcover","FeelsLikeC"]
+                    result_list.append(int(j["tempC"])) # ["humidity","tempC","cloudcover","FeelsLikeC"]
         df_peak_API[site_i]=result_list
 
-    df_peak_API.to_csv("API_FeelsLikeC.csv", sep=";")
+    df_peak_API.to_csv("API_tempC.csv", sep=";")
