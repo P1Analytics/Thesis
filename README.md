@@ -184,6 +184,8 @@ __Question 1 : what is the orientation for this room ?__
     ![peak](./image/peakAfterETL.png?raw=true"")
     ![peak](./image/peakETL.png?raw=true"")
     ![peak](./image/peakETL_one_day.png?raw=true"")
+    If we put cloud cover persentage with orientation of the room.
+    Observe the time difference for indoor vs outdoor reach daily peak temperature 
     ![peak](./image/diff_cloud.png?raw=true"")
     
     - Predicting orientation by using peak temperature :
