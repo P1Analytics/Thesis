@@ -1,8 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from pylab import *
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
+
+
+
+
 
 
 def outliers_sliding_window(df, window_number):
@@ -155,7 +160,6 @@ if __name__ == "__main__":
         "157185_Temperature.csv",
         "159705_Temperature.csv"
     ]
-
     for school_i in school_list:
         df_school_i = pd.read_csv(school_i, delimiter=";", index_col='timestamps', parse_dates=True)
         df_indoor, room_list, _ = ETL(school_i)
@@ -163,24 +167,25 @@ if __name__ == "__main__":
         df_peak_i = pd.DataFrame(index=date_list, columns=list(room_list))
         school_i = school_i.split("_")[0]
         for date_i in date_list:
-            begin = df_indoor.index.get_loc(pd.Timestamp(date_i + " " + '6:00'))
-            df = df_indoor.iloc[begin: begin + 15]
+            begin = df_indoor.index.get_loc(pd.Timestamp(date_i + " " + '9:00'))
+            df = df_indoor.iloc[begin: begin + 12]
             daily_peak = []
             for room_i in room_list:
                 daily_peak.append(df[room_i].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
             df_peak_i.loc[date_i]=daily_peak
 
-        print(len(room_list))
         if len(room_list) > 1 :
             i = 0
+            # X_list = ["0xd21","0xd1e","0xff3","0xfe6","0xd1d"]
             fig, axn = plt.subplots(len(room_list), 1, sharex=True)
             for ax in axn:
                 room_i = room_list[i]
                 diff= df_peak_API.loc[:,school_i]-df_peak_i.loc[:,room_i]
-                i +=1
                 diff.plot(ax=ax)
+                # ax.set_ylabel(X_list[i],labelpad=15)
+                i +=1
         else:
             diff.plot()
 
-        plt.suptitle(school_i)
+        # plt.suptitle(school_i)
     plt.show()
