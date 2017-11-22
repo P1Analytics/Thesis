@@ -184,6 +184,7 @@ __Question 1 : what is the orientation for this room ?__
     ![peak](./image/peakAfterETL.png?raw=true"")
     ![peak](./image/peakETL.png?raw=true"")
     ![peak](./image/peakETL_one_day.png?raw=true"")
+    ![peak](./image/diff_cloud.png?raw=true"")
     
     - Predicting orientation by using peak temperature :
         - Using RESTful API to retrieve the time : [sunrise , noon ,and sunset],unit: hour.

@@ -29,7 +29,7 @@ public class WriteCassandra {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
         ZonedDateTime end = ZonedDateTime.now();
-        ZonedDateTime start = end.minusMonths(30);
+        ZonedDateTime start = end.minusMonths(2);
         String freq = "5min";
 
         List<Long> siteIds = instance.listSitesIds();
@@ -38,8 +38,9 @@ public class WriteCassandra {
             List<Long> resourcesIds = instance.listResourcesIds(siteId);
             for (Long resourceId: resourcesIds){
                 try{
-                    System.out.println(resourceId);
                     Matcher matcher = instance.getResourceDataByDayRange(resourceId, start, end, freq);
+                    System.out.println(resourceId);
+
                     while (matcher.find()) {
                         String group = matcher.group();
                         String [] values = group.split(",");
@@ -49,6 +50,7 @@ public class WriteCassandra {
                         Timestamp ts=new Timestamp(Long.parseLong(timestamp));
                         Date date=new Date(ts.getTime());
                         String dateS = df.format(date);
+                        System.out.println(value+" "+timestamp+" "+dateS);
 
                         String query = "INSERT INTO " + keyspace + "." + table_name
                                 + " (id,date,timeindex,value) VALUES("
@@ -56,7 +58,7 @@ public class WriteCassandra {
                                 "\'"+dateS + "\'" +", " + timestamp+", " + value+" );" ;
                         System.out.println(query);
                         session.execute(query);
-                    }
+                     }
                 }
                 catch (Exception e){
                     System.out.println("----------------------------------" + e + " on " + resourceId);
@@ -80,6 +82,7 @@ public class WriteCassandra {
                             Date date=new Date(ts.getTime());
                             String dateS = df.format(date);
 
+                            System.out.println(value+" "+timestamp+" "+dateS);
                             String query = "INSERT INTO " + keyspace + "." + table_name
                                     + " (id,date,timeindex,value) VALUES ("
                                     + resourceId +", "+

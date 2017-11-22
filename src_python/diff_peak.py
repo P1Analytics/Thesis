@@ -4,10 +4,7 @@ import pandas as pd
 from pylab import *
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
-
-
-
-
+pd.options.mode.chained_assignment = None
 
 
 def outliers_sliding_window(df, window_number):
@@ -55,8 +52,6 @@ def outliers_sliding_window(df, window_number):
                 # print(item, "change to max", (last_max + max) / 2)
                 window[-1] = average  # last_max# (last_max + max) / 2
                 df[i] = average  # last_max #(last_max + max) / 2
-
-    # print("******************************", df.name, df.size, outlier,outlier_NaN, outlier_NaN / outlier)
     return df, outlier, average
 
 
@@ -68,9 +63,8 @@ def ETL(filename, statistic=False):
         index_month = [int(str(i).split("-")[1]) for i in df.index.date]
         df_norm.index = index_month
 
-    active_time = []  # some sensors are 0, never active
+    active_time = []
     dfT = df.T
-    check_earliest = True
     for head in list(dfT):
         df_col = dfT[head]
         try:
@@ -80,11 +74,9 @@ def ETL(filename, statistic=False):
                 active_time.append(head)
         except ValueError:
             continue
-        pd.options.mode.chained_assignment = None
     df = dfT.T
-    # print("POWER OFF time", (1 - df[(df.T != 0).any()].shape[0] / df.shape[0]) * 100, "%") # could be easier ?
 
-    active_sensor = []  # sometimes is 0
+    active_sensor = []
     for head in list(df):
         df_col = df[head]
         if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
@@ -95,10 +87,6 @@ def ETL(filename, statistic=False):
 
     begin = df.index.get_loc(active_time[0])
     df_power = df.iloc[begin:]
-    # print("here is the NaN in the dataframe","\n",df_power.isnull().sum())
-    # sum_nan = sum(df_power.isnull().sum().values)  # Define:  all the NaN data are "missing data"
-    # power_on = df_power.shape
-    # result = sum_nan / power_on[0] / power_on[1] * 100
 
     if statistic:
         print(begin, active_time[0])
@@ -132,40 +120,45 @@ def ETL(filename, statistic=False):
 
 
 if __name__ == "__main__":
-
-    df_API = pd.read_csv("API_Temp.csv", delimiter="\t", index_col='timestamps', parse_dates=True)
-    index = df_API.index.tz_localize('CET', ambiguous='infer')
+    df_API_Temp = pd.read_csv("API_Temp.csv", delimiter="\t", index_col='timestamps', parse_dates=True)
+    index = df_API_Temp.index.tz_localize('CET', ambiguous='infer')
     date_list = sorted(set([str(time).split()[0] for time in index]))[:-1]
 
-    df_peak_API = pd.DataFrame(index=date_list, columns=list(df_API))
+    df_peak_API = pd.DataFrame(index=date_list, columns=list(df_API_Temp))
     for date_i in date_list:
-        begin = df_API.index.get_loc(pd.Timestamp(date_i + " " + '6:00'))
-        df = df_API.iloc[begin : begin + 15]
+        begin = df_API_Temp.index.get_loc(pd.Timestamp(date_i + " " + '6:00'))
+        df = df_API_Temp.iloc[begin : begin + 15]
         daily_peak=[]
-        for site_i in list(df_API):
+        for site_i in list(df_API_Temp):
             daily_peak.append(df[site_i].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
         df_peak_API.loc[date_i]=daily_peak
 
+    df_API_Cloud = pd.read_csv("API_cloudcover_daily.csv", delimiter=";", index_col='timestamps', parse_dates=True)
+    df_API_Cloud.index = sorted(set([str(time).split()[0] for time in index]))
     school_list = [
-        "144024_Temperature.csv",
-        "144243_Temperature.csv",
-        "144242_Temperature.csv",
-        "19640_Temperature.csv",
-        "27827_Temperature.csv",
-        "155849_Temperature.csv",
-        "155851_Temperature.csv",
-        "155076_Temperature.csv",
-        "155865_Temperature.csv",
+        # "144024_Temperature.csv",
+        # "144243_Temperature.csv",
+        # "144242_Temperature.csv",
+        # "19640_Temperature.csv",
+        # "27827_Temperature.csv",
+        # "155849_Temperature.csv",
+        # "155851_Temperature.csv",
+        # "155076_Temperature.csv",
+        # "155865_Temperature.csv",
         "155877_Temperature.csv",
-        "157185_Temperature.csv",
-        "159705_Temperature.csv"
+        # "157185_Temperature.csv",
+        # "159705_Temperature.csv"
     ]
+    xticks = [pd.to_datetime(date).strftime('%b-%d') for date in date_list]
     for school_i in school_list:
         df_school_i = pd.read_csv(school_i, delimiter=";", index_col='timestamps', parse_dates=True)
         df_indoor, room_list, _ = ETL(school_i)
+        school_i = school_i.split("_")[0]
+
+        df_cloud = df_API_Cloud.loc[:,school_i]
+        df_cloud = df_cloud.drop(df_cloud.index[len(df_cloud)-1]) # drop the last row Nov-4
 
         df_peak_i = pd.DataFrame(index=date_list, columns=list(room_list))
-        school_i = school_i.split("_")[0]
         for date_i in date_list:
             begin = df_indoor.index.get_loc(pd.Timestamp(date_i + " " + '9:00'))
             df = df_indoor.iloc[begin: begin + 12]
@@ -174,16 +167,19 @@ if __name__ == "__main__":
                 daily_peak.append(df[room_i].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
             df_peak_i.loc[date_i]=daily_peak
 
+        room = ['R1_SW', 'R2_S', 'R3_SE']
         if len(room_list) > 1 :
             i = 0
-            # X_list = ["0xd21","0xd1e","0xff3","0xfe6","0xd1d"]
-            fig, axn = plt.subplots(len(room_list), 1, sharex=True)
-            for ax in axn:
+            fig, axn = plt.subplots(len(room_list)+1, 1, sharex=True)
+            df_cloud.plot(ax=axn[0])
+            axn[0].set_ylabel("Cloudy(%)")
+            for ax_i in axn[1:]:
                 room_i = room_list[i]
                 diff= df_peak_API.loc[:,school_i]-df_peak_i.loc[:,room_i]
-                diff.plot(ax=ax)
-                # ax.set_ylabel(X_list[i],labelpad=15)
+                diff.plot(ax=ax_i)
+                ax_i.set_ylabel(room[i])
                 i +=1
+            plt.xticks(range(len(xticks)),xticks, rotation='vertical')
         else:
             diff.plot()
 
