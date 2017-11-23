@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas.tseries.offsets import *
+from sklearn.linear_model import LinearRegression
 import warnings, json
 from pylab import *
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
@@ -148,7 +149,7 @@ if __name__ == "__main__":
 
     for site_i in school_list:
         site_id = site_i.split("_")[0]
-        print(site_id)
+        print(site_i)
 
         df_cloud = df_API_Cloud.loc[:,site_id]
         df_tempC = df_API_Temp.loc[:,site_id]
@@ -157,6 +158,59 @@ if __name__ == "__main__":
         xaxis = df_cloud.index.values
         xticks = [pd.to_datetime(str(date)).strftime('%Y-%m-%d') for date in xaxis]
         day_list = sorted(set(xticks))
+
+
+        # plot histgram for ETL Data
+        f, axn = plt.subplots(len(room_list),1, sharex=True,squeeze=False)
+        i = 0
+        for room_i in room_list:
+            axn[i,0].hist(df_site_i[room_i].dropna().values, alpha=0.5, color='b')
+            axn[i,0].grid(color='grey', linestyle='-', linewidth=0.5)
+            axn[i,0].set_ylabel("Room_" + str(i+1), rotation=90, labelpad=5)
+            i = i + 1
+        axn[i-1,-1].set_xlabel('Temperature')
+        axn[0,0].set_title(site_id)
+
+        # correlation with Cloud coverage or outdoor temperature
+        coef = []
+        inter = []
+        X = df_cloud
+        X = X.values.reshape(np.shape(X)[0], 1)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        for room_i in room_list:
+            Y = df_site_i[room_i]
+            Y = Y.fillna(mean(Y.dropna().values))
+            Y = Y.values.reshape(np.shape(Y)[0], 1)
+            clf = LinearRegression().fit(X, Y)
+            coef.append(clf.coef_[0][0])
+            inter.append(clf.intercept_[0])
+            print(room_i,clf.coef_[0][0])
+        ax.scatter(coef, inter)
+        ax.set_yticks([])
+        ax.grid(color='grey', linestyle='-', linewidth=0.5)
+        ax.set_xlabel(room_i+"Indoor temperature correlation with "+"cloud coverage")
+
+        coef = []
+        inter = []
+        X = df_tempC
+        X = X.values.reshape(np.shape(X)[0], 1)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        for room_i in room_list:
+            Y = df_site_i[room_i]
+            Y = Y.fillna(mean(Y.dropna().values))
+            Y = Y.values.reshape(np.shape(Y)[0], 1)
+            clf = LinearRegression().fit(X, Y)
+            coef.append(clf.coef_[0][0])
+            inter.append(clf.intercept_[0])
+            print(room_i,clf.coef_[0][0])
+
+        ax.scatter(coef, inter)
+        ax.set_yticks([])
+        ax.grid(color='grey', linestyle='-', linewidth=0.5)
+        ax.set_xlabel(room_i+" correlation with "+"outdoor temperature")
+
 
         # timeline indoor temperature vs outdoor temperature & cloud cover(%)
         fig = plt.figure()
@@ -169,16 +223,6 @@ if __name__ == "__main__":
         ax.set_title(site_id)
         plt.legend()
 
-        # plot histgram for ETL Data
-        f, axn = plt.subplots(len(room_list),1, sharex=True,squeeze=False)
-        i = 0
-        for room_i in room_list:
-            axn[i,0].hist(df_site_i[room_i].dropna().values, alpha=0.5, color='b')
-            axn[i,0].grid(color='grey', linestyle='-', linewidth=0.5)
-            axn[i,0].set_ylabel("Room_" + str(i+1), rotation=90, labelpad=5)
-            i = i + 1
-        axn[i-1,-1].set_xlabel('Temperature')
-        axn[0,0].set_title(site_id)
 
         # one single day as one subplot for 30 days
         df_cloud.index=xticks
