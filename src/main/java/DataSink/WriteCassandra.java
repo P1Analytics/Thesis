@@ -28,8 +28,9 @@ public class WriteCassandra {
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-        ZonedDateTime end = ZonedDateTime.now();
-        ZonedDateTime start = end.minusMonths(2);
+//        ZonedDateTime end = ZonedDateTime.now();
+        ZonedDateTime start = ZonedDateTime.parse("2017-02-01T00:00:00+01:00[Europe/Rome]");
+        ZonedDateTime end = start.plusMonths(1);
         String freq = "5min";
 
         List<Long> siteIds = instance.listSitesIds();
