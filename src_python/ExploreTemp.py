@@ -5,7 +5,10 @@ from pandas.tseries.offsets import *
 from sklearn.linear_model import LinearRegression
 import warnings, json
 from pylab import *
+
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
+from collections import defaultdict
+
 
 def outliers_sliding_window(df, window_number):
     window = []
@@ -124,47 +127,62 @@ def ETL(filename, statistic=False):
     outlierS = ("%.2f" % result) + "%"
     df.iloc[begin:] = df_power
 
-    # df.to_csv(filename.split(".")[0] + "_XXX.csv", sep=";")
     return df, active_sensor, outlierS
 
 
+def Orientation():
+    with open("orientation.txt", encoding="utf-8") as f:
+        lines = f.read().splitlines()
+    orientation = defaultdict(list)
+    for line in lines:
+        orientation[line.split()[0]].append([line.split()[1], line.split()[2]])
+    return orientation
+
+
 if __name__ == "__main__":
+
+    orientation = Orientation()
+
     school_list = [
-        "144024_Temperature.csv",
-        "144243_Temperature.csv",
-        "144242_Temperature.csv",
-        "19640_Temperature.csv",
-        "27827_Temperature.csv",
-        "155849_Temperature.csv", #
-        "155851_Temperature.csv",
-        "155076_Temperature.csv",
-        "155865_Temperature.csv",
-        "155877_Temperature.csv", #
+        # "144024_Temperature.csv",
+        # "144243_Temperature.csv",
+        # "144242_Temperature.csv",
+        # "19640_Temperature.csv",
+        # "27827_Temperature.csv",
+        # "155849_Temperature.csv",
+        # "155851_Temperature.csv",
+        # "155076_Temperature.csv",
+        # "155865_Temperature.csv",
+        "155877_Temperature.csv",
         "157185_Temperature.csv",
-        "159705_Temperature.csv" #
+        # "159705_Temperature.csv"
     ]
 
     df_API_Cloud = pd.read_csv("API_cloudcover_hourly.csv", delimiter=";", index_col='timestamps', parse_dates=True)
     df_API_Temp = pd.read_csv("API_tempC.csv", delimiter=";", index_col='timestamps', parse_dates=True)
 
     for site_i in school_list:
-        site_id = site_i.split("_")[0]
         print(site_i)
+        site_id = site_i.split("_")[0]
+        room_id_ori = orientation[site_id]
 
-        df_cloud = df_API_Cloud.loc[:,site_id]
-        df_tempC = df_API_Temp.loc[:,site_id]
+        df_cloud = df_API_Cloud.loc[:, site_id]
+        df_tempC = df_API_Temp.loc[:, site_id]
+
+        df_raw_i = pd.read_csv(site_i, delimiter=";", index_col='timestamps', parse_dates=True)
+        df_raw_i = df_raw_i[~df_raw_i.index.duplicated(keep='first')]
+
         df_site_i, room_list, _ = ETL(site_i)
 
         xaxis = df_cloud.index.values
         xticks = [pd.to_datetime(str(date)).strftime('%Y-%m-%d') for date in xaxis]
         day_list = sorted(set(xticks))
 
-
         # plot histgram for ETL Data
         f, axn = plt.subplots(len(room_list),1, sharex=True,squeeze=False)
         i = 0
         for room_i in room_list:
-            axn[i,0].hist(df_site_i[room_i].dropna().values, alpha=0.5, color='b')
+            axn[i,0].hist(df_site_i[room_i].dropna().values,bins=50, alpha=0.5, color='b')
             axn[i,0].grid(color='grey', linestyle='-', linewidth=0.5)
             axn[i,0].set_ylabel("Room_" + str(i+1), rotation=90, labelpad=5)
             i = i + 1
@@ -244,7 +262,58 @@ if __name__ == "__main__":
                     another.set_yticks([])
                     another.set_title(day_i)
         fig.tight_layout()
-        # plt.savefig('36days'+site_id+'.png',dpi=4000)
+        # plt.savefig('36days'+site_id+'.png',dpi=400)
 
-    plt.show()
+
+        # one single day as one plot for 30 days
+        if not room_id_ori:
+            print("we dont know the real orientation for this site",site_id)
+            import sys
+            sys.exit()
+
+        df_cloud.index = xticks
+        df_site_i.index = xticks
+        df_raw_i.index = xticks
+        df_tempC.index = xticks
+
+        room_ids = [label.split("_")[-3] for label in room_list]
+        room_labels = []
+        i = 1
+        for room_id in room_ids:
+            for id_label in room_id_ori:
+                if room_id in id_label:
+                    room_labels.append("R" + str(i) + "_" + id_label[1] + "_" + room_id)
+            i += 1
+
+        for day_i in day_list[15:45]:
+            df_day_i = df_site_i.loc[day_i, :]
+            df_day_i_raw = df_raw_i.loc[day_i, :]
+            df_cloud_i = df_cloud.loc[day_i]
+            df_temp_i = df_tempC.loc[day_i]
+
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+
+            df_day_i.plot(ax=ax, xticks=list(range(24)))
+            ax.legend(room_labels, loc=1)
+
+            raw = ax.twinx()
+            df_day_i_raw.plot(ax=raw, xticks=list(range(24)),legend=None, marker='.')
+            raw.set_yticks([])
+
+            cloud = ax.twinx()
+            df_cloud_i.plot(ax=cloud, color='b', marker='o')
+            cloud.legend(["Cloud"], loc=4)
+
+            temp = ax.twinx()
+            df_temp_i.plot(ax=temp, color='y', marker='o')
+            temp.set_yticks([])
+            temp.legend(["Outdoor"],loc=2)
+
+            plt.xlim(0, 23)
+            ax.set_title(day_i + " at " + site_id)
+            ax.set_xticklabels(list(range(24)))
+            fig.set_size_inches(18.5, 7.5)
+            # plt.savefig(day_i+"_"+site_id+'.png',dpi=400)
     # plt.close('all')
+    plt.show()
