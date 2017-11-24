@@ -37,10 +37,12 @@ public class WriteCSV {
         instance.setUp();
         instance.authenticate();
 
-        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-        String freq = "hour"; //5min,hour,day,
-        ZonedDateTime end = ZonedDateTime.now();
-        ZonedDateTime start = end.minusMonths(2);
+//        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+
+        String freq = "5min"; //5min,hour,day,
+        ZonedDateTime start = ZonedDateTime.parse("2017-02-01T00:00:00+01:00[Europe/Rome]");
+        ZonedDateTime end = start.plusMonths(1);
 
         String folder = "./src_python/";
         String property = "Temperature";
