@@ -132,6 +132,45 @@ def ETL(filename, statistic=False):
 
     return df, active_sensor, outlierS
 
+def ETL_outlier(df):
+    df = df[~df.index.duplicated(keep='first')]
+
+    for head in list(df):
+        df_col = df[head]
+        if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
+            df = df.drop(head, 1)
+            continue
+
+    if df.shape[1] > 0:
+        active_time = []
+        dfT = df.T
+        for head in list(dfT):
+            df_col = dfT[head]
+            try:
+                if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
+                    dfT[head] = dfT[head].replace(0, np.nan)
+                else:
+                    active_time.append(head)
+            except ValueError:
+                continue
+        df = dfT.T
+        begin = df.index.get_loc(active_time[0])
+    else:
+        return df,[]
+
+    df_power = df.iloc[begin:]
+
+    df_power[df_power==0]=np.nan
+
+    for head in list(df_power):
+        df_col = df_power[head]
+        df_col, outliers, average = outliers_sliding_window(df_col, window_number=4)
+        df_col = df_col.rolling(window=6, center=False, min_periods=0).mean()
+        df_col = df_col.fillna(average)
+        df_power[head] = df_col
+
+    df.iloc[begin:] = df_power
+    return df,list(df)
 
 def Orientation():
     with open("orientation.txt", encoding="utf-8") as f:
@@ -148,19 +187,19 @@ if __name__ == "__main__":
 
     school_list = [
         "144024_Temperatur2months.csv",
-        "144242_Temperatur2months.csv",
-        "144243_Temperatur2months.csv",
-        "155076_Temperatur2months.csv",
-        "155849_Temperatur2months.csv",
-        "155851_Temperatur2months.csv",
-        "155865_Temperatur2months.csv",
-        "155877_Temperatur2months.csv",
-        "157185_Temperatur2months.csv",
-        "159705_Temperatur2months.csv",
-        "19640_Temperatur2months.csv",
-        "27827_Temperatur2months.csv",
-        "28843_Temperatur2months.csv",
-        "28850_Temperatur2months.csv",
+        # "144242_Temperatur2months.csv",
+        # "144243_Temperatur2months.csv",
+        # "155076_Temperatur2months.csv",
+        # "155849_Temperatur2months.csv",
+        # "155851_Temperatur2months.csv",
+        # "155865_Temperatur2months.csv",
+        # "155877_Temperatur2months.csv",
+        # "157185_Temperatur2months.csv",
+        # "159705_Temperatur2months.csv",
+        # "19640_Temperatur2months.csv",
+        # "27827_Temperatur2months.csv",
+        # "28843_Temperatur2months.csv",
+        # "28850_Temperatur2months.csv",
         # hourly
         # "144024_Temperature.csv",
         # "144243_Temperature.csv",
@@ -192,105 +231,115 @@ if __name__ == "__main__":
         df_raw_i = pd.read_csv(site_i, delimiter=";", index_col='timestamps', parse_dates=True)
         df_raw_i = df_raw_i[~df_raw_i.index.duplicated(keep='first')]
 
-        df_site_i, room_list, _ = ETL(site_i)
+        # df_site_i, room_list, _ = ETL(site_i)
+        df_site_i, room_list = ETL_outlier(df_raw_i)
 
+        # double check the ETL filter effection
+        for i in room_list:
+            plt.figure()
+            (df_raw_i[i] - df_site_i[i]).plot()
+            df_raw_i[i].plot()
+            df_site_i[i].plot()
+
+
+        # Expanding the cloud or temperature from API sampled by 1 hour to 5mins interval
         df_cloud.index = pd.DatetimeIndex(df_cloud.index)
         df_cloud = df_cloud.reindex(df_site_i.index, method='pad', limit=11)
-
         df_tempC.index = pd.DatetimeIndex(df_tempC.index)
         df_tempC = df_tempC.reindex(df_site_i.index, method='pad', limit=11)
 
+
         xaxis = df_site_i.index.values
-        xticks = [pd.to_datetime(str(date)).strftime('%Y-%m-%d') for date in xaxis]
-        day_list = sorted(set(xticks))
+        day_index = [pd.to_datetime(str(date)).strftime('%Y-%m-%d') for date in xaxis]
+        day_list = sorted(set(day_index))
 
-        # # plot histgram for ETL Data
-        # f, axn = plt.subplots(len(room_list),1, sharex=True,squeeze=False)
-        # i = 0
-        # for room_i in room_list:
-        #     axn[i,0].hist(df_site_i[room_i].dropna().values,bins=50, alpha=0.5, color='b')
-        #     axn[i,0].grid(color='grey', linestyle='-', linewidth=0.5)
-        #     axn[i,0].set_ylabel("Room_" + str(i+1), rotation=90, labelpad=5)
-        #     i = i + 1
-        # axn[i-1,-1].set_xlabel('Temperature')
-        # axn[0,0].set_title(site_id)
-        #
+        # plot histgram for ETL Data
+        f, axn = plt.subplots(len(room_list),1, sharex=True,squeeze=False)
+        i = 0
+        for room_i in room_list:
+            axn[i,0].hist(df_site_i[room_i].dropna().values,bins=50, alpha=0.5, color='b')
+            axn[i,0].grid(color='grey', linestyle='-', linewidth=0.5)
+            axn[i,0].set_ylabel("Room_" + str(i+1), rotation=90, labelpad=5)
+            i = i + 1
+        axn[i-1,-1].set_xlabel('Temperature')
+        axn[0,0].set_title(site_id)
+
         # correlation with Cloud coverage or outdoor temperature
-        # coef = []
-        # inter = []
-        # X = df_cloud
-        # X = X.values.reshape(np.shape(X)[0], 1)
-        # fig = plt.figure()
-        # ax = fig.add_subplot(1, 1, 1)
-        # for room_i in room_list:
-        #     Y = df_site_i[room_i]
-        #     print(Y.isnull().sum())
-        #     Y = Y.fillna(mean(Y.dropna().values))
-        #     Y = Y.values.reshape(np.shape(Y)[0], 1)
-        #     print(len(X),len(Y))
-        #     clf = LinearRegression().fit(X, Y)
-        #     coef.append(clf.coef_[0][0])
-        #     inter.append(clf.intercept_[0])
-        #     print(room_i,clf.coef_[0][0])
-        # ax.scatter(coef, inter)
-        # ax.set_yticks([])
-        # ax.grid(color='grey', linestyle='-', linewidth=0.5)
-        # ax.set_xlabel(room_i+"Indoor temperature correlation with "+"cloud coverage")
-        #
-        # coef = []
-        # inter = []
-        # X = df_tempC
-        # X = X.values.reshape(np.shape(X)[0], 1)
-        # fig = plt.figure()
-        # ax = fig.add_subplot(1, 1, 1)
-        # for room_i in room_list:
-        #     Y = df_site_i[room_i]
-        #     Y = Y.fillna(mean(Y.dropna().values))
-        #     Y = Y.values.reshape(np.shape(Y)[0], 1)
-        #     clf = LinearRegression().fit(X, Y)
-        #     coef.append(clf.coef_[0][0])
-        #     inter.append(clf.intercept_[0])
-        #     print(room_i,clf.coef_[0][0])
-        #
-        # ax.scatter(coef, inter)
-        # ax.set_yticks([])
-        # ax.grid(color='grey', linestyle='-', linewidth=0.5)
-        # ax.set_xlabel(room_i+" correlation with "+"outdoor temperature")
-        #
-        #
-        # # timeline indoor temperature vs outdoor temperature & cloud cover(%)
-        # fig = plt.figure()
-        # ax = fig.add_subplot(1, 1, 1)
-        # ax.grid(color='grey', linestyle='--', linewidth=0.5)
-        # ax.plot(df_site_i)
-        # ax.plot(xaxis,df_tempC.values,'b--',label="Outdoor_Temp")
-        # another = ax.twinx()
-        # another.plot(xaxis,df_cloud.values, 'c--',label="Cloudy")
-        # ax.set_title(site_id)
-        # plt.legend()
+        coef = []
+        inter = []
+        X = df_cloud
+        X = X.values.reshape(np.shape(X)[0], 1)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        for room_i in room_list:
+            Y = df_site_i[room_i]
+            print(Y.isnull().sum())
+            Y = Y.fillna(mean(Y.dropna().values))
+            Y = Y.values.reshape(np.shape(Y)[0], 1)
+            print(len(X),len(Y))
+            clf = LinearRegression().fit(X, Y)
+            coef.append(clf.coef_[0][0])
+            inter.append(clf.intercept_[0])
+            print(room_i,clf.coef_[0][0])
+        ax.scatter(coef, inter)
+        ax.set_yticks([])
+        ax.grid(color='grey', linestyle='-', linewidth=0.5)
+        ax.set_xlabel(room_i+"Indoor temperature correlation with "+"cloud coverage")
+
+        coef = []
+        inter = []
+        X = df_tempC
+        X = X.values.reshape(np.shape(X)[0], 1)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        for room_i in room_list:
+            Y = df_site_i[room_i]
+            Y = Y.fillna(mean(Y.dropna().values))
+            Y = Y.values.reshape(np.shape(Y)[0], 1)
+            clf = LinearRegression().fit(X, Y)
+            coef.append(clf.coef_[0][0])
+            inter.append(clf.intercept_[0])
+            print(room_i,clf.coef_[0][0])
+
+        ax.scatter(coef, inter)
+        ax.set_yticks([])
+        ax.grid(color='grey', linestyle='-', linewidth=0.5)
+        ax.set_xlabel(room_i+" correlation with "+"outdoor temperature")
 
 
-        # # one single day as one subplot for 30 days
-        # df_cloud.index=xticks
-        # df_site_i.index=xticks
-        # fig, axn = plt.subplots(nrows=6, ncols=5,sharex=True,sharey=True)
-        # for row in list(range(6)):
-        #     for col in list(range(5)):
-        #         if day_list:
-        #             day_i = day_list[0]
-        #             day_list.pop(0)
-        #             df_day_i=df_site_i.loc[day_i,:]
-        #             df_cloud_i=df_cloud.loc[day_i]
-        #             df_day_i.plot(ax=axn[row,col],legend=False)
-        #             axn[row,col].set_xticks([])
-        #             axn[row,col].set_yticks([])
-        #
-        #             another = axn[row,col].twinx()
-        #             another.plot(df_cloud_i.values,'b--')
-        #             another.set_yticks([])
-        #             another.set_title(day_i)
-        # fig.tight_layout()
-        # # plt.savefig('36days'+site_id+'.png',dpi=400)
+        # timeline indoor temperature vs outdoor temperature & cloud cover(%)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax.grid(color='grey', linestyle='--', linewidth=0.5)
+        ax.plot(df_site_i)
+        ax.plot(xaxis,df_tempC.values,'b--',label="Outdoor_Temp")
+        another = ax.twinx()
+        another.plot(xaxis,df_cloud.values, 'c--',label="Cloudy")
+        ax.set_title(site_id)
+        plt.legend()
+
+
+        # one single day as one subplot for 30 days
+        df_cloud.index=day_index
+        df_site_i.index=day_index
+        fig, axn = plt.subplots(nrows=6, ncols=5,sharex=True,sharey=True)
+        for row in list(range(6)):
+            for col in list(range(5)):
+                if day_list:
+                    day_i = day_list[0]
+                    day_list.pop(0)
+                    df_day_i=df_site_i.loc[day_i,:]
+                    df_cloud_i=df_cloud.loc[day_i]
+                    df_day_i.plot(ax=axn[row,col],legend=False)
+                    axn[row,col].set_xticks([])
+                    axn[row,col].set_yticks([])
+
+                    another = axn[row,col].twinx()
+                    another.plot(df_cloud_i.values,'b--')
+                    another.set_yticks([])
+                    another.set_title(day_i)
+        fig.tight_layout()
+        # plt.savefig('36days'+site_id+'.png',dpi=400)
 
 
         # one single day as one plot for 30 days
@@ -299,10 +348,10 @@ if __name__ == "__main__":
             print("we dont know the real orientation for this site", site_id)
             continue
 
-        df_cloud.index = xticks
-        df_site_i.index = xticks
-        df_raw_i.index = xticks
-        df_tempC.index = xticks
+        df_cloud.index = day_index
+        df_site_i.index = day_index
+        df_raw_i.index = day_index
+        df_tempC.index = day_index
 
         room_ids = [label.split("_")[-3] for label in room_list]
         room_labels = []
@@ -342,7 +391,7 @@ if __name__ == "__main__":
             if xmax == 24:
                 major_ticks = np.arange(0,24)
             else:
-                major_ticks = np.arange(0, xmax, 12)
+                major_ticks = np.arange(0, xmax, 12) # 5mins * 12 = 1hour 
             plt.xlim(0, xmax)
             plt.xticks(major_ticks,list(range(24)))
 
@@ -351,4 +400,4 @@ if __name__ == "__main__":
             fig.set_size_inches(18.5, 7.5)
             plt.savefig(day_i+"_"+site_id+'.png',dpi=400)
     plt.close('all')
-    # plt.show()
+    plt.show()
