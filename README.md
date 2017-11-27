@@ -260,6 +260,7 @@ __Question 1 : what is the orientation for this room ?__
         ![cloudy](./image/CloudyFeb-Oct144242.png?raw=true"") 
         ![cloudy](./image/CloudyFeb-Oct155877.png?raw=true"")
         ![cloudy](./image/CloudyFeb-Oct155865.png?raw=true"")
+        ![cloudy](./image/CloudyFeb-Oct155851.png?raw=true"")
 
 - **TODO** __Identify patten by slope = delta(temperature)/delta(time):__ 
     
