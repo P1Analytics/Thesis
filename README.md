@@ -256,7 +256,8 @@ __Question 1 : what is the orientation for this room ?__
         | W  | 0%| 0/1| 
         | W - N|0% |  0/11|
     
-    
+    - The cloudy coverage impact on the indoor temperature:
+        ![cloudy](./image/CloudyFeb-Oct144242.png?raw=true"") 
 
 - **TODO** __Identify patten by slope = delta(temperature)/delta(time):__ 
     
