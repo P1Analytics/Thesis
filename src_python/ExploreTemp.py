@@ -132,7 +132,7 @@ def ETL(filename, statistic=False):
 
     return df, active_sensor, outlierS
 
-def ETL_outlier(df):
+def ETL_df(df):
     df = df[~df.index.duplicated(keep='first')]
 
     for head in list(df):
@@ -156,7 +156,7 @@ def ETL_outlier(df):
         df = dfT.T
         begin = df.index.get_loc(active_time[0])
     else:
-        return df,[]
+        return df,[],-1
 
     df_power = df.iloc[begin:]
 
@@ -170,7 +170,7 @@ def ETL_outlier(df):
         df_power[head] = df_col
 
     df.iloc[begin:] = df_power
-    return df,list(df)
+    return df,list(df),begin
 
 def Orientation():
     with open("orientation.txt", encoding="utf-8") as f:
@@ -232,7 +232,7 @@ if __name__ == "__main__":
         df_raw_i = df_raw_i[~df_raw_i.index.duplicated(keep='first')]
 
         # df_site_i, room_list, _ = ETL(site_i)
-        df_site_i, room_list = ETL_outlier(df_raw_i)
+        df_site_i, room_list = ETL_df(df_raw_i)
 
         # double check the ETL filter effection
         for i in room_list:
