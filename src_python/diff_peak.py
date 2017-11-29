@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from pylab import *
 import warnings
+from sklearn.linear_model import LinearRegression
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 pd.options.mode.chained_assignment = None
 
@@ -122,7 +123,7 @@ def ETL(filename, statistic=False):
 if __name__ == "__main__":
     df_API_Temp = pd.read_csv("API_Temp.csv", delimiter="\t", index_col='timestamps', parse_dates=True)
     index = df_API_Temp.index.tz_localize('CET', ambiguous='infer')
-    date_list = sorted(set([str(time).split()[0] for time in index]))[:-1]
+    date_list = sorted(set([str(time).split()[0] for time in index]))#[:-1]
 
     df_peak_API = pd.DataFrame(index=date_list, columns=list(df_API_Temp))
     for date_i in date_list:
@@ -144,13 +145,16 @@ if __name__ == "__main__":
         # "155849_Temperature.csv",
         # "155851_Temperature.csv",
         # "155076_Temperature.csv",
-        # "155865_Temperature.csv",
-        "155877_Temperature.csv",
+        "155865_Temperature.csv",
+        # "155877_Temperature.csv",
         # "157185_Temperature.csv",
         # "159705_Temperature.csv"
     ]
+
     xticks = [pd.to_datetime(date).strftime('%b-%d') for date in date_list]
     for school_i in school_list:
+        coef = []
+        inter = []
         df_school_i = pd.read_csv(school_i, delimiter=";", index_col='timestamps', parse_dates=True)
         df_indoor, room_list, _ = ETL(school_i)
         school_i = school_i.split("_")[0]
@@ -167,7 +171,7 @@ if __name__ == "__main__":
                 daily_peak.append(df[room_i].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
             df_peak_i.loc[date_i]=daily_peak
 
-        room = ['R1_SW', 'R2_S', 'R3_SE']
+        room = ['R1_SW', 'R2_SW', 'R3_NE','R4_NE']
         if len(room_list) > 1 :
             i = 0
             fig, axn = plt.subplots(len(room_list)+1, 1, sharex=True)
@@ -175,13 +179,27 @@ if __name__ == "__main__":
             axn[0].set_ylabel("Cloudy(%)")
             for ax_i in axn[1:]:
                 room_i = room_list[i]
-                diff= df_peak_API.loc[:,school_i]-df_peak_i.loc[:,room_i]
+                diff= (df_peak_API.loc[:,school_i]-df_peak_i.loc[:,room_i])#.abs()
                 diff.plot(ax=ax_i)
                 ax_i.set_ylabel(room[i])
+                # ax_i.set_ylabel(room_i.split("_")[1])
+
+
+                df_cloud = df_API_Cloud.loc[:,school_i]
+                df_indoor_i = df_peak_i.loc[:,room_i]
+
+                # clf = LinearRegression().fit(df_cloud.values.reshape(np.shape(df_cloud)[0], 1), diff.values.reshape(np.shape(diff)[0], 1))
+                clf = LinearRegression().fit(df_cloud.values.reshape(np.shape(df_cloud)[0], 1), df_indoor_i.values.reshape(np.shape(df_indoor_i)[0], 1))
+                print(room[i],clf.coef_[0][0],clf.intercept_[0])
+
+                coef.append(clf.coef_[0][0])
+                inter.append(clf.intercept_[0])
+
                 i +=1
             plt.xticks(range(len(xticks)),xticks, rotation='vertical')
         else:
             diff.plot()
-
         # plt.suptitle(school_i)
+        plt.figure()
+        plt.scatter(coef,inter)
     plt.show()
