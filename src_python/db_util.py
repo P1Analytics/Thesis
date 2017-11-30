@@ -57,7 +57,6 @@ def init_database(cursor):
                                         );"""
     execute_sql(cursor, sql_create_details_site_table)
 
-
     sql_create_API_Temperature_table = """
                                             CREATE TABLE IF NOT EXISTS API_Temperature  (
                                             id INT,
@@ -128,11 +127,19 @@ def query_temp_resource_value(cursor, temp_resource_list):
     return resource_value
 
 
-def query_site_room_orientaion(cursor, siteID):
-    # print("select room, orien from orientation where site =" + str(siteID) + ";")
-    orient = cursor.execute("select room, orien from orientation where site =" + str(siteID))
+def query_site_room_orientaion(cursor, site_id):
+    # print("select room, orien from orientation where site =" + str(site_id) + ";")
+    orient = cursor.execute("select room, orien from orientation where site =" + str(site_id))
     # print(orient.fetchall()) # tuple [id,'NE']
     return orient.fetchall()
+
+
+def query_site_lat_lng(cursor):
+    coordinate_dict={}
+    resp = cursor.execute("select * from coordinates")
+    for id,lng,lat in resp.fetchall():
+        coordinate_dict[id]=[lng,lat]
+    return coordinate_dict
 
 
 def query_temperature_resource(cursor, site_id):
@@ -206,37 +213,39 @@ if __name__ == "__main__":
         try:
             c = conn.cursor()
 
-            ######### init table for database
-            # init_database(c)
+            query_site_lat_lng(c)
 
-            ######### after you fill up the details_of_sensor with, use this to create value table for each site
-            # create_resource_value_tables(c)
-            # create_resource_ETL_tables(c)
-
-            ######### import from CSV demo , fastest way , execute in the sqlite not in the scripts
-            # resource_value_folder = "/Users/nanazhu/Documents/Sapienza/sqlite/5min2017Jan-Mar/"
-            # importFromCSV(resource_value_folder, "resource_value")
-
-            ######### export to CSV demo
-            query = """select time, value from resource_value where time > '2017-03-21' and time < '2017-03-22';"""
-            exportToCSV(query, 'JustATest.csv')
-
-            ######### a full demo story:find all the temperature sensor data
-            #######   input
-            #######   time range : whole March
-            ######### output: pandas dataframe for one site
-            site_list = c.execute("select site from details_sensor group by site;")
-            site_list = [str(id[0]) for id in site_list]
-            for site_id in site_list:
-                print(site_id, ":")
-                temperature_resource_list = query_temperature_resource(c, site_id)
-                print(temperature_resource_list)
-                df = select_time_range_to_dataframe(c, temperature_resource_list, '2017-03-01', '2017-04-01')
-
-            ######### convert from previous format into ready-to-import-to-sqlite csv file
-            df = pd.read_csv("API_tempC_Febhourly.csv", delimiter=";", parse_dates=True)
-            print(df)
-            pandas_to_sqlite(df)
+            # ######### init table for database
+            # # init_database(c)
+            #
+            # ######### after you fill up the details_of_sensor with, use this to create value table for each site
+            # # create_resource_value_tables(c)
+            # # create_resource_ETL_tables(c)
+            #
+            # ######### import from CSV demo , fastest way , execute in the sqlite not in the scripts
+            # # resource_value_folder = "/Users/nanazhu/Documents/Sapienza/sqlite/5min2017Jan-Mar/"
+            # # importFromCSV(resource_value_folder, "resource_value")
+            #
+            # ######### export to CSV demo
+            # query = """select time, value from resource_value where time > '2017-03-21' and time < '2017-03-22';"""
+            # exportToCSV(query, 'JustATest.csv')
+            #
+            # ######### a full demo story:find all the temperature sensor data
+            # #######   input
+            # #######   time range : whole March
+            # ######### output: pandas dataframe for one site
+            # site_list = c.execute("select site from details_sensor group by site;")
+            # site_list = [str(id[0]) for id in site_list]
+            # for site_id in site_list:
+            #     print(site_id, ":")
+            #     temperature_resource_list = query_temperature_resource(c, site_id)
+            #     print(temperature_resource_list)
+            #     df = select_time_range_to_dataframe(c, temperature_resource_list, '2017-03-01', '2017-04-01')
+            #
+            # ######### convert from previous format into ready-to-import-to-sqlite csv file
+            # df = pd.read_csv("API_tempC_Febhourly.csv", delimiter=";", parse_dates=True)
+            # print(df)
+            # pandas_to_sqlite(df)
 
         except Error as e:
             print("SQL ERROR:", e)
