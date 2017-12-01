@@ -1,4 +1,4 @@
-package DataSink;
+package DataSource;
 import DataSource.SparkAPI;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,28 +38,38 @@ public class WriteCSV {
         instance.authenticate();
 
 //        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
         String freq = "5min"; //5min,hour,day,
-        ZonedDateTime start = ZonedDateTime.parse("2017-02-01T00:00:00+01:00[Europe/Rome]");
-        ZonedDateTime end = start.plusMonths(1);
+//      ZonedDateTime start = ZonedDateTime.parse("2017-01-01T00:00:00+01:00[Europe/Rome]");
+        ZonedDateTime start = ZonedDateTime.parse("2016-01-01T00:00:00+01:00[Europe/Rome]");//
+        ZonedDateTime end = ZonedDateTime.parse("2016-07-01T00:00:00+01:00[Europe/Rome]"); //ZonedDateTime.now();
 
-        String folder = "./src_python/";
-        String property = "Temperature";
+        String folder = "./src_python/5minFirst2016/";
+        String property = ""; //Temperature
 
-//        List<Long> siteIds = Arrays.asList(28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L);
-//          [144242L, 27827L, 144024L, 155076L, 155849L, 155077L, 155865L, 155877L, 28843L, 144243L, 28850L, 159705L, 157185L, 155851L, 19640L]
+        List<Long> siteIds = Arrays.asList(
+                144242L, 27827L, 144024L,
+                155076L, 155849L, 155077L
+//                155865L, 155877L, 28843L,
+//                144243L, 28850L, 159705L,
+//                157185L, 155851L, 19640L
+        );
+
 //        for (Long siteId : siteIds) {
-
-        for (Long siteId : instance.listSitesIds()) {
+//        List<Long> siteIds =instance.listSitesIds();
+        for (Long siteId : siteIds) {
+//
             List<Long> resourcesIds = instance.listResourcesIds(siteId);
             for (Long resourceId : resourcesIds) {
                 try{
                     if (instance.getResourceIdDetails(resourceId,"property").contains(property)){
                         String id = instance.getResourceSummary(resourceId,freq);
                         String file_name = folder + siteId + "_"
-                                + resourceId +"_"+ id+"_"
-                                +instance.getResourceIdDetails(resourceId,"property")+".csv";
+                                + resourceId
+                                +"_"+ id+"_"
+                                +instance.getResourceIdDetails(resourceId,"property")
+                                +".csv";
                         WriteToCSV(instance, format, freq, start,end, resourceId, file_name);
                         System.out.println("\""+siteId + "_" + resourceId +"_"+ id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
                     }
@@ -77,8 +87,11 @@ public class WriteCSV {
                         if (instance.getResourceIdDetails(resourceId,"property").contains(property)){
                             String id = instance.getResourceSummary(resourceId,freq);
                             String file_name = folder + siteId + "_"
-                                    + subsiteId + "_" + resourceId +"_"+id+"_"
-                                    +instance.getResourceIdDetails(resourceId,"property")+".csv";
+                                    + subsiteId + "_"
+                                    + resourceId
+                                    +"_"+id+"_"
+//                                    +instance.getResourceIdDetails(resourceId,"property")
+                                    +".csv";
                             WriteToCSV(instance, format, freq, start,end,  resourceId, file_name);
                             System.out.println("\""+siteId+"_"+subsiteId+"_"+resourceId+"_"+id+"_"+instance.getResourceIdDetails(resourceId,"property")+".csv\",");
                         }

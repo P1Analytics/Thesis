@@ -37,13 +37,16 @@ public class SparkAPI {
     }
 
     private List<String> GetUserInfo() throws Exception {
+
         try{
             DataInputStream in = new DataInputStream(new FileInputStream("UserInfo"));
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
             String username = br.readLine();
             String password = br.readLine();
             String clientId = br.readLine();
             String clientSecret = br.readLine();
+
             in.close();
             List<String> UserInfo = Arrays.asList(username, password,clientId,clientSecret);
             return UserInfo;

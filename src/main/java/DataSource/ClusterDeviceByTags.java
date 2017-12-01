@@ -1,7 +1,7 @@
 package DataSource;
 import java.util.*;
 
-public class ClusterByTags {
+public class ClusterDeviceByTags {
 //    Turn URI as tag list
 //    Map-reduce the tag with resource id to cluster them into same device
 //    Output Dictionary List  [Key,Value] = [potential devices , set of resources on this device]

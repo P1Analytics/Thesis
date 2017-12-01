@@ -1,4 +1,4 @@
-package DataSource;
+package DataSink;
 
 import com.datastax.driver.core.Cluster;
 import org.apache.flink.api.common.functions.FlatMapFunction;
