@@ -3,6 +3,7 @@ from sqlite3 import Error
 import pandas as pd
 import glob
 import os
+import shutil
 
 
 def create_connection(db_file):
@@ -79,26 +80,49 @@ def init_database(cursor):
 
 def pandas_to_sqlite(df):
     """
-    :param df:
+    :param df: df head : [ timestamps id1  id2 ...idn]
     :return: sqlite execute command
     """
     directory = './DBimport/'
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    # df head : [ timestamps id1  id2 ...idn]
+
     for value in list(df)[1::]:
         print(value)
         df_value = df[['timestamps', value]]
         df_value["id"] = [value] * df.shape[0]
         new = ["id", "timestamps", value]
         df_value = df_value.reindex(columns=new)
-        print(df_value)
+        # print(df_value)
         df_value.to_csv(directory + value + "to_import_sqlite.csv", sep=";", index=False, header=False)
-    importFromCSV(directory, "resource_value")
+    csv_batch_to_sqlite(directory, "resource_value")
+
+def csv_to_sqlite(APIcsvfile,table):
+    """
+
+    :param APIcsvfile: head list ['timestamps, id1,id2,...]
+    :param table for the input csv data
+    :return: sqlite execute command
+    """
+    df = pd.read_csv(APIcsvfile, delimiter=";", parse_dates=True)#,index_col='timestamps')
+    directory = './API_import/'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    else:
+        shutil.rmtree(directory)
+        os.makedirs(directory)
+    headers = list(df)
+    for id in headers[1::]:
+        df_value = df[['timestamps', id]]
+        df_value["id"] = [id] * df.shape[0]
+        new = ["id", "timestamps", id]
+        df_value = df_value.reindex(columns=new)
+        df_value.to_csv(directory + id + "to_import_sqlite.csv", sep=";", index=False, header=False)
+    csv_batch_to_sqlite(directory, table)
 
 
-def importFromCSV(folder, table):
+def csv_batch_to_sqlite(folder, table):
     # print("Copy paste below dot command into your sqlite \n! Nothing execute in here\n")
 
     file_list = glob.glob(folder + "*.csv")
@@ -109,13 +133,13 @@ def importFromCSV(folder, table):
         "delete from " + table + " where rowid not in (select  min(rowid) from " + table + " group by id,time,value);")
 
 
-def exportToCSV(query, file):
+def sqlite_to_csv(query, csvfile):
     # sqlite > select time, value from resource_value where time > '2017-03-21' and time < '2017-03-22';
     # print("Copy paste below dot command into your sqlite \n! Nothing execute in here\n")
     print(".headers on")
     print(".mode csv")
     print(".separator \";\"")
-    print(".output " + file)
+    print(".output " + csvfile)
     print(query)
 
 
@@ -151,7 +175,7 @@ def query_temperature_resource(cursor, site_id):
     return [id[0] for id in resource_list]
 
 
-def select_data_to_col(cursor, query):
+def select_single_sensor_to_pandas(cursor, query,id):
     resp = cursor.execute(query)
     df = pd.DataFrame(resp.fetchall(), columns=["timestamps", id], dtype=float)
     df = df.reset_index(drop=True)
@@ -213,7 +237,11 @@ if __name__ == "__main__":
         try:
             c = conn.cursor()
 
-            query_site_lat_lng(c)
+
+            # csv_to_sqlite("API_Cloud_2017.csv","API_CloudCoverage")
+            
+
+            #query_site_lat_lng(c)
 
             # ######### init table for database
             # # init_database(c)
