@@ -36,13 +36,13 @@ if __name__ == "__main__":
                     '11-1','11-30',
                     '12-1','12-31',
                     ]
-        Y='2015'
+        Y='2016'
         Year = Y+"-"
 
         result_listTempC = []
         result_listHumidity = []
         result_listCloud = []
-
+        result_listTime = []
         while date_range:
             begin = Year+date_range[0]
             end = Year+date_range[1]
@@ -61,15 +61,28 @@ if __name__ == "__main__":
             r = requests.get(URL, params).json()
             print(json.dumps(r, sort_keys=True, indent=4)) # human-readable response :)
             for i in r["data"]["weather"]:
+                date = i["date"]
                 for j in i["hourly"]:
                     result_listTempC.append(int(j["tempC"]))
                     result_listCloud.append(int(j["cloudcover"]))
                     result_listHumidity.append(int(j["humidity"]))
-        print(df_peak_API_Cloud.shape,len(result_listCloud))
+                    result_listTime.append(str(date)+" "+ '{:02d}'.format(int(int(j["time"])/100))+":00"+":00")
+
         df_peak_API_Cloud[site_i]=result_listCloud
         df_peak_API_Humidity[site_i]=result_listHumidity
         df_peak_API_TempC[site_i]=result_listTempC
 
+    df_peak_API_Cloud["timestamps"] = result_listTime
+    df_peak_API_Cloud = df_peak_API_Cloud.reset_index(drop=True)
+    df_peak_API_Cloud = df_peak_API_Cloud.set_index('timestamps')
+    df_peak_API_Cloud.to_csv("API_Cloud_" + Y + ".csv",sep=";")
+
+    df_peak_API_TempC["timestamps"] = result_listTime
+    df_peak_API_TempC = df_peak_API_TempC.reset_index(drop=True)
+    df_peak_API_TempC = df_peak_API_TempC.set_index('timestamps')
     df_peak_API_TempC.to_csv("API_tempC_"+ Y  +".csv", sep=";")
-    df_peak_API_Humidity.to_csv("API_Humidity_" + Y+ ".csv", sep=";")
-    df_peak_API_Cloud.to_csv("API_Cloud_" + Y + ".csv", sep=";")
+
+    df_peak_API_Humidity["timestamps"] = result_listTime
+    df_peak_API_Humidity = df_peak_API_Humidity.reset_index(drop=True)
+    df_peak_API_Humidity = df_peak_API_Humidity.set_index('timestamps')
+    df_peak_API_Humidity.to_csv("API_Humidity_" + Y+ ".csv",sep=";")
