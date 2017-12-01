@@ -4,6 +4,8 @@ import pandas as pd
 import glob
 import os
 import shutil
+import requests
+import json
 
 
 def create_connection(db_file):
@@ -78,6 +80,94 @@ def init_database(cursor):
     execute_sql(cursor, sql_create_API_CloudCoverage_table)
 
 
+def WeatherAPI_to_sqlite(c, date_range, Y):
+    """
+    collecting temperature , cloud coverage , humidity
+    :param c: cursor
+    :param date_range: how many months do you like
+                        example
+                        [
+                            '1-1', '1-31',
+                            '2-1', '2-28',
+                            '3-1,', '3-31',
+                            '4-1', '4-30',
+                            '5-1', '5-31',
+                            '6-1', '6-30',
+                            '7-1', '7-31',
+                            '8-1', '8-31,',
+                            '9-01', '9-30',
+                            '10-1', '10-31',
+                            '11-1', '11-30',
+                            '12-1', '12-31',
+                        ]
+    :param Y: Year
+    :return: print stdout sqlite commands for import API weather data into sqlite
+    """
+    coordinate_dict = query_site_lat_lng(c)
+    site_list = query_site_list(c)
+
+    df_peak_API_Cloud = pd.DataFrame(columns=site_list)
+    df_peak_API_TempC = pd.DataFrame(columns=site_list)
+    df_peak_API_Humidity = pd.DataFrame(columns=site_list)
+    URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
+
+    for site_i in site_list:
+        lng, lat = coordinate_dict[site_i][0], coordinate_dict[site_i][1]
+        coordinate = str(lat) + "," + str(lng)
+
+        result_listTempC = []
+        result_listHumidity = []
+        result_listCloud = []
+        result_listTime = []
+
+        Year = Y + "-"
+        date_range = iter(date_range)
+        for i in date_range:
+            begin = Year + i
+            end = Year + next(date_range)
+            params = {
+                'q': coordinate,
+                'date': begin,
+                'enddate': end,
+                'tp': '1',
+                'key': '612818efa9204368a1785431172610',  # TODO expired 2017 Dec
+                'format': 'json',
+                'includelocation': 'yes',
+            }
+            r = requests.get(URL, params).json()
+            print(json.dumps(r, sort_keys=True, indent=4))  # human-readable response :)
+            for i in r["data"]["weather"]:
+                date = i["date"]
+                for j in i["hourly"]:
+                    result_listTempC.append(int(j["tempC"]))
+                    result_listCloud.append(int(j["cloudcover"]))
+                    result_listHumidity.append(int(j["humidity"]))
+                    result_listTime.append(
+                        str(date) + " " + '{:02d}'.format(int(int(j["time"]) / 100)) + ":00" + ":00")
+
+        df_peak_API_Cloud[site_i] = result_listCloud
+        df_peak_API_Humidity[site_i] = result_listHumidity
+        df_peak_API_TempC[site_i] = result_listTempC
+
+    df_peak_API_Cloud["timestamps"] = result_listTime
+    df_peak_API_Cloud = df_peak_API_Cloud.reset_index(drop=True)
+    df_peak_API_Cloud = df_peak_API_Cloud.set_index('timestamps')
+    df_peak_API_Cloud.to_csv("API_Cloud_" + Y + ".csv", sep=";")
+    csv_batch_to_sqlite("./", "API_CloudCoverage", "API_Cloud_")
+
+    df_peak_API_TempC["timestamps"] = result_listTime
+    df_peak_API_TempC = df_peak_API_TempC.reset_index(drop=True)
+    df_peak_API_TempC = df_peak_API_TempC.set_index('timestamps')
+    df_peak_API_TempC.to_csv("API_tempC_" + Y + ".csv", sep=";")
+    csv_batch_to_sqlite("./", "API_Temperature", "API_tempC_")
+
+    df_peak_API_Humidity["timestamps"] = result_listTime
+    df_peak_API_Humidity = df_peak_API_Humidity.reset_index(drop=True)
+    df_peak_API_Humidity = df_peak_API_Humidity.set_index('timestamps')
+    df_peak_API_Humidity.to_csv("API_Humidity_" + Y + ".csv", sep=";")
+    csv_batch_to_sqlite("./", "df_peak_API_Humidity", "API_Humidity_")
+
+
 def pandas_to_sqlite(df):
     """
     :param df: df head : [ timestamps id1  id2 ...idn]
@@ -86,7 +176,6 @@ def pandas_to_sqlite(df):
     directory = './DBimport/'
     if not os.path.exists(directory):
         os.makedirs(directory)
-
 
     for value in list(df)[1::]:
         print(value)
@@ -98,14 +187,15 @@ def pandas_to_sqlite(df):
         df_value.to_csv(directory + value + "to_import_sqlite.csv", sep=";", index=False, header=False)
     csv_batch_to_sqlite(directory, "resource_value")
 
-def csv_to_sqlite(APIcsvfile,table):
+
+def csv_to_sqlite(APIcsvfile, table):
     """
 
     :param APIcsvfile: head list ['timestamps, id1,id2,...]
     :param table for the input csv data
     :return: sqlite execute command
     """
-    df = pd.read_csv(APIcsvfile, delimiter=";", parse_dates=True)#,index_col='timestamps')
+    df = pd.read_csv(APIcsvfile, delimiter=";", parse_dates=True)  # ,index_col='timestamps')
     directory = './API_import/'
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -122,10 +212,13 @@ def csv_to_sqlite(APIcsvfile,table):
     csv_batch_to_sqlite(directory, table)
 
 
-def csv_batch_to_sqlite(folder, table):
+def csv_batch_to_sqlite(folder, table, matcher=None):
     # print("Copy paste below dot command into your sqlite \n! Nothing execute in here\n")
-
-    file_list = glob.glob(folder + "*.csv")
+    if matcher:
+        file_list = glob.glob(folder + matcher + "*.csv")
+        print
+    else:
+        file_list = glob.glob(folder + "*.csv")
     print(".separator \";\"")
     for i in file_list:
         print(".import " + i + " " + table)
@@ -141,6 +234,13 @@ def sqlite_to_csv(query, csvfile):
     print(".separator \";\"")
     print(".output " + csvfile)
     print(query)
+
+
+def query_site_list(c):
+    site_list = c.execute("select site from details_sensor group by site;")
+    site_list = [id[0] for id in site_list]
+    print(site_list)
+    return site_list
 
 
 def query_temp_resource_value(cursor, temp_resource_list):
@@ -159,10 +259,10 @@ def query_site_room_orientaion(cursor, site_id):
 
 
 def query_site_lat_lng(cursor):
-    coordinate_dict={}
+    coordinate_dict = {}
     resp = cursor.execute("select * from coordinates")
-    for id,lng,lat in resp.fetchall():
-        coordinate_dict[id]=[lng,lat]
+    for id, lng, lat in resp.fetchall():
+        coordinate_dict[id] = [lng, lat]
     return coordinate_dict
 
 
@@ -175,7 +275,7 @@ def query_temperature_resource(cursor, site_id):
     return [id[0] for id in resource_list]
 
 
-def select_single_sensor_to_pandas(cursor, query,id):
+def select_single_sensor_to_pandas(cursor, query, id):
     resp = cursor.execute(query)
     df = pd.DataFrame(resp.fetchall(), columns=["timestamps", id], dtype=float)
     df = df.reset_index(drop=True)
@@ -237,11 +337,30 @@ if __name__ == "__main__":
         try:
             c = conn.cursor()
 
-
             # csv_to_sqlite("API_Cloud_2017.csv","API_CloudCoverage")
-            
+            # csv_to_sqlite("API_tempC_2017.csv", "API_Temperature")
 
-            #query_site_lat_lng(c)
+            # Demo on WeatherOnlineAPI data collecting
+            date_range = [
+                '1-1', '1-31',
+                '2-1', '2-28',
+                '3-1,', '3-31',
+                '4-1', '4-30',
+                '5-1', '5-31',
+                '6-1', '6-30',
+                '7-1', '7-31',
+                '8-1', '8-31,',
+                '9-01', '9-30',
+                '10-1', '10-31',
+                '11-1', '11-30',
+                '12-1', '12-31',
+            ]
+            Year = '2016'
+            WeatherAPI_to_sqlite(c, date_range, Year)
+
+
+
+            # query_site_lat_lng(c)
 
             # ######### init table for database
             # # init_database(c)
