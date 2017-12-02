@@ -30,7 +30,6 @@ def retrieve_data(database, Months):
             c = conn.cursor()
             site_list = c.execute("select site from details_sensor group by site;")
             site_list = [str(id[0]) for id in site_list]
-            site_list= ['19640']
             for site_id in site_list:
                 temperature_resource_list = query_site_room_orientaion(c, site_id)
                 orientation[site_id] = temperature_resource_list
@@ -60,7 +59,7 @@ def plot_temp_indoor_outdoor(key_day, ax, weather, df_ETL, df_tempc, room_legend
         ax.set_xticks(xticks)
         ax.set_xticklabels(list(range(24)))
         # outdoor = ax.twinx().twiny() # wrong but looks better on trend
-        # outdoor = ax.twiny() # good but not good to show trend 
+        # outdoor = ax.twiny() # good but not good to show trend
         # df_tempc.loc[key_day].plot(ax=outdoor, color='c')
         # outdoor.set_xticks([])
         # outdoor.set_yticks([])
@@ -70,7 +69,7 @@ if __name__ == "__main__":
 
     database = '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
     Year = 2017
-    Months = list(range(2, 3))
+    Months = list(range(1, 13))
 
     site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation = retrieve_data(database, Months)
     for site_id in site_list:
