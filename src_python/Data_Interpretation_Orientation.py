@@ -35,7 +35,7 @@ def predict_orientation(df_rooms, active_rooms, date_list):
     for date in date_list:
         if '-15' in date or '-30' in date:  # update the sunrise sunset every 15 days
             sunrise, noon, sunset = sun_rise_set(lat, lng, pd.Timestamp(date + ' 01:00').timestamp())
-        begin = df_rooms.index.get_loc(date + " " + '{:02d}'.format(sunrise) + ':00:00')
+        begin = df_rooms.index.get_loc(date + " " + '{:02d}'.format(sunrise+2) + ':00:00')
         end = df_rooms.index.get_loc(date + " " + '{:02d}'.format(sunset) + ':00:00')
         df = df_rooms.iloc[begin:end]
         for room in active_rooms:
@@ -74,8 +74,7 @@ def predict_orientation(df_rooms, active_rooms, date_list):
         prediction.append([room, result])
 
         peak_top3[room]=[item for sublist in peak_top3[room] for item in sublist]
-        # print(peak_top3[room])
-        # print()
+
         # print(room, '{:05.1f}'.format(degree_prediction), '{:05.2f}%'.format(morning_peak_ratio * 100),
         #       "peak hour,frequency:", sorted(dict(Counter(peak)).items(), key=operator.itemgetter(1), reverse=True),
         #       "temperature range: [",
@@ -83,17 +82,12 @@ def predict_orientation(df_rooms, active_rooms, date_list):
         #       '{:05.2f}'.format(np.percentile(df[room].values, 50)),
         #       '{:05.2f}]'.format(np.percentile(df[room].values, 100)))
 
-        # print(peak)
-        # print(sorted(dict(Counter(peak)).items(), key=operator.itemgetter(1), reverse=True))
-    # print(peak_top3)
-    # peak_top = [item for sublist in peak_top3 for item in sublist]
-    # print(peak_top)
     return prediction, peak_top3
 
 
 if __name__ == "__main__":
     database = '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
-    site_list, dict_df, _, _, _ = retrieve_data(database, Year=2017, Months=list(range(1, 10)), feq="00:00")
+    site_list, dict_df, _, _, _ = retrieve_data(database, Year=2017, Months=list(range(4, 7)), feq="00:00")
     orientation_dict = retrieve_orientation(database)
     coordinate_dict = retrieve_coordinate(database)
 
@@ -129,8 +123,7 @@ if __name__ == "__main__":
                     orientation = ori
             ax_temp[i, 0].set_ylabel("R_" + orientation, rotation=90, labelpad=5)
             ax_peak[i, 0].set_ylabel("R_" + orientation, rotation=90, labelpad=5)
-            ax_temp[i, 0].grid(color='grey', linestyle='-', linewidth=0.5)
-            ax_peak[i, 0].grid(color='grey', linestyle='-', linewidth=0.5)
+
             i = i + 1
         ax_temp[i - 1, -1].set_xlabel('Temperature')
         ax_temp[0, 0].set_title(site_id)
