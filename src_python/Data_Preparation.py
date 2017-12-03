@@ -144,3 +144,8 @@ def ETL(df):
     df.iloc[begin:] = df_power
     df.iloc[:begin] = 0
     return df, list(df), begin
+
+
+def feedback_data():
+    # TODO write ETL data into database
+    pass
