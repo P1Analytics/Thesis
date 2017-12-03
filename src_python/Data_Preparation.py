@@ -30,13 +30,13 @@ def retrieve_data(database,Year, Months,feq=None):
             orientation = {}
             c = conn.cursor()
             site_list = c.execute("select site from details_sensor group by site;") # TODO or fill the table :details_site
-            # site_list = [str(id[0]) for id in site_list]
-            site_list=[
-                "144024", #"28843", "144243", "28850",
-            #     "144242", "19640", "27827", "155849",
-            #     "155851", "155076", "155865", "155077",
-            #     "155877", "157185", "159705"
-            ]
+            site_list = [str(id[0]) for id in site_list]
+            # site_list=[
+            #     "144024", #"28843", "144243", "28850",
+            # #     "144242", "19640", "27827", "155849",
+            # #     "155851", "155076", "155865", "155077",
+            # #     "155877", "157185", "159705"
+            # ]
             for site_id in site_list:
                 temperature_resource_list = query_site_room_orientaion(c, site_id)
                 orientation[site_id] = temperature_resource_list
