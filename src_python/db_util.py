@@ -296,9 +296,27 @@ def query_temperature_resource(cursor, site_id):
                                    "where site= " + site_id
                                    + " and property = 'Temperature'"
                                    + " and uri NOT LIKE '%site%' "
-                                   + "group by resource")
+                                   + "group by resource").fetchall()
     return [id[0] for id in resource_list]
 
+
+def query_resource_device(cursor, site_id,property):
+    """
+    :param cursor:
+    :param site_id:
+    :param property: "Luminosity","Motion","Relative Humidity", etc ...
+    :return: sensors id list and related pysical device list
+    """
+    resp = cursor.execute("select resource,uri from details_sensor "
+                                   "where site= " + str(site_id)
+                                   + " and property = '"+property+"'"
+                                   + " and uri NOT LIKE '%site%' "
+                                   + " and subsite != 0 "
+                                   + " group by resource"
+                          ).fetchall()
+    sensors = [iter[0] for iter in resp]
+    devices = [iter[1].split("/")[-2] for iter in resp] # TODO depend on different type of uri naming rules
+    return sensors,devices
 
 def select_single_sensor_to_pandas(cursor, query, id):
     resp = cursor.execute(query)
@@ -365,7 +383,7 @@ if __name__ == "__main__":
     with create_connection('/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db') as conn:
         try:
             c = conn.cursor()
-
+            print(query_motion_resource(c,'155877'))
             # query_site_lat_lng(c)
 
             # ######### init table for database
@@ -404,22 +422,22 @@ if __name__ == "__main__":
 
 
             ##########  Demo on WeatherOnlineAPI data collecting
-            date_range = [
-                # '1-1', '1-31',
-                # '2-1', '2-28',
-                # '3-1,', '3-31',
-                # '4-1', '4-30',
-                # '5-1', '5-31',
-                # '6-1', '6-30',
-                # '7-1', '7-31',
-                # '8-1', '8-31,',
-                # '9-01', '9-30',
-                '10-1', '10-31',
-                '11-1', '11-30',
-                # '12-1', '12-31',
-            ]
-            Year = '2017'
-            WeatherAPI_to_sqlite(c, date_range, Year)
+            # date_range = [
+            #     # '1-1', '1-31',
+            #     # '2-1', '2-28',
+            #     # '3-1,', '3-31',
+            #     # '4-1', '4-30',
+            #     # '5-1', '5-31',
+            #     # '6-1', '6-30',
+            #     # '7-1', '7-31',
+            #     # '8-1', '8-31,',
+            #     # '9-01', '9-30',
+            #     '10-1', '10-31',
+            #     '11-1', '11-30',
+            #     # '12-1', '12-31',
+            # ]
+            # Year = '2017'
+            # WeatherAPI_to_sqlite(c, date_range, Year)
 
             # WeatherAPIcsv_to_sqlite("API_Cloud_2017.csv", "API_CloudCoverage")
             # WeatherAPIcsv_to_sqlite("API_tempC_2017.csv", "API_Temperature")
