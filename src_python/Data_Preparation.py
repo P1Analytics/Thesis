@@ -5,7 +5,7 @@ from db_util import *
 pd.options.mode.chained_assignment = None
 
 
-def retrieve_data(database,Year, Months,feq=None):
+def retrieve_data(database, Year, Months, feq=None):
     """
     retrieve data from database during date rage A-B
     :param feq: 5mins sample , None; if 1hour sample use "00:00" ; 1 day sample use "21:00"
@@ -25,15 +25,15 @@ def retrieve_data(database,Year, Months,feq=None):
         date_B = str(Year) + "-" + str('{:02d}'.format(Months[-1] + 1)) + "-01"
 
     with create_connection(database) as conn:
-        print("Database Connecting....")
+        print("Database Connecting for sensor data....")
         try:
             orientation = {}
             c = conn.cursor()
             site_list = c.execute("select site from details_sensor group by site;") # TODO or fill the table :details_site
             site_list = [str(id[0]) for id in site_list]
             # site_list=[
-            #     "144024", #"28843", "144243", "28850",
-            # #     "144242", "19640", "27827", "155849",
+            #     #"144024","28843", "144243", "28850",
+            #     "144242","155849", #"144242",  "19640", "27827", "155849",
             # #     "155851", "155076", "155865", "155077",
             # #     "155877", "157185", "159705"
             # ]
@@ -56,6 +56,32 @@ def retrieve_data(database,Year, Months,feq=None):
         except Error as e:
             print("SQL ERROR:", e)
     return site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation
+
+
+
+def retrieve_coordinate(database):
+    with create_connection(database) as conn:
+        print("Database Connecting for coordinate....")
+        try:
+            c = conn.cursor()
+            coordinate_dict = query_site_lat_lng(c)
+            return coordinate_dict
+        except Error as e:
+            print("SQL ERROR:", e)
+            return None
+
+
+def retrieve_orientation(database):
+    with create_connection(database) as conn:
+        print("Database Connecting for orientation ....")
+        try:
+            c = conn.cursor()
+            orientation_dict = query_site_orientaion(c)
+            return orientation_dict
+        except Error as e:
+            print("SQL ERROR:", e)
+            return None
+
 
 
 def outliers_sliding_window(df, window_number):
@@ -142,7 +168,7 @@ def ETL(df):
         df_power[head] = df_col
 
     df.iloc[begin:] = df_power
-    df.iloc[:begin] = 0
+    # df.iloc[:begin] = 0
     return df, list(df), begin
 
 

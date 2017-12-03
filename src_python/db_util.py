@@ -1,4 +1,5 @@
 import sqlite3
+from collections import defaultdict
 from sqlite3 import Error
 import pandas as pd
 import glob
@@ -274,11 +275,19 @@ def query_site_room_orientaion(cursor, site_id):
     return orient.fetchall()
 
 
+def query_site_orientaion(cursor):
+    orientaion_dict = defaultdict(list)
+    resp = cursor.execute("select * from orientation")
+    for site, room, orient in resp.fetchall():
+        orientaion_dict[site].append([room, orient])
+    return orientaion_dict
+
+
 def query_site_lat_lng(cursor):
     coordinate_dict = {}
     resp = cursor.execute("select * from coordinates")
-    for id, lng, lat in resp.fetchall():
-        coordinate_dict[id] = [lng, lat]
+    for site, lng, lat in resp.fetchall():
+        coordinate_dict[site] = [lng, lat]
     return coordinate_dict
 
 

@@ -31,7 +31,7 @@ if __name__ == "__main__":
     for site_id in site_list:
         room_id_ori = orientation[site_id]
         if not room_id_ori:
-            print("we dont know the true orientation for this site ", site_id)
+            print("Don't know the true orientation for this site ", site_id)
             continue
         print("****************  ", site_id, room_id_ori, "****************  ")
 
