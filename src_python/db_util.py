@@ -153,42 +153,42 @@ def WeatherAPI_to_sqlite(c, date_range, Y):
     df_peak_API_Cloud = df_peak_API_Cloud.reset_index(drop=True)
     df_peak_API_Cloud = df_peak_API_Cloud.set_index('timestamps')
     df_peak_API_Cloud.to_csv("API_Cloud_" + Y + ".csv", sep=";")
-    csv_batch_to_sqlite("./", "API_CloudCoverage", "API_Cloud_")
+    csv_batch_to_one_table("./", "API_CloudCoverage", "API_Cloud_")
 
     df_peak_API_TempC["timestamps"] = result_listTime
     df_peak_API_TempC = df_peak_API_TempC.reset_index(drop=True)
     df_peak_API_TempC = df_peak_API_TempC.set_index('timestamps')
     df_peak_API_TempC.to_csv("API_tempC_" + Y + ".csv", sep=";")
-    csv_batch_to_sqlite("./", "API_Temperature", "API_tempC_")
+    csv_batch_to_one_table("./", "API_Temperature", "API_tempC_")
 
     df_peak_API_Humidity["timestamps"] = result_listTime
     df_peak_API_Humidity = df_peak_API_Humidity.reset_index(drop=True)
     df_peak_API_Humidity = df_peak_API_Humidity.set_index('timestamps')
     df_peak_API_Humidity.to_csv("API_Humidity_" + Y + ".csv", sep=";")
-    csv_batch_to_sqlite("./", "df_peak_API_Humidity", "API_Humidity_")
+    csv_batch_to_one_table("./", "df_peak_API_Humidity", "API_Humidity_")
 
 
-def pandas_to_sqlite(df):
-    """
-    :param df: df head : [ timestamps id1  id2 ...idn]
-    :return: sqlite execute command
-    """
-    directory = './DBimport/'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+# def pandas_to_sqlite(df):
+#     """
+#     :param df: df head : [ timestamps id1  id2 ...idn]
+#     :return: sqlite execute command
+#     """
+#     directory = './DBimport/'
+#     if not os.path.exists(directory):
+#         os.makedirs(directory)
+#
+#     for value in list(df)[1::]:
+#         print(value)
+#         df_value = df[['timestamps', value]]
+#         df_value["id"] = [value] * df.shape[0]
+#         new = ["id", "timestamps", value]
+#         df_value = df_value.reindex(columns=new)
+#         # print(df_value)
+#         df_value.to_csv(directory + value + "to_import_sqlite.csv", sep=";", index=False, header=False)
+#     csv_batch_to_sqlite(directory, "resource_value")
 
-    for value in list(df)[1::]:
-        print(value)
-        df_value = df[['timestamps', value]]
-        df_value["id"] = [value] * df.shape[0]
-        new = ["id", "timestamps", value]
-        df_value = df_value.reindex(columns=new)
-        # print(df_value)
-        df_value.to_csv(directory + value + "to_import_sqlite.csv", sep=";", index=False, header=False)
-    csv_batch_to_sqlite(directory, "resource_value")
 
-
-def csv_to_sqlite(APIcsvfile, table):
+def WeatherAPIcsv_to_sqlite(APIcsvfile, table):
     """
 
     :param APIcsvfile: head list ['timestamps, id1,id2,...]
@@ -209,10 +209,10 @@ def csv_to_sqlite(APIcsvfile, table):
         new = ["id", "timestamps", id]
         df_value = df_value.reindex(columns=new)
         df_value.to_csv(directory + id + "to_import_sqlite.csv", sep=";", index=False, header=False)
-    csv_batch_to_sqlite(directory, table)
+    csv_batch_to_one_table(directory, table)
 
 
-def csv_batch_to_sqlite(folder, table, matcher=None):
+def csv_batch_to_one_table(folder, table, matcher=None):
     # print("Copy paste below dot command into your sqlite \n! Nothing execute in here\n")
     if matcher:
         file_list = glob.glob(folder + matcher + "*.csv")
@@ -224,6 +224,22 @@ def csv_batch_to_sqlite(folder, table, matcher=None):
         print(".import " + i + " " + table)
     print(
         "delete from " + table + " where rowid not in (select  min(rowid) from " + table + " group by id,time,value);")
+
+
+def csv_batch_to_tables(sensor_data_folder):
+    """
+    :param sensor_data_folder:  inside  filename = "/../../5min2017Jul-Oct/27827.csv <---> table site_27827"
+    :return: sqlite commands for import data into tables for each site
+    """
+    file_list = glob.glob(sensor_data_folder + "*.csv")
+    print(".separator \";\"")
+    for file in file_list:
+        table = "site_" + file.split("/")[-1].split(".")[0]
+        print(".import " + file + " " + table)
+        print()
+        print(
+            "delete from " + table + " where rowid not in (select  min(rowid) from " + table + " group by id,time,value);")
+        print()
 
 
 def sqlite_to_csv(query, csvfile):
@@ -285,12 +301,16 @@ def select_single_sensor_to_pandas(cursor, query, id):
     return df
 
 
-def select_time_range_to_dataframe(cursor, site_id, resource_list, begin, end):
+def select_time_range_to_dataframe(cursor, site_id, resource_list, begin, end, feq=None):
     df_final = pd.DataFrame()
     for id in resource_list:
-        resp = cursor.execute("select time, value from site_" + site_id +
-                              " where id = " + str(id)
-                              + " and time > '" + begin + "' and time < '" + end + "';")
+        if feq:
+            query = "select time, value from site_" + site_id + " where id = " + str(id) + \
+                    " and time LIKE  '%" + feq + "%' and time > '" + begin + "' and time < '" + end + "';"
+        else:
+            query = "select time, value from site_" + site_id + " where id = " + str(id) + \
+                    " and time > '" + begin + "' and time < '" + end + "';"
+        resp = cursor.execute(query)
         df = pd.DataFrame(resp.fetchall(), columns=["timestamps", id], dtype=float)
         df = df.reset_index(drop=True)
         df = df.set_index('timestamps')
@@ -337,46 +357,25 @@ if __name__ == "__main__":
         try:
             c = conn.cursor()
 
-            # csv_to_sqlite("API_Cloud_2017.csv","API_CloudCoverage")
-            # csv_to_sqlite("API_tempC_2017.csv", "API_Temperature")
-
-            # Demo on WeatherOnlineAPI data collecting
-            date_range = [
-                '1-1', '1-31',
-                '2-1', '2-28',
-                '3-1,', '3-31',
-                '4-1', '4-30',
-                '5-1', '5-31',
-                '6-1', '6-30',
-                '7-1', '7-31',
-                '8-1', '8-31,',
-                '9-01', '9-30',
-                '10-1', '10-31',
-                '11-1', '11-30',
-                '12-1', '12-31',
-            ]
-            Year = '2016'
-            WeatherAPI_to_sqlite(c, date_range, Year)
-
-
-
             # query_site_lat_lng(c)
 
             # ######### init table for database
             # # init_database(c)
-            #
+
             # ######### after you fill up the details_of_sensor with, use this to create value table for each site
             # # create_resource_value_tables(c)
             # # create_resource_ETL_tables(c)
-            #
+
             # ######### import from CSV demo , fastest way , execute in the sqlite not in the scripts
-            # # resource_value_folder = "/Users/nanazhu/Documents/Sapienza/sqlite/5min2017Jan-Mar/"
-            # # importFromCSV(resource_value_folder, "resource_value")
-            #
+            # resource_value_folder = "/Users/nanazhu/Documents/Sapienza/temp/5min2017Apr-Jun/"
+            # csv_batch_to_tables(resource_value_folder)
+            # resource_value_folder = "/Users/nanazhu/Documents/Sapienza/temp/5min2017Jan-Mar/"
+            # csv_batch_to_tables(resource_value_folder)
+
             # ######### export to CSV demo
             # query = """select time, value from resource_value where time > '2017-03-21' and time < '2017-03-22';"""
             # exportToCSV(query, 'JustATest.csv')
-            #
+
             # ######### a full demo story:find all the temperature sensor data
             # #######   input
             # #######   time range : whole March
@@ -388,11 +387,33 @@ if __name__ == "__main__":
             #     temperature_resource_list = query_temperature_resource(c, site_id)
             #     print(temperature_resource_list)
             #     df = select_time_range_to_dataframe(c, temperature_resource_list, '2017-03-01', '2017-04-01')
-            #
+
             # ######### convert from previous format into ready-to-import-to-sqlite csv file
             # df = pd.read_csv("API_tempC_Febhourly.csv", delimiter=";", parse_dates=True)
             # print(df)
             # pandas_to_sqlite(df)
+
+
+            ##########  Demo on WeatherOnlineAPI data collecting
+            date_range = [
+                # '1-1', '1-31',
+                # '2-1', '2-28',
+                # '3-1,', '3-31',
+                # '4-1', '4-30',
+                # '5-1', '5-31',
+                # '6-1', '6-30',
+                # '7-1', '7-31',
+                # '8-1', '8-31,',
+                # '9-01', '9-30',
+                '10-1', '10-31',
+                '11-1', '11-30',
+                # '12-1', '12-31',
+            ]
+            Year = '2017'
+            WeatherAPI_to_sqlite(c, date_range, Year)
+
+            # WeatherAPIcsv_to_sqlite("API_Cloud_2017.csv", "API_CloudCoverage")
+            # WeatherAPIcsv_to_sqlite("API_tempC_2017.csv", "API_Temperature")
 
         except Error as e:
             print("SQL ERROR:", e)

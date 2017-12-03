@@ -1,7 +1,62 @@
 import numpy as np
 import pandas as pd
 from pylab import *
+from db_util import *
 pd.options.mode.chained_assignment = None
+
+
+def retrieve_data(database,Year, Months,feq=None):
+    """
+    retrieve data from database during date rage A-B
+    :param feq: 5mins sample , None; if 1hour sample use "00:00" ; 1 day sample use "21:00"
+    :param database: sqlite database file
+    :param Year :
+    :param Months: query months range
+    :return: full site list ,
+             dictionary of : sensor data, API data for cloud coverage , API data for Temperature
+    """
+    dict_df = {}
+    dict_df_cloud = {}
+    dict_df_tempc = {}
+    date_A = str(Year) + "-" + str('{:02d}'.format(Months[0])) + "-01"
+    if 12 == Months[-1]:
+        date_B = str(Year + 1) + "-01-01"
+    else:
+        date_B = str(Year) + "-" + str('{:02d}'.format(Months[-1] + 1)) + "-01"
+
+    with create_connection(database) as conn:
+        print("Database Connecting....")
+        try:
+            orientation = {}
+            c = conn.cursor()
+            site_list = c.execute("select site from details_sensor group by site;") # TODO or fill the table :details_site
+            # site_list = [str(id[0]) for id in site_list]
+            site_list=[
+                "144024", #"28843", "144243", "28850",
+            #     "144242", "19640", "27827", "155849",
+            #     "155851", "155076", "155865", "155077",
+            #     "155877", "157185", "159705"
+            ]
+            for site_id in site_list:
+                temperature_resource_list = query_site_room_orientaion(c, site_id)
+                orientation[site_id] = temperature_resource_list
+                temperature_resource_list = [i[0] for i in temperature_resource_list]
+                if feq:
+                    dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A, date_B,feq)
+                else:
+                    dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A,date_B)
+
+                query = " select time,value from API_CloudCoverage " \
+                        "where id=" + site_id + " and (time> '" + date_A + "' and time < '" + date_B + "');"
+                dict_df_cloud[site_id] = select_single_sensor_to_pandas(c, query, site_id)
+
+                query = " select time,value from API_Temperature " \
+                        "where id=" + site_id + " and (time> '" + date_A + "' and time < '" + date_B + "');"
+                dict_df_tempc[site_id] = select_single_sensor_to_pandas(c, query, site_id)
+        except Error as e:
+            print("SQL ERROR:", e)
+    return site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation
+
 
 def outliers_sliding_window(df, window_number):
     window = []
@@ -50,7 +105,7 @@ def outliers_sliding_window(df, window_number):
 
 
 def ETL(df):
-    # df = df[~df.index.duplicated(keep='first')]
+    df = df[~df.index.duplicated(keep='first')]
 
     for head in list(df):
         df_col = df[head]
@@ -87,4 +142,5 @@ def ETL(df):
         df_power[head] = df_col
 
     df.iloc[begin:] = df_power
+    df.iloc[:begin] = 0
     return df, list(df), begin

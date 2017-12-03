@@ -1,52 +1,7 @@
-from pylab import *
-from db_util import *
 from Data_Preparation import *
 
 pd.options.mode.chained_assignment = None
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
-
-
-def retrieve_data(database, Months):
-    """
-    retrieve data from database during date rage A-B
-    :param database: sqlite database file
-    :param Months: query months range
-    :return: full site list ,
-             dictionary of : sensor data, API data for cloud coverage , API data for Temperature
-    """
-    dict_df = {}
-    dict_df_cloud = {}
-    dict_df_tempc = {}
-    date_A = str(Year) + "-" + str('{:02d}'.format(Months[0])) + "-01"
-    if 12 == Months[-1]:
-        date_B = str(Year + 1) + "-01-01"
-    else:
-        date_B = str(Year) + "-" + str('{:02d}'.format(Months[-1] + 1)) + "-01"
-
-    with create_connection(database) as conn:
-        print("Database Connecting....")
-        try:
-            orientation = {}
-            c = conn.cursor()
-            site_list = c.execute("select site from details_sensor group by site;")
-            site_list = [str(id[0]) for id in site_list]
-            for site_id in site_list:
-                temperature_resource_list = query_site_room_orientaion(c, site_id)
-                orientation[site_id] = temperature_resource_list
-                temperature_resource_list = [i[0] for i in temperature_resource_list]
-
-                dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A, date_B)
-
-                query = " select time,value from API_CloudCoverage " \
-                        "where id=" + site_id + " and (time> '" + date_A + "' and time < '" + date_B + "');"
-                dict_df_cloud[site_id] = select_single_sensor_to_pandas(c, query, site_id)
-
-                query = " select time,value from API_Temperature " \
-                        "where id=" + site_id + " and (time> '" + date_A + "' and time < '" + date_B + "');"
-                dict_df_tempc[site_id] = select_single_sensor_to_pandas(c, query, site_id)
-        except Error as e:
-            print("SQL ERROR:", e)
-    return site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation
 
 
 def plot_temp_indoor_outdoor(key_day, ax, weather, df_ETL, df_tempc, room_legends, xticks):
@@ -69,9 +24,10 @@ if __name__ == "__main__":
 
     database = '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
     Year = 2017
-    Months = list(range(1, 13))
+    Months = list(range(8, 9))
 
-    site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation = retrieve_data(database, Months)
+    site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation = retrieve_data(
+        database='/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db', Year=2017, Months=list(range(1, 13)))
     for site_id in site_list:
         room_id_ori = orientation[site_id]
         if not room_id_ori:
