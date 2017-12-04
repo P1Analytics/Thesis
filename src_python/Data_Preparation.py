@@ -77,12 +77,11 @@ def retrieve_orientation(database):
         try:
             c = conn.cursor()
             orientation_dict = query_site_orientaion(c)
-            return orientation_dict
+
         except Error as e:
             print("SQL ERROR:", e)
             return None
-
-
+    return orientation_dict
 
 def outliers_sliding_window(df, window_number):
     window = []
