@@ -1,10 +1,20 @@
 from Util.Data_Preparation import *
-
 pd.options.mode.chained_assignment = None
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
 
 def plot_temp_indoor_outdoor(key_day, ax, weather, df_ETL, df_tempc, room_legends, xticks):
+    """
+    plot the temperature effected by outdoor cloud coverage
+    :param key_day: most sunny date ; most cloudy date
+    :param weather: "sunny" "cloudy"
+    :param df_ETL: data after ETL
+    :param df_tempc: outdoor temperature
+    :param ax: plot
+    :param room_legends: parameters for plot
+    :param xticks: parameters for plot
+    :return:
+    """
     df = df_ETL.loc[key_day, :]
     if 0 != df.shape[1]:
         df.plot(ax=ax)
@@ -21,24 +31,30 @@ def plot_temp_indoor_outdoor(key_day, ax, weather, df_ETL, df_tempc, room_legend
         # outdoor.legend(["Outdoor"], loc=3)
 
 if __name__ == "__main__":
-
+    # set parameteres here
     database = '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
     Year = 2017
     Months = list(range(8, 9))
 
+    # retrieve data
     site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation = retrieve_data(
         database='/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db', Year=2017, Months=list(range(1, 13)))
+
+
     for site_id in site_list:
+        # validate the data
         room_id_ori = orientation[site_id]
         if not room_id_ori:
             print("Don't know the true orientation for this site ", site_id)
             continue
         print("****************  ", site_id, room_id_ori, "****************  ")
 
+        # data pre-process for making sure time index in asc order
         df_site_i = dict_df[site_id].sort_index()
         df_cloud_i = dict_df_cloud[site_id].sort_index()
         df_tempc_i = dict_df_tempc[site_id].sort_index()
 
+        # for each months , making a plot
         index = 0
         while index < len(Months):
             date_begin = str(Year) + "-" + str('{:02d}'.format(Months[index])) + "-01"
@@ -51,6 +67,7 @@ if __name__ == "__main__":
                     date_end = str(Year) + "-" + str('{:02d}'.format(Months[index] + 1)) + "-01"
             index += 1
 
+            # ETL the sensor data
             df_raw = df_site_i.loc[date_begin:date_end]
             df_ETL, rooms_active, begin = ETL(df_raw)
             if -1 == begin:
@@ -58,7 +75,10 @@ if __name__ == "__main__":
                 continue
             print("Time range ", date_begin, date_end)
 
+            # reset index with date , no time
             df_ETL.index = [pd.to_datetime(str(date)).strftime('%Y-%m-%d') for date in df_ETL.index.values]
+
+            # maybe the beginning of data has been in long term power off / not active yet , only check weather after power-on
             begin_i = df_ETL.index[begin]
             print("Power-on start from ", begin_i)
 
@@ -66,12 +86,14 @@ if __name__ == "__main__":
             df_cloud.index = [pd.to_datetime(str(date)).strftime('%Y-%m-%d') for date in df_cloud.index.values]
             df_cloud.index.name = 'date'
             mean_day = df_cloud.groupby('date').mean()
+            # pick most cloudy day and most sunny day
             cloudy = mean_day.idxmax()
             sunny = mean_day.idxmin()
 
             df_tempc = df_tempc_i.loc[begin_i:date_end]
             df_tempc.index = [pd.to_datetime(str(date)).strftime('%Y-%m-%d') for date in df_tempc.index.values]
 
+            # plot the comparision of the two different outdoor weather
             fig, axn = plt.subplots(1, 2, sharey=True)
             plt.suptitle(site_id)
             xmax = 288  # not magic number = 5(mins/ sampled data)*12(times/ hour)*24(hours)
