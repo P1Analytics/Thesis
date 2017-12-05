@@ -5,6 +5,14 @@ warnings.filterwarnings(action="ignore", module="scipy", message="^internal gels
 
 
 def sun_rise_set(lat, lng, timestamp):
+    """
+    Retrieve the data from API
+    :param lat: latitude
+    :param lng: longitude
+    :param timestamp: because the day time keep changing as time fly
+    :return: exact hour for sunset sunrise and noon
+    """
+    # check the DST offset
     timezone_url = "https://maps.googleapis.com/maps/api/timezone/json?location=" + str(lat) + "," + str(lng) + \
                    "&timestamp=" + str(timestamp) + \
                    "&key=AIzaSyAI4--_x4AE2K5zZ6Z5tZafwwpVI9uYlYM"
@@ -13,6 +21,7 @@ def sun_rise_set(lat, lng, timestamp):
     # print(json.dumps(rs, sort_keys=True, indent=4))  # human-readable response :)
     GMT = int((int(rs["dstOffset"]) + int(rs["rawOffset"])) / 3600)
 
+    # check the weather
     rise_set_url = "https://api.sunrise-sunset.org/json?lat=" + str(lat) + "&lng=" + str(lng) + \
                    "&date=" + time.strftime("%D", time.localtime(timestamp))
     try:
@@ -26,6 +35,14 @@ def sun_rise_set(lat, lng, timestamp):
 
 
 def predict_orientation(df_rooms, active_rooms, date_list):
+    """
+    making prediction based on the indoor temperature from the sensor
+    :param df_rooms: all rooms temperature of indoor for one site
+    :param active_rooms: active sensor list
+    :param date_list: checking each day with
+    :return: prediction and top 3 peak hour list for later histgram analysis plot
+    """
+    # find the hottest time per day and top3
     prediction = []
     peak_dict = defaultdict(list)
     peak_top3 = defaultdict(list)
@@ -43,6 +60,7 @@ def predict_orientation(df_rooms, active_rooms, date_list):
             peak_top3[room].append(list(map(int, [pd.to_datetime(str(timestamps)).strftime('%H') for timestamps in df[room].nlargest(3).index.values])))
             peak_dict[room].append(df[room].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
 
+    # check room by room for prediction the orientation
     for room in active_rooms:
         peak = peak_dict[room]
         sum = 0
@@ -84,6 +102,7 @@ def predict_orientation(df_rooms, active_rooms, date_list):
 
 
 if __name__ == "__main__":
+    # retrieve data from database
     database = '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
     site_list, dict_df, _, _, _ = retrieve_data(database, Year=2017, Months=list(range(4, 7)), feq="00:00")
     orientation_dict = retrieve_orientation(database)
@@ -91,6 +110,7 @@ if __name__ == "__main__":
 
     for site_id in site_list:
         print("********* ", site_id, " *********")
+        # validate the data
         rooms_orientation = orientation_dict[int(site_id)]
         if rooms_orientation is None:
             print(site_id, " orientation empty")
@@ -104,11 +124,15 @@ if __name__ == "__main__":
         if -1 == begin:
             print(site_id, " empty")
             continue
+
+        # remove the time part from datetime index
         date_list = sorted(
             set([pd.to_datetime(str(timestamps)).strftime('%Y-%m-%d') for timestamps in df_original.index.values]))
         prediction,peak_dict = predict_orientation(df_rooms, active_rooms, date_list)
         print("Truth :", rooms_orientation)
         print("Prediction :", prediction)
+
+        # plot the histgram of the distribution of the peak time and temperature
         f, ax_temp = plt.subplots(len(active_rooms), 1, sharex=True, squeeze=False)
         f, ax_peak = plt.subplots(len(active_rooms), 1, sharex=True, squeeze=False)
         i = 0
