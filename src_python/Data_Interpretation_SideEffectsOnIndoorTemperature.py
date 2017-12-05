@@ -1,4 +1,4 @@
-from Data_Preparation import *
+from Util.Data_Preparation import *
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
 
@@ -124,6 +124,7 @@ if __name__ == "__main__":
 
         # plot out the data per day
         for day_i in day_list[0:30]:
+            # only print weekend
             if pd.to_datetime(day_i).dayofweek <5:
                 continue
 
@@ -144,13 +145,15 @@ if __name__ == "__main__":
             df_day_i.plot(ax=axn[0, 0])
             axn[0, 0].legend(room_legends, loc=2)
             axn[0, 0].set_xticks([])
+            axn[1, 0].set_ylabel('Temp')
 
             df_motion_i.plot(ax=axn[1, 0], marker=".")
             axn[1, 0].legend(room_legends, loc=2)
             axn[1, 0].set_xticks([])
+            axn[1,0].set_ylabel('Motion')
 
             df_cloud_i.plot(ax=axn[2, 0], marker=",")
-            axn[2, 0].legend(["cloud"], loc=2)
+            axn[2, 0].legend(["Cloud"], loc=2)
             axn[2, 0].set_xticks([])
 
             df_tempC_i.plot(ax=axn[3, 0], marker="o")
@@ -159,7 +162,9 @@ if __name__ == "__main__":
 
             plt.xlim(0, xmax)
             plt.xticks(major_ticks, list(range(24)))
+
+
             f.set_size_inches(18.5, 11.5)
             plt.savefig(day_i + "_" + site_id + '.png', dpi=400)
         plt.close('all')
-        # plt.show()
+    # plt.show()

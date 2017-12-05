@@ -1,7 +1,5 @@
-import numpy as np
-import pandas as pd
 from pylab import *
-from db_util import *
+from Util.db_util import *
 pd.options.mode.chained_assignment = None
 
 
@@ -60,6 +58,11 @@ def retrieve_data(database, Year, Months, feq=None):
 
 
 def retrieve_coordinate(database):
+    """
+    retrieve the coordinate of all the sites
+    :param database:  format like  '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
+    :return: dictionary of coordinate
+    """
     with create_connection(database) as conn:
         print("Database Connecting for coordinate....")
         try:
@@ -72,6 +75,11 @@ def retrieve_coordinate(database):
 
 
 def retrieve_orientation(database):
+    """
+    retrieve the orientation of all the sites
+    :param database: format like  '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
+    :return:  dictionary of orientation
+    """
     with create_connection(database) as conn:
         print("Database Connecting for orientation ....")
         try:
@@ -84,6 +92,12 @@ def retrieve_orientation(database):
     return orientation_dict
 
 def outliers_sliding_window(df, window_number):
+    """
+    remove the outlier
+    :param df: dataframe
+    :param window_number: checking only window_number size history data
+    :return: updated dataframe
+    """
     window = []
     outlier = 0
     max_range = 0
@@ -111,20 +125,21 @@ def outliers_sliding_window(df, window_number):
 
         if np.isnan(item) or item == 0:
             outlier += 1
-            window[-1] = average  # last_max
-            df[i] = average  # last_max
+            window[-1] = average  # or fill back with last_max
+            df[i] = average  # or fill back with last_max
 
         if len(previous) < window_number - 1:
             continue
 
-        if now_range > max_range * 0.9:  # 0.8:  # new peak comes out, OTHERWISE keep calm and carry on
+        # new peak comes out, OTHERWISE keep calm and carry on
+        if now_range > max_range * 0.9:  # 0.8:
             outlier += 1
             if item < lower:
-                window[-1] = average  # last_min# (last_min + min) / 2
-                df[i] = average  # last_min #(last_min + min) / 2
+                window[-1] = average  #or fill back with last_min ; (last_min + min) / 2
+                df[i] = average  #or fill back with last_min ;(last_min + min) / 2
             if item > upper:
-                window[-1] = average  # (last_max + max) / 2
-                df[i] = average  # last_max #(last_max + max) / 2
+                window[-1] = average  #or fill back with last_max; (last_max + max) / 2
+                df[i] = average  # or fill back with last_max ; (last_max + max) / 2
 
     return df, outlier, average
 

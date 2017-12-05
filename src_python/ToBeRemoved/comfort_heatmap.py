@@ -1,141 +1,11 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from pandas.tseries.offsets import *
 import seaborn as sns
-from math import *
-import time, warnings
-from comfort_models import *
+from db_util import *
+
+from Util.Data_Preparation import *
+from Util.comfort_models import *
+
 sns.set()
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
-
-
-def coordinate_dicts():
-    global coordinates
-    with open("coordinates.txt") as f:
-        lines = f.read().splitlines()
-    coordinates = {}
-    for line in lines:
-        coordinates[line.split()[0]] = [line.split()[1], line.split()[2]]
-    # print(coordinates)
-    return coordinates
-
-
-def outliers_sliding_window(df, window_number):
-    window = []
-    outlier = 0
-    max_range = 0
-    for i in range(df.size):  # df is df_col
-        item = df[i]
-        if len(window) == window_number:
-            window.pop(0)
-        window.append(item)
-        previous = window[:-1]
-        if len(previous) == 0:
-            continue  # TODO what if the first value is NaN ?
-
-        average = np.mean(previous)
-        Q1 = np.percentile(previous, 25)
-        Q3 = np.percentile(previous, 75)
-        upper = Q3 + (Q3 - Q1) * 3 #1.5
-        lower = Q1 - (Q3 - Q1) * 3 #1.5
-        last_min = np.percentile(previous, 0)
-        last_max = np.percentile(previous, 100)
-        min = np.percentile(window, 0)
-        max = np.percentile(window, 100)
-        now_range = max - min
-        if max_range < now_range:
-            max_range = now_range
-
-        if np.isnan(item) or item == 0: # if temperature always above 0
-            outlier += 1
-            window[-1] = average
-            df[i] = average
-            # print(item, "change to max", average)
-
-        if len(previous) < window_number - 1:
-            continue
-
-        if now_range > max_range * 0.9:  # new peak comes out, OTHERWISE keep calm and carry on
-            outlier += 1
-            if item < lower:
-                # print(item, "change to min", (last_min + min) / 2)
-                window[-1] = (last_min + min) / 2
-                df[i] = (last_min + min) / 2
-            if item > upper:
-                # print(item, "change to max", (last_max + max) / 2)
-                window[-1] = (last_max + max) / 2
-                df[i] = (last_max + max) / 2
-
-    # print("******************************", df.name, df.size, outlier,outlier_NaN, outlier_NaN / outlier)
-    return df, outlier
-
-
-def ETL(filename, statistic=False):
-    df = pd.read_csv(filename, delimiter=";", index_col='timestamps', parse_dates=True)
-
-    if statistic:
-        df_norm = (df - df.min()) / (df.max() - df.min())  # Normalized different scale for different sensor
-        index_month = [int(str(i).split("-")[1]) for i in df.index.date]
-        df_norm.index = index_month
-
-    active_time = []
-    dfT = df.T
-    for head in list(dfT):
-        df_col = dfT[head]
-        try:
-            if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
-                dfT[head] = dfT[head].replace(0, np.nan)
-            else:
-                active_time.append(head)
-        except ValueError:
-            continue
-        pd.options.mode.chained_assignment = None
-    df = dfT.T
-
-    active_sensor = []
-    for head in list(df):
-        df_col = df[head]
-        if (df_col[df_col == 0]).size + df_col.isnull().sum() == df_col.size:
-            # df[head] = df[head].replace(0, np.nan)
-            df = df.drop(head, 1)
-        else:
-            active_sensor.append(head)
-
-    if len(active_time) != 0:
-        begin = df.index.get_loc(active_time[0])
-        df_power = df.iloc[begin:]
-        sum_nan = sum(df_power.isnull().sum().values)  # Define:  all the NaN data are "missing data"
-        power_on = df_power.shape
-        miss_ratio = sum_nan / power_on[0] / power_on[1] * 100
-    else:
-        df_power = df
-
-    if statistic:
-        print(begin, active_time[0])
-        # print(filename)
-        print(">>>>>>>statistic : active time", len(active_time) / df.shape[0] * 100, "%")
-        print(">>>>>>>statistic : active sensor", len(head) / df.shape[1] * 100, "%")
-        miss_ratio = ("%.2f" % miss_ratio) + "%"
-        return df_norm, miss_ratio
-
-    # Here is the smooth out : delete outliers + rolling windows
-    sum_outliers = 0
-    for head in list(df_power):
-        df_col = df_power[head]
-        nan = df_col.isnull().sum()
-        df_col, outliers = outliers_sliding_window(df_col, window_number=4)
-        sum_outliers += (outliers - nan)
-
-        df_col = df_col.rolling(window=6, center=False, min_periods=0).mean()
-        df_col = df_col.fillna(df_col.mean)
-        df_power[head] = df_col
-    outlierS = sum_outliers / df_power.shape[0] / df_power.shape[1] * 100
-
-    df.iloc[begin:] = df_power
-
-    # df.to_csv(filename.split(".")[0] + "_XXX.csv", sep=";")
-    return df, active_sensor, outlierS
 
 
 if __name__ == "__main__":
@@ -172,9 +42,13 @@ if __name__ == "__main__":
     business_week = ['M','T','W','T','F']
 
     df_all_comfort = pd.DataFrame(index=index)
+
     for school in school_list:
         outdoor = df_api_temp[school.split("_")[0]].values
-        df_rooms, _, _ = ETL(school)
+        site_id = school.split("_")[0]
+        df = pd.read_csv(school, delimiter=";", index_col='timestamps', parse_dates=True)
+
+        df_rooms, _, _ = ETL(df)
         room_list = list(df_rooms)
         room_num = len(room_list)
 

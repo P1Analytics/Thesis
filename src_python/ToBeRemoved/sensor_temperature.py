@@ -1,17 +1,15 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import operator
 import pandas as pd
-from pandas.tseries.offsets import *
+import time
+from collections import Counter, defaultdict
+
+import pandas as pd
 import requests
 import seaborn as sns
-import time, warnings, json
-import pytz
-from collections import Counter, defaultdict
 from pylab import *
 from sklearn.linear_model import LinearRegression
-from pandas.tseries.offsets import BDay
-from comfort_models import *
+
+from Util.comfort_models import *
+
 sns.set()
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
@@ -66,8 +64,8 @@ def outliers_sliding_window(df, window_number):
         average = mean(previous)
         Q1 = np.percentile(previous, 25)
         Q3 = np.percentile(previous, 75)
-        upper = Q3 + (Q3 - Q1) * 1.5
-        lower = Q1 - (Q3 - Q1) * 1.5
+        upper = Q3 + (Q3 - Q1) * 3 #1.5
+        lower = Q1 - (Q3 - Q1) * 3 # 1.5
         last_min = np.percentile(previous, 0)
         last_max = np.percentile(previous, 100)
         min = np.percentile(window, 0)
@@ -76,28 +74,28 @@ def outliers_sliding_window(df, window_number):
         if max_range < now_range:
             max_range = now_range
 
-        if np.isnan(item):  # or item == 0:
+        if np.isnan(item) : # or item == 0:
             outlier += 1
-            window[-1] = average
-            df[i] = average
+            window[-1] = average # last_max
+            df[i] = average # last_max
             # print(item, "change to max", average)
 
         if len(previous) < window_number - 1:
             continue
 
-        if now_range > max_range * 0.9:  # new peak comes out, OTHERWISE keep calm and carry on
+        if now_range > max_range * 0.9: # 0.8:  # new peak comes out, OTHERWISE keep calm and carry on
             outlier += 1
             if item < lower:
                 # print(item, "change to min", (last_min + min) / 2)
-                window[-1] = (last_min + min) / 2
-                df[i] = (last_min + min) / 2
+                window[-1] = average # last_min# (last_min + min) / 2
+                df[i] = average # last_min #(last_min + min) / 2
             if item > upper:
                 # print(item, "change to max", (last_max + max) / 2)
-                window[-1] = (last_max + max) / 2
-                df[i] = (last_max + max) / 2
+                window[-1] = average # last_max# (last_max + max) / 2
+                df[i] = average# last_max #(last_max + max) / 2
 
     # print("******************************", df.name, df.size, outlier,outlier_NaN, outlier_NaN / outlier)
-    return df, outlier
+    return df, outlier,average
 
 
 def ETL(filename, statistic=False):
@@ -155,11 +153,11 @@ def ETL(filename, statistic=False):
             continue # df = df.drop(head, 1)  # skip dead sensor
 
         nan = df_col.isnull().sum()
-        df_col, outliers = outliers_sliding_window(df_col, window_number=4)
+        df_col, outliers,average = outliers_sliding_window(df_col, window_number=4)
         sum_outliers += (outliers-nan)
 
         df_col = df_col.rolling(window=6, center=False, min_periods=0).mean()
-        df_col = df_col.fillna(df_col.mean)
+        df_col = df_col.fillna(average)#(df_col.mean)
         df_power[head] = df_col  # only save data after ETL
     result = sum_outliers/ df_power.shape[0] / df_power.shape[1] * 100
 
@@ -171,16 +169,16 @@ def ETL(filename, statistic=False):
 
 
 if __name__ == "__main__":
-    '''
-    # print("********* Comfortable *************")
+
     df_original, _, _ = ETL("27827_Temperature.csv")
     heads = list(df_original)
-    indoor_list = heads[1:]
+    indoor_list = heads[2:]
     fig, axn = plt.subplots(len(indoor_list), 1, sharex=True)
     cbar_ax = fig.add_axes([.92, .3, .03, .4]) # [left, bottom, width, height]
     fig.suptitle("Room comfortable  2017.Sep.05-2017.Nov.04", fontsize=14)
+    map_weekday = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
-    for o in [heads[0],]:
+    for o in [heads[1],]:
         for j, ax in enumerate(axn.flat): #for i in heads[1:]:
             i = indoor_list[0]
             indoor_list.pop(0)
@@ -194,7 +192,6 @@ if __name__ == "__main__":
             com_df = pd.DataFrame(comfort, index=index, columns=["comfort KPI"])
             date_list = sorted(set([str(i).split()[0] for i in com_df.index]))
 
-            map_weekday = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
             comfort_ratio = defaultdict(list)
             week_index = []
             for date in date_list:
@@ -237,11 +234,14 @@ if __name__ == "__main__":
             ax.set_ylabel(label, rotation=0,labelpad=50)
 
     plt.show()
-    # print("********* Comfortable *************")
-    '''
 
+
+
+
+
+
+    # ****************  replace outdoor with API ****************
     '''
-    print("********* replace outdoor with API *************")
     lng, lat = 21.707891,38.197247
     # real-time
     # r = requests.get('http://api.openweathermap.org/data/2.5/weather?',
@@ -268,8 +268,8 @@ if __name__ == "__main__":
     print("********* replace outdoor with API *************")
     '''
 
-    '''
     # ********* heatmap for STATISTIC of MISSING DATA  for 15 sites , active vs inactive for 2 years *********
+    '''
     TwoYEARs_list = [
         "Libelium.csv",
         "Synfield.csv",
@@ -337,9 +337,8 @@ if __name__ == "__main__":
     # print("SIZE",df_norm.iloc[2:].shape)
     '''
 
-
-    '''
     # ****************  find similarity of the rooms  ****************
+
     df_original = pd.read_csv("155877_Temperature4.csv", delimiter=";", index_col='timestamps', parse_dates=True)
 
     df_indoor, working_indoor, _ = ETL("155877_Temperature4.csv")#("144024.csv") #("144242_TemperatureIndoor.csv")
@@ -382,7 +381,7 @@ if __name__ == "__main__":
 
             # plot Raw + ETL data for peak
             ax.plot(xaxis,df_original[indoor].values,label="Room "+room[i]+" Raw")
-            ax.plot(xaxis,Y,label="Room"+room[i]+" ETL")
+            ax.plot(xaxis,Y,label="Room "+room[i]+" ETL")
             ax.legend()
 
             # plot histgram for ETL Data
@@ -416,11 +415,10 @@ if __name__ == "__main__":
         # df_indoor[[new_heads[5],new_heads[7],new_heads[9],new_heads[11],new_heads[13]]].boxplot(rot=90)
     # plt.scatter(coef, inter)
     # df_indoor.to_csv(indoor.split("_")[0] + "_trend.csv", sep=";")
-    '''
 
-    '''
-    print("********* Orientation *************")
-    
+
+    # ****************  Orientation  ****************
+
     head = list(df_indoor)
     coordinate_dict = coordinate_dicts()
     site = working_indoor[0].split("_")[0]
@@ -468,5 +466,6 @@ if __name__ == "__main__":
         if sunset / 24 * 360 <= Ori < 359:
             print("West|North-West")
         print("**********************")
-    '''
-    # plt.show()
+
+
+

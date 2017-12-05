@@ -1,7 +1,8 @@
 import seaborn as sns
-from Data_Preparation import *
-from comfort_models import *
-from db_util import *
+
+from Util.Data_Preparation import *
+from Util.comfort_models import *
+
 sns.set()
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 from Data_Interpretation_CloudOnIndoorTemperature import retrieve_data

@@ -300,23 +300,45 @@ def query_temperature_resource(cursor, site_id):
     return [id[0] for id in resource_list]
 
 
-def query_resource_device(cursor, site_id,property):
+def query_same_device_other_sensor(cursor, subsite_id):
+    resource = cursor.execute("select resource from details_sensor "
+                              "where subsite = " + subsite_id
+                              + " and property = 'Motion'"
+                              ).fetchall()
+    return resource
+
+
+def query_resource_device(cursor, site_id, property):
     """
     :param cursor:
     :param site_id:
     :param property: "Luminosity","Motion","Relative Humidity", etc ...
     :return: sensors id list and related pysical device list
     """
-    resp = cursor.execute("select resource,uri from details_sensor "
-                                   "where site= " + str(site_id)
-                                   + " and property = '"+property+"'"
-                                   + " and uri NOT LIKE '%site%' "
-                                   + " and subsite != 0 "
-                                   + " group by resource"
+    resp = cursor.execute("select resource,uri,subsite from details_sensor "
+                          "where site= " + str(site_id)
+                          + " and property = '" + property + "'"
+                          + " and uri NOT LIKE '%site%' "
+                          + " and subsite != 0 "
+                          + " group by resource"
                           ).fetchall()
     sensors = [iter[0] for iter in resp]
-    devices = [iter[1].split("/")[-2] for iter in resp] # TODO depend on different type of uri naming rules
-    return sensors,devices
+    devices = [iter[1].split("/")[-2] for iter in resp]  # TODO depend on different type of uri naming rules
+    print(devices)
+    sensor_temp = []
+    for iter in devices:
+        subsite = cursor.execute("select subsite from details_sensor "
+                              "where site= " + str(site_id)
+                              + " and property = 'Temperature'"
+                              + " and uri LIKE '%" + iter + "%' "
+                              + " and subsite != 0 "
+                              + " group by resource"
+                              ).fetchall()[0][0]
+
+        print(subsite)
+
+    return sensors, devices
+
 
 def select_single_sensor_to_pandas(cursor, query, id):
     resp = cursor.execute(query)
@@ -383,7 +405,7 @@ if __name__ == "__main__":
     with create_connection('/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db') as conn:
         try:
             c = conn.cursor()
-            print(query_motion_resource(c,'155877'))
+            print(query_resource_device(c, '155877', 'Motion'))
             # query_site_lat_lng(c)
 
             # ######### init table for database
