@@ -1,20 +1,20 @@
-import seaborn as sns
-
 from Util.Data_Preparation import *
 from Util.comfort_models import *
-
+import seaborn as sns
 sns.set()
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 from Data_Interpretation_CloudOnIndoorTemperature import retrieve_data
 
 if __name__ == "__main__":
-
+    # retrieve the data from database , sample 1hour
     site_list, dict_df, _, dict_df_tempc, _ = retrieve_data(
         database='/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db',
         Year=2017, Months=list(range(4,10)), feq="00:00")
 
+    # put all the comfort KPI into one dataframe
     df_all_comfort = pd.DataFrame()
     for site_id in site_list:
+        # calculate each site comfort with outdoor/indoor temperature
         outdoor = dict_df_tempc[site_id]
         outdoor = outdoor[site_id].values
         df_rooms, room_list, begin = ETL(dict_df[site_id])
@@ -35,11 +35,13 @@ if __name__ == "__main__":
         df_sum = df_comfort_school_X.mean(axis=1)
         df_all_comfort[site_id] = df_sum.values
 
+    # set all comfort dataframe with the same index from database and remove the duplicated ones from DST changing
     df_all_comfort['date'] = df_sum.index.values
     df_all_comfort = df_all_comfort.reset_index(drop=True)
     df_all_comfort = df_all_comfort.set_index('date')
     df_all_comfort = df_all_comfort[~df_all_comfort.index.duplicated(keep='first')]
 
+    # only check the comfort during working-day
     df_comfort_business_day = pd.DataFrame(columns=list(df_all_comfort), dtype=float)
     index_date = sorted(set([pd.to_datetime(str(time)).strftime('%Y-%m-%d') for time in df_all_comfort.index.values]))
     yticks_list = []
@@ -51,6 +53,7 @@ if __name__ == "__main__":
     df_comfort_business_day.index = pd.to_datetime(df_comfort_business_day.index)
     df_comfort_business_day = df_comfort_business_day.groupby(pd.TimeGrouper('D')).mean().dropna(axis=0)
 
+    # plot the whole heatmap for comfort of all site
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     cbar_ax = fig.add_axes([.902, .3, .03, .4])
