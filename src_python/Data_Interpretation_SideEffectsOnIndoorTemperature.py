@@ -30,7 +30,7 @@ def retrieve_period_data(database, Year, Months, feq=None):
             site_list = [str(id[0]) for id in site_list]
             # site_list=[
             #     #"144024","28843", "144243", "28850",
-            #     "144242",#"155849", #"144242",  "19640", "27827", "155849",
+            #     '144243','155865',#'157185',#"155849", #"144242",  "19640", "27827", "155849",
             # #     "155851", "155076", "155865", "155077",
             # #     "155877", "157185", "159705"
             # ]
@@ -123,9 +123,9 @@ if __name__ == "__main__":
 
 
         # plot out the data per day
-        for day_i in day_list[0:30]:
+        for day_i in day_list:
             # only print weekend
-            if pd.to_datetime(day_i).dayofweek <5:
+            if pd.to_datetime(day_i).dayofweek < 5 :
                 continue
 
             df_day_i = df_temp.loc[day_i, :]
@@ -133,38 +133,40 @@ if __name__ == "__main__":
             df_cloud_i = df_cloud.loc[day_i, :]
             df_tempC_i = df_tempC.loc[day_i, :]
 
+
+            f, axn = plt.subplots(4, 1, squeeze=False) #sharex=True,
             xmax = df_day_i.shape[0]
             if xmax == 24:
                 major_ticks = np.arange(0, 24)
             else:
                 major_ticks = np.arange(0, xmax, 12)  # 5mins * 12 = 1hour
 
-            f, axn = plt.subplots(4, 1, sharex=True, squeeze=False)
             axn[0, 0].set_title(day_i + " at " + site_id)
 
             df_day_i.plot(ax=axn[0, 0])
             axn[0, 0].legend(room_legends, loc=2)
             axn[0, 0].set_xticks([])
-            axn[1, 0].set_ylabel('Temp')
-
-            df_motion_i.plot(ax=axn[1, 0], marker=".")
+            axn[0, 0].set_ylabel('Temp')
+            axn[0, 0].set_xlim(0 + 8 * 12, xmax - 2 * 12)
+            #
+            df_day_i.diff().abs().plot(ax=axn[1, 0])
             axn[1, 0].legend(room_legends, loc=2)
-            axn[1, 0].set_xticks([])
-            axn[1,0].set_ylabel('Motion')
+            axn[1,0].set_ylabel('Diff')
 
-            df_cloud_i.plot(ax=axn[2, 0], marker=",")
-            axn[2, 0].legend(["Cloud"], loc=2)
-            axn[2, 0].set_xticks([])
+            df_motion_i.plot(ax=axn[2, 0],legend=False)
+            axn[2, 0].set_ylabel('Motion')
 
-            df_tempC_i.plot(ax=axn[3, 0], marker="o")
-            axn[3, 0].legend(["TempOut"], loc=2)
-            axn[3, 0].set_xticks([])
+            df_cloud_i.plot(ax=axn[3, 0],legend=False)
+            axn[3, 0].set_ylabel('Cloud')
 
             plt.xlim(0, xmax)
-            plt.xticks(major_ticks, list(range(24)))
 
+            # must set at the end of all the plots
+            plt.setp(axn, xticks=major_ticks, xticklabels=list(range(24)))
 
-            f.set_size_inches(18.5, 11.5)
-            plt.savefig(day_i + "_" + site_id + '.png', dpi=400)
-        plt.close('all')
-    # plt.show()
+            break
+        break
+    #         f.set_size_inches(18.5, 11.5)
+    #         plt.savefig(day_i + "_" + site_id + '.png', dpi=400)
+    #     plt.close('all')
+    plt.show()
