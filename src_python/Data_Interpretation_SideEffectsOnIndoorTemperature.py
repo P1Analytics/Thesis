@@ -160,7 +160,8 @@ if __name__ == "__main__":
             axn[3, 0].set_ylabel('Cloud')
 
             plt.xlim(0, xmax)
-
+            # axn[0, 0].set_xlim(0 + 8 * 12, xmax - 2 * 12)
+            # axn[1, 0].set_xlim(0 + 8 * 12, xmax - 2 * 12)
             # must set at the end of all the plots
             plt.setp(axn, xticks=major_ticks, xticklabels=list(range(24)))
 
