@@ -1,4 +1,8 @@
 import time
+from collections import Counter
+import operator
+import seaborn as sns
+sns.set(style="whitegrid")
 from Util.Data_Preparation import *
 
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
@@ -46,6 +50,7 @@ def predict_orientation(df_rooms, active_rooms, date_list):
     prediction = []
     peak_dict = defaultdict(list)
     peak_top3 = defaultdict(list)
+    hottest3 = defaultdict(list)
     sunrise, noon, sunset = sun_rise_set(lat, lng, pd.Timestamp(date_list[0] + ' 01:00').timestamp())
     for date in date_list:
         if '-15' in date or '-30' in date:  # update the sunrise sunset every 15 days
@@ -58,7 +63,10 @@ def predict_orientation(df_rooms, active_rooms, date_list):
                 continue
             df.index = pd.to_datetime(df.index)
             peak_top3[room].append(list(map(int, [pd.to_datetime(str(timestamps)).strftime('%H') for timestamps in df[room].nlargest(3).index.values])))
+            # print(df[room].nlargest(3).values)
+            hottest3[room].append(list(map(int,df[room].nlargest(3).values)))
             peak_dict[room].append(df[room].groupby(pd.TimeGrouper('D')).idxmax().dt.hour.values[0])
+
 
     # check room by room for prediction the orientation
     for room in active_rooms:
@@ -90,21 +98,25 @@ def predict_orientation(df_rooms, active_rooms, date_list):
         prediction.append([room, result])
 
         peak_top3[room]=[item for sublist in peak_top3[room] for item in sublist]
+        hottest3[room]=[item for sublist in hottest3[room] for item in sublist]
+        print(room,
+              '{:05.1f}'.format(degree_prediction),
+              '{:05.2f}%'.format(morning_peak_ratio * 100),
+              "peak hour,frequency:", sorted(dict(Counter(peak)).items(), key=operator.itemgetter(1), reverse=True),
+              "temperature range: [",
+              '{:05.2f}'.format(np.percentile(df[room].values, 0)),
+              '{:05.2f}'.format(np.percentile(df[room].values, 25)),
+              '{:05.2f}'.format(np.percentile(df[room].values, 50)),
+              '{:05.2f}'.format(np.percentile(df[room].values, 75)),
+              '{:05.2f}]'.format(np.percentile(df[room].values, 100)))
 
-        # print(room, '{:05.1f}'.format(degree_prediction), '{:05.2f}%'.format(morning_peak_ratio * 100),
-        #       "peak hour,frequency:", sorted(dict(Counter(peak)).items(), key=operator.itemgetter(1), reverse=True),
-        #       "temperature range: [",
-        #       '{:05.2f}'.format(np.percentile(df[room].values, 0)),
-        #       '{:05.2f}'.format(np.percentile(df[room].values, 50)),
-        #       '{:05.2f}]'.format(np.percentile(df[room].values, 100)))
-
-    return prediction, peak_top3
+    return prediction, peak_top3,hottest3
 
 
 if __name__ == "__main__":
     # retrieve data from database
     database = '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
-    site_list, dict_df, _, _, _ = retrieve_data(database, Year=2017, Months=list(range(4, 7)), feq="00:00")
+    site_list, dict_df, _, _, _ = retrieve_data(database, Year=2017, Months=list(range(9, 10)), feq="00:00")
     orientation_dict = retrieve_orientation(database)
     coordinate_dict = retrieve_coordinate(database)
 
@@ -128,27 +140,43 @@ if __name__ == "__main__":
         # remove the time part from datetime index
         date_list = sorted(
             set([pd.to_datetime(str(timestamps)).strftime('%Y-%m-%d') for timestamps in df_original.index.values]))
-        prediction,peak_dict = predict_orientation(df_rooms, active_rooms, date_list)
+
+        # make prediction based on temperature
+        prediction,peak_dict,hot3 = predict_orientation(df_rooms, active_rooms, date_list)
         print("Truth :", rooms_orientation)
         print("Prediction :", prediction)
 
         # plot the histgram of the distribution of the peak time and temperature
         f, ax_temp = plt.subplots(len(active_rooms), 1, sharex=True, squeeze=False)
         f, ax_peak = plt.subplots(len(active_rooms), 1, sharex=True, squeeze=False)
+        f, ax_hot = plt.subplots(len(active_rooms), 1, sharex=True, squeeze=False)
         i = 0
         for room_i in active_rooms:
+            print("here is the hottest top 3 temperatrue for Room",room_i, hot3[room_i])
             ax_peak[i, 0].hist(peak_dict[room_i], bins=50, alpha=0.5, color='g')
+            ax_hot[i, 0].hist(hot3[room_i], bins=200, alpha=0.5)
+            # sns.swarmplot(x=df_rooms.index.values, y=room_i, data=df_rooms)
             ax_temp[i, 0].hist(df_rooms[room_i].dropna().values, bins=50, alpha=0.5, color='b')
 
             for id,ori in rooms_orientation:
                 if room_i == id:
                     orientation = ori
-            ax_temp[i, 0].set_ylabel("R_" + orientation, rotation=90, labelpad=5)
-            ax_peak[i, 0].set_ylabel("R_" + orientation, rotation=90, labelpad=5)
+            ax_temp[i, 0].set_ylabel("R_" + orientation+str(room_i), rotation=90, labelpad=5)
+            ax_peak[i, 0].set_ylabel("R_" + orientation+str(room_i), rotation=90, labelpad=5)
+            ax_hot[i, 0].set_ylabel("R_" + orientation+str(room_i), rotation=90, labelpad=5)
+            i += 1
 
-            i = i + 1
         ax_temp[i - 1, -1].set_xlabel('Temperature')
         ax_temp[0, 0].set_title(site_id)
         ax_peak[i - 1, -1].set_xlabel('Peak time')
         ax_peak[0, 0].set_title(site_id)
+        ax_hot[i - 1, -1].set_xlabel('Temperature')
+        ax_temp[0, 0].set_title(site_id)
+        df_rooms.plot()
+        df_rooms.diff().plot()
+        df_rooms.plot()
     plt.show()
+
+
+    # Todo What if all the data at the same time are dots on the 2D ,
+    # if the distance between each other suddenly grows too far
