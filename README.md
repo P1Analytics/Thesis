@@ -1,5 +1,5 @@
 
-#  Mining Sensor Data to Evaluate Indoor Environmental Quality of Public Educational Buildings
+# Mining Sensor Data to Evaluate Indoor Environmental Quality of Public Educational Buildings
 
 In this project, we will collect, extract, transform, load, and analyse sensor data transmitted 
 from large amount of sensors installed in school buildings across three European countries. 
@@ -13,11 +13,28 @@ Based on our findings, school management can optimise the energy consumption.
 
 The ultimate target :  __Save the energy Save the world__   
     
-## "Gazing at" the data
+## Basic information
+### Why do we care about collecting data in schools? 
+From six until we are ready to step out to get to work, most of our time spent at school, 
+sometimes even after school we still stay there for sports activities, or stay in the library for studying. 
 
-__Where are these data from?__
+What should be an ideally school? 
+Enough illumination, comfortable temperature not too hot not too cold, 
+enough fresh air to cool you head down before you crashed down by study and/or stress?
 
- - Locations in [Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
+The governments spend a lot of money on education, 
+but is that enough money or is there some way to put the money on the better place instead of just paying the electricity bills?  
+
+If we really want to do something for making a better place to study, 
+where should we start to do or look at? 
+We need some first-hand data to tell us which part is the most expensive one so we can start to work on it. 
+
+In this situation, sensor data is good cutting point for having an observation and do the analysis. 
+ 
+
+### Sensor device geography distribution 
+
+ - Locations in [Google Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
 
 ![map](./image/map.png?raw=true"")
 
@@ -27,7 +44,7 @@ __Where are these data from?__
 | | Sensing rate | 1 minute | Can be modified | 
 | | Educators | 294 | Greek public schools in GAIA| 
 | |Students | 2267 | Greek public schools in GAIA | 
-| Italy (Sapienza,Roma) | Sensing endpoints  | 118 |Will soon be augmented|
+| Italy (Roma) | Sensing endpoints  | 118 |Will soon be augmented|
 | | Sensing rate | 1 minute | Can be modified | 
 | | Educators | 120 | University faculty and Post Doc |
 | | Students | 1706 | University students | 
@@ -36,9 +53,10 @@ __Where are these data from?__
 
 Total : 16 sites and 1922 sensors are on the record till 2017/09/16.
 Part of them are newly installed in this year and some have history data from 2015.
+The data is collected under different weather condition, from different cultures , with different user behaviour pattens 
+It is a good start we could see the difference and find the similarity.
 
-__What do these sensors collect?__
-
+### Sensor data : unit  
 - Power consumption
     - Calculated Power Consumption : mWh
     - Power Consumption : mWh
@@ -48,25 +66,18 @@ __What do these sensors collect?__
     - Apparent Power : VA
     - Voltage : V
     
+    - Power Factor : Raw Value
+    - Reactive Energy : VARh
+    - Reactive Power : VAR
+    
 - Environmental parameters
-    - Light : lux
     - Noise : Raw Value
     - Motion : Raw Value
     - Movement : Raw Value
     - Luminosity : Raw Value
-    - External Air Contaminants : Raw Value
-    - External Ammonia Concentration : Raw Value
-    - External Carbon Dioxide Concentration : Raw Value
-    - External Carbon Monoxide Concentration : Raw Value
-    - External Oxygen Concentration : Raw Value
-    - Carbon Monoxide Concentration : Raw Value
-    - Methane Concentration : Raw Value
-    - Power Factor : Raw Value
+    - Light : lux
+
     - Atmospheric Pressure : kPa
-    - Radiation ：uSv/h 😵
-    - Reactive Energy : VARh
-    - Reactive Power : VAR
-    
     - External Relative Humidity : %
     - Relative Humidity :  %
     - Rain Height : mm
@@ -76,16 +87,23 @@ __What do these sensors collect?__
     - Temperature : Centigrade
     - External Temperature : C
     
+    - Radiation ：uSv/h ( be careful, too high, you will die ) 
+    - External Air Contaminants : Raw Value
+    - External Ammonia Concentration : Raw Value
+    - External Carbon Dioxide Concentration : Raw Value
+    - External Carbon Monoxide Concentration : Raw Value
+    - External Oxygen Concentration : Raw Value
+    - Carbon Monoxide Concentration : Raw Value
+    - Methane Concentration : Raw Value
+    
 ![sensortype](./image/sensorType.png?raw=true "")
- 
-__ETL for raw data__
-- Clean the __times period__ which all the sensors are __inactive__.
-- Clean the __sensors__ which are always __inactive__  
+ ### Sensor device connection 
+- WiFi 
 
-     - If the site is not kick-off yet, it will not be counted as inactive
-     - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
-     - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
-     - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
+
+    
+## Accessibility
+ - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
         during [2015-Nov-1,2017-Oct-30]
                     
     |ID |	Name	| Inactive | start time  | outlier| Total number of measurements | 
@@ -118,6 +136,15 @@ __ETL for raw data__
      | Electrical Power Consumption |18.68 % |  33.40 %| 73010
  ![active](./image/active_3types.png?raw=true"")
 
+## Reliability
+__ETL for raw data__
+- Clean the __times period__ which all the sensors are __inactive__.
+- Clean the __sensors__ which are always __inactive__  
+
+     - If the site is not kick-off yet, it will not be counted as inactive
+     - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
+     - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
+
 - Remove the outliers with Turkey's fences and replace with min/max value
     ```
     What is outliers 
@@ -135,22 +162,23 @@ __ETL for raw data__
          - Real-valued outlier score, higher values of the score make the point more like an outlier
          - Binary label binary value yes or no for an data point to be outlier
      ``` 
-    - identify outliers by using Turkey's fences, aka __inter quartile range__ 
+- identify outliers by using Turkey's fences, aka __inter quartile range__ 
         
-        `Q1 = First Quartile`
-        
-        `Q3 = Third Quartile`
-        
-        `Inter-quartile Range (IQR) = Q3 - Q1`
-        
-        `Lower Outlier Boundary = Q1 - 3 * IQR`
-        
-        `Upper Outlier Boundary = Q3 + 3 * IQR`
-    - identify outliers by using a sliding windows W holds last W-1 values
-        Moving windows through data from the beginning
-        - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers : replace it with min or max 
-        - If the new value is NaN, it is also an outlier : replace it with average 
-        - min/max/average = min/max/average (previous W-1 values)
+    `Q1 = First Quartile`
+    
+    `Q3 = Third Quartile`
+    
+    `Inter-quartile Range (IQR) = Q3 - Q1`
+    
+    `Lower Outlier Boundary = Q1 - 3 * IQR`
+    
+    `Upper Outlier Boundary = Q3 + 3 * IQR`
+
+- identify outliers by using a sliding windows W holds last W-1 values
+    Moving windows through data from the beginning
+    - If the __inter quartile range__ becomes biggest ever seen,here comes a outliers : replace it with min or max 
+    - If the new value is NaN, it is also an outlier : replace it with average 
+    - min/max/average = min/max/average (previous W-1 values)
     
 - moving window average to smooth out short-term fluctuations and highlight longer-term trends or cycles
     ```
@@ -170,7 +198,31 @@ __ETL for raw data__
 - Visualize one day temperature data after processes mentioned above
 ![trend](./image/ELT.png?raw=true"")
 
-__Question 1 : what is the orientation for this room ?__
+
+## Accuracy
+Can we retrieve outdoor weather through API ? 
+   
+[Openweathermap for real-time data](https://openweathermap.org/current#current_JSON)
+
+But this response is only for the real time request.
+
+[Worldweatheronline for history data](https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx#hourly_element)
+
+Both of APIs response : 
+
+| Temperature | Wind | Humidity | Pressure | Cloud...|
+| ----------  | --------| ----------| ----------|----------|
+
+What about the accuracy between data retrieved from API and sensors?
+![hist](./image/APIvsSensor.png?raw=true"") 
+![hist](./image/144243External%20Relative%20HumidityAPI.png?raw=true"")
+__Notice__ API from worldweatheronline does not provide longer than 32days data
+ 
+Conclusion : Yes we can retrieve both realtime and history,but the accuracy is not pretty enough
+
+
+## Interpretation
+### Orientation Prediction and Temperature Deviation 
 
 - Assuming the indoor temperature should rise as the day time passing by. 
   We do not put human activity or others into the consideration, for now
@@ -276,7 +328,7 @@ __Question 1 : what is the orientation for this room ?__
     heatmap for the slop of the data
     ![](./image/27827_diff_heatmap.png?raw=true"")
 
-__Question 2 : Is this room comfortable ?__
+### Comfort
 
 From Wikipedia
         
@@ -355,30 +407,14 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     Since we do not have good stable outdoor temperature resource,API could be an idealy option.   
     ![heatmap](./image/comfort_compare.png?raw=true"")
     
-__Question 3 : Is there any way to find out the similarity of rooms in the same building ?__
 
-__Question 4 : Can we retrieve outdoor weather through API ?  YES!__ 
-   
-[Openweathermap for real-time data](https://openweathermap.org/current#current_JSON)
+## Data Variability and Potential Patterns 
+- Temperature  
+- Light
+- Motion 
+- Power consumption
 
-But this response is only for the real time request.
-
-[Worldweatheronline for history data](https://developer.worldweatheronline.com/api/docs/historical-weather-api.aspx#hourly_element)
-
-Both of APIs response : 
-
-| Temperature | Wind | Humidity | Pressure | Cloud...|
-| ----------  | --------| ----------| ----------|----------|
-
-What about the accuracy between data retrieved from API and sensors?
-![hist](./image/APIvsSensor.png?raw=true"") 
-![hist](./image/144243External%20Relative%20HumidityAPI.png?raw=true"")
-__Notice__ API from worldweatheronline does not provide longer than 32days data
- 
-Conclusion : Yes we can retrieve both realtime and history,but the accuracy is not pretty enough
-
-
-__Observation for raw data__
+We take a close look on the raw data and see what kind of story or intuition we might get:
 
 - Demo on all the schools in Greece, for one year, time interval: day
     - Power Consumption, 10 schools in Greece 
@@ -388,41 +424,54 @@ __Observation for raw data__
     - Temperature, 12 schools in Greece
     ![greece one year](./image/Greece%20Temperature.png?raw=true "")
         
-- Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
-    - Temperature for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
-        
-    - Clustering luminosity for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
+##### Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
 
-    - Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
-    ![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
-     
-    - Temperature 
-    ![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
-        
-    - Calculated Power Consumption 
-    ![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
-    
-    - Main building Motion 
-    ![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
-     
-    - Subsite Motion (Αίθουσα ισόγειο) 
-    ![3 weeks motion ](./image/Mo2.png?raw=true"")
-    
-    - Luminosity 
-    ![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
+- Temperature for 4 weeks in the main building with building floor plan 
 
-- Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
-    - Temperature at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
+   So here are the pattens  
+   - the room(4ce) at ground floor , heading to the north has lowest temperature all the time.
+   - the two on the first floor, two classrooms to west (class 1 and 2) are next to each other and have similar pattern of temperature changing
+   and the "warmest" rooms in the whole school building. 
+   - the rooms at the north are cooler compared to.
+  
+
+![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
+    
+- Clustering luminosity for 4 weeks in the main building with building floor plan 
+![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
+
+- Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
+![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
+ 
+- Temperature 
+![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
+    
+- Calculated Power Consumption 
+![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
+
+- Main building Motion 
+![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
+ 
+- Subsite Motion (Αίθουσα ισόγειο) 
+![3 weeks motion ](./image/Mo2.png?raw=true"")
+
+- Luminosity 
+![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
+
+##### Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
+- Temperature at the main building with building floor plan
+Patterns :
+Temperature in Computer Lab is more stable than the rest of others , but still fit our expectation.
+![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
+    
+- Humidity at the main building with building floor plan
+Patterns : we can see the basement has the highest humidity and the music class is stable and remain in a good dry condition for preserving the music instruments 
+![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
+    
     - Clustering the room by temperature at the main building with building floor plan
     ![4 weeks Temperature](./image/19640%20Temperature0_cluster.png?raw=true"")    
     - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
     ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
-    - Humidity at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
-    
     - Temperature inside & outside of the building
     ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
     - Temperature at the sub-site building
