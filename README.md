@@ -56,7 +56,7 @@ Part of them are newly installed in this year and some have history data from 20
 The data is collected under different weather condition, from different cultures , with different user behaviour pattens 
 It is a good start we could see the difference and find the similarity.
 
-### Sensor data : unit  
+### Sensor data / unit  
 - Power consumption
     - Calculated Power Consumption : mWh
     - Power Consumption : mWh
@@ -95,29 +95,73 @@ It is a good start we could see the difference and find the similarity.
     - External Oxygen Concentration : Raw Value
     - Carbon Monoxide Concentration : Raw Value
     - Methane Concentration : Raw Value
-    
+
+
 ![sensortype](./image/sensorType.png?raw=true "")
  ### Sensor device connection 
 - WiFi
 - 2G/3G mobile network connection 
 
+## Data Variability and Potential Patterns 
+- Temperature  
+- Light
+- Motion 
+- Power consumption
 
+We take a close look on the raw data and see what kind of story or intuition we might get:
+
+- Demo on all the schools in Greece, for one year, time interval: day
+    - Power Consumption, 10 schools in Greece 
+    ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
+    There are 3 other schools without power consumption sensors or no data.
     
-## Accessibility
+    - Temperature, 12 schools in Greece
+    ![greece one year](./image/Greece%20Temperature.png?raw=true "")
+        
+##### Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
+
+- Temperature for 4 weeks in the main building with building floor plan 
+
+   So here are the pattens  
+   - the room(4ce) at ground floor , heading to the north has lowest temperature all the time.
+   - the two on the first floor, two classrooms to west (class 1 and 2) are next to each other and have similar pattern of temperature changing
+   and the "warmest" rooms in the whole school building. 
+   - the rooms at the north are cooler compared to.
+![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
+ 
+##### Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
+- Temperature at the main building with building floor plan
+
+    Patterns :
+    Temperature in Computer Lab is more stable than the rest of others , but still fit our expectation.
+![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
+    
+- Humidity at the main building with building floor plan
+    
+   Patterns : we can see the basement has the highest humidity and the music class is stable and remain in a good dry condition for preserving the music instruments 
+![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
+ 
+- Luminosity at the main building 
+![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
+
+- Luminosity at the sub-site building
+![4 weeks](./image/19640%20Luminosity2.png?raw=true"")
+    
+## Activity
 #####Algorithm for Accessibility is different from prediction in clean outlier and inactive data   
 Intuition: 
-  - Some sensor data has reasonable zero value as true value,like motion while nobody walking around 
+  - Some sensor data has reasonable zero value as true value,like motion while no one walking around 
   - Some sensor data should never be zero , like Temperature and humidity always above zero, or some others type might below zero.
 
 In general , the summary for one device even there is(/are) some sensor data has "legal" zero 
 the summary based on the same timestamps should always be above zero as long as it is active. 
 
 Process : 
-    - Put all [value != 0] =  1 
-    - Sum for all sensor data in one device
-    - Normalized all [value > 0] = 1 
-Output :  1 = active , 0 = inactive for each device 
+  - Put all [value != 0] =  1 
+  - Sum for all sensor data in one device
+  - Normalized all [value > 0] = 1 
 
+Output :  1 = active , 0 = inactive for each device 
 
 ######  Visualize in Heatmap for device activities  
 ![active](./image/active15_device.png?raw=true"")
@@ -159,11 +203,10 @@ Category by device connection
 
 
 ## Reliability
-__ETL for raw data__
 - Clean the __times period__ which all the sensors are __inactive__.
 - Clean the __sensors__ which are always __inactive__  
 
-     - If the site is not kick-off yet, it will not be counted as inactive
+     - If the site is not power-on yet, it will not be counted as inactive
      - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
      - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
 
@@ -244,7 +287,7 @@ Conclusion : Yes we can retrieve both realtime and history,but the accuracy is n
 
 
 ## Interpretation
-### Orientation Prediction and Temperature Deviation 
+### Orientation Prediction and Deviation 
 
 - Assuming the indoor temperature should rise as the day time passing by. 
   We do not put human activity or others into the consideration, for now
@@ -429,106 +472,6 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
     Since we do not have good stable outdoor temperature resource,API could be an idealy option.   
     ![heatmap](./image/comfort_compare.png?raw=true"")
     
-
-## Data Variability and Potential Patterns 
-- Temperature  
-- Light
-- Motion 
-- Power consumption
-
-We take a close look on the raw data and see what kind of story or intuition we might get:
-
-- Demo on all the schools in Greece, for one year, time interval: day
-    - Power Consumption, 10 schools in Greece 
-    ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
-    There are 3 other schools without power consumption sensors or no data.
-    
-    - Temperature, 12 schools in Greece
-    ![greece one year](./image/Greece%20Temperature.png?raw=true "")
-        
-##### Demo on site __8ο Γυμνάσιο Πατρών,Greece__ ,for 3 weeks, time interval: hour        
-
-- Temperature for 4 weeks in the main building with building floor plan 
-
-   So here are the pattens  
-   - the room(4ce) at ground floor , heading to the north has lowest temperature all the time.
-   - the two on the first floor, two classrooms to west (class 1 and 2) are next to each other and have similar pattern of temperature changing
-   and the "warmest" rooms in the whole school building. 
-   - the rooms at the north are cooler compared to.
-  
-
-![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
-    
-- Clustering luminosity for 4 weeks in the main building with building floor plan 
-![4 weeks temperature](./image/27827%20Lumin_vs_temp_cluste1.png?raw=true"")
-
-- Clustering Occupancy(motions vs site-noise) for 4 weeks in the main building with building floor plan 
-![4 weeks temperature](./image/27827%20Motion.png?raw=true"")
- 
-- Temperature 
-![3 weeks temperature](./image/8ο%20Γυμνάσιο%20Πατρών%20Temperature.png?raw=true "")
-    
-- Calculated Power Consumption 
-![3 weeks Calculated Power Consumption](./image/8ο%20Γυμνάσιο%20Πατρών%20Calculated%20Power%20Consumption.png?raw=true "")
-
-- Main building Motion 
-![3 weeks motion](./image/8ο%20Γυμνάσιο%20Πατρών%20Motion.png?raw=true"")
- 
-- Subsite Motion (Αίθουσα ισόγειο) 
-![3 weeks motion ](./image/Mo2.png?raw=true"")
-
-- Luminosity 
-![4 weeks temperature](./image/27827%20Lumin.png?raw=true"")
-
-##### Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
-- Temperature at the main building with building floor plan
-Patterns :
-Temperature in Computer Lab is more stable than the rest of others , but still fit our expectation.
-![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
-    
-- Humidity at the main building with building floor plan
-Patterns : we can see the basement has the highest humidity and the music class is stable and remain in a good dry condition for preserving the music instruments 
-![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
-    
-    - Clustering the room by temperature at the main building with building floor plan
-    ![4 weeks Temperature](./image/19640%20Temperature0_cluster.png?raw=true"")    
-    - Clustering the Occupancy(motion vs site-noise)at the main building with building floor plan
-    ![4 weeks motion](./image/19640%20Motion.png?raw=true"")
-    - Temperature inside & outside of the building
-    ![4 weeks Temperature](./image/19640%20Temperature3.png?raw=true"")    
-    - Temperature at the sub-site building
-    ![4 weeks Temperature](./image/19640%20Temperature2.png?raw=true"")
-    - Calculated Power Consumption at the main building 
-    ![4 weeks Calculated Power Consumption](./image/19640%20Calculated%20Power%20Consumption.png?raw=true"")  
-    - Electrical Current at the main building 
-    ![4 weeks ElectricalCurrent](./image/19640%20ElectricalCurrent.png?raw=true"")
-    - Luminosity at the main building 
-    ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
-    - Luminosity at the sub-site building
-    ![4 weeks](./image/19640%20Luminosity2.png?raw=true"")
-    - Rain Height and Relative Humidity at the main building
-    ![4 weeks Rain Height and Relative Humidity](./image/19640%20RainHeight_humidity.png?raw=true"")
-    - Relative Humidity at the sub-site building
-    ![4 weeks Relative Humidity](./image/19640%20humidity.png?raw=true"")
-     - Motion at the main building 
-    ![4 weeks motion](./image/19640%20motion1.png?raw=true"")
-    - Motion at the sub-site building
-    ![4 weeks motion](./image/19640%20motion2.png?raw=true"")
-    - Noise at the main building 
-    ![4 weeks motion](./image/19640%20noise1.png?raw=true"")
-    - Noise at the sub-site building
-    ![4 weeks motion](./image/19640%20noise2.png?raw=true"")
-    - Motion and Noise at the sub-site building
-    ![4 weeks motion](./image/19640%20subsite%20motion%20noise.png?raw=true"")
-
-- Demo on site __Δημοτικό Σχολείο Μεγίστης,Greece__, for 4 weeks, time interval: hour  
-    - Temperature inside and outside of the main building with building floor plan
-    ![4 weeks Temperature](./image/144243Temperature.png?raw=true"")
-    It is not so obvious for the orientation
-    - Clustering the temperature inside and outside of the main building with building floor plan
-    ![4 weeks Temperature](./image/144243Temperature_cluster.png?raw=true"")
-     Now, it is easy to see the orientation
-
 
 
 ## Setup enviroment on mac OS Sierra 10
