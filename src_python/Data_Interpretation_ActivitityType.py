@@ -1,4 +1,5 @@
 from Util.db_util import *
+from Util.Data_Preparation import *
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
@@ -18,21 +19,6 @@ def select_time_range_to_dataframe(cursor, site_id, resource_list):
         df = df[~df.index.duplicated(keep='first')]
         df_final = pd.concat([df_final, df], axis=1)
     return df_final
-
-
-def ETL_activity(df):
-    """
-    if any none zero data from any sensor, this device is active
-    so we add all up from one device and more accuracy for activity statistic
-
-    :param df: data from the same device, different sensors
-    :return: the device on the timeline  active or not (1 or 0)
-    """
-    df = df[~df.index.duplicated(keep='first')]
-    df[df > 0] = 1
-    df_active = df.sum(axis=1)
-    df_active[df_active > 0] = 1
-    return df_active
 
 
 def query_device(c, site_id):
@@ -81,13 +67,16 @@ if __name__ == "__main__":
     with create_connection(database) as conn:
         try:
             c = conn.cursor()
+            # site_list = [str(id[0]) for id in conn("select site from details_sensor group by site;")]
+
+            site_list = [ '155851', # '144243', '155865',
+                "144024", "28843", "144243", "28850",
+                             # '157185',#"155849", #"144242",  "19640", "27827", "155849",
+                             #     "155851", "155076", "155865", "155077",
+                             #     "155877", "157185", "159705"
+            ]
             site_list = [str(id[0]) for id in c.execute("select site from details_sensor group by site;")]
-            # site_list = [  # '144243', '155865',
-            #     "144024", "28843", "144243", "28850",
-            #     #              # '157185',#"155849", #"144242",  "19640", "27827", "155849",
-            #     #              #     "155851", "155076", "155865", "155077",
-            #     #              #     "155877", "157185", "159705"
-            # ]
+
             if len(site_list) <= 1:
                 print("site list need more than 1 ", site_list)
 
@@ -95,6 +84,7 @@ if __name__ == "__main__":
             df_device_syn = pd.DataFrame()
             df_device_lib = pd.DataFrame()
             df_device_pow = pd.DataFrame()
+            size_max = 0
             for site_id in site_list:
                 print(site_id,".......")
                 # query database:  {device:[resources list],...}
@@ -106,41 +96,55 @@ if __name__ == "__main__":
                     df_device = select_time_range_to_dataframe(c, site_id, device_dict[device])
                     df_device = df_device.sort_index()
                     df_static = ETL_activity(df_device)
+
+                    print(device,device_dict[device],df_static.shape[0])
+                    day_index = [pd.to_datetime(str(date)).strftime('%Y-%m') for date in df_static.index.values]
+                    if len(day_index) > size_max:
+                        final_index = day_index
+                    try:
                     # category different types into different dataframe
-                    if 'libelium' in device:
-                        df_device_lib[str(site_id) + device] = df_static.values
-                    elif 'synfield' in device:
-                        df_device_syn[str(site_id) + device] = df_static.values
-                    else:
-                        query = "select property from details_sensor where resource = " + str(device_dict[device][0])
-                        if 'Power' in c.execute(query).fetchall()[0][0] or 'Current' in c.execute(query).fetchall()[0][
-                            0]:
-                            df_device_pow[str(site_id) + device] = df_static.values
+                        if 'libelium' in device:
+                            df_device_lib[str(site_id) + device] = df_static.values
+                        elif 'synfield' in device :
+                            df_device_syn[str(site_id) + device] = df_static.values
                         else:
-                            print(df_device_env.shape,"\t",df_static.shape)
-                            df_device_env[str(site_id) + device] = df_static.values
+                            query = "select property from details_sensor where resource = " + str(device_dict[device][0])
+                            if 'Power' in c.execute(query).fetchall()[0][0] or 'Current' in c.execute(query).fetchall()[0][
+                                0]:
+                                df_device_pow[str(site_id) + device] = df_static.values
+                            else:
+                                df_device_env[str(site_id) + device] = df_static.values
+                    except ValueError:
+                        print(df_static.shape)
+                        continue
+                # print(df_static.index.values)
 
             # reset index with plot Year - Month as label
-            day_index = [pd.to_datetime(str(date)).strftime('%Y-%m') for date in df_static.index.values]
-            df_device_syn = reindex_df(day_index, df_device_syn)
-            df_device_lib = reindex_df(day_index, df_device_lib)
-            df_device_pow = reindex_df(day_index, df_device_pow)
-            df_device_env = reindex_df(day_index, df_device_env)
-
+            df_device_syn = reindex_df(final_index, df_device_syn)
+            df_device_lib = reindex_df(final_index, df_device_lib)
+            df_device_pow = reindex_df(final_index, df_device_pow)
+            df_device_env = reindex_df(final_index, df_device_env)
+            print(df_device_env.shape,df_device_lib.shape,df_device_syn.shape,df_device_pow.shape)
             ylabel_list = ["Env", "Syn", "Lib", "Pow"]
             df_list = [df_device_env, df_device_syn, df_device_lib, df_device_pow]
             fig, axn = plt.subplots(4, 1, sharex=True)
             for j, ax in enumerate(axn.flat):
                 # plot the heatmap for each type
-                sns.heatmap(df_list[j].T,
-                            ax=ax,
-                            xticklabels=31,
-                            yticklabels=False,
-                            cbar=False
-                            )
-                ax.set_xlabel('')
-                ax.set_ylabel(ylabel_list[j])# , rotation=90, labelpad=5, fontsize=9)
-            axn[-1].set_xticklabels(sorted(set(day_index)))
+                print(df_list[j].isnull)
+                try:
+                    # df_list[j].plot(ax=ax)
+
+                    sns.heatmap(df_list[j].T,
+                                ax=ax,
+                                xticklabels=31,
+                                yticklabels=False,
+                                cbar=False
+                                )
+                    ax.set_xlabel('')
+                    ax.set_ylabel(ylabel_list[j],rotation=0, labelpad=20)# , rotation=90, fontsize=9)
+                    axn[-1].set_xticklabels(sorted(set(day_index)))
+                except TypeError:
+                    continue
             plt.show()
         except Error as e:
             print("SQL ERROR:", e)

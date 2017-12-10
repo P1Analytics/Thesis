@@ -16,16 +16,16 @@ public class WriteSensorData {
 
         String freq = "5min"; //5min,hour,day,
         DateFormat time_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        ZonedDateTime start = ZonedDateTime.parse("2016-09-01T00:00:00+01:00[Europe/Rome]");
-        ZonedDateTime end = ZonedDateTime.parse("2017-01-01T00:00:00+01:00[Europe/Rome]");
+        ZonedDateTime start = ZonedDateTime.parse("2016-05-01T00:00:00+01:00[Europe/Rome]");
+        ZonedDateTime end = ZonedDateTime.parse("2017-09-01T00:00:00+01:00[Europe/Rome]");
 
-        String folder = "/Users/nanazhu/Documents/Sapienza/Thesis/src_python/5min2016Sep-Dec/";
+        String folder = "/Users/nanazhu/Documents/Sapienza/Thesis/src_python/5min2016May-Aug/";
         List<Long> siteIds = Arrays.asList(
-                144242L, 27827L, 144024L,
-                155076L, 155849L, 155077L,
-                155865L, 155877L, 28843L,
-                144243L, 28850L, 159705L,
-                157185L, 155851L, 19640L
+//                144242L, 27827L, 144024L,155076L,155849L,
+//                 155077L,155865L,155877L,
+                 //28843L bad end why ?
+                144243L, 28850L, 159705L
+//                157185L, 155851L, 19640L
         );
         for (Long siteId : siteIds) {
             System.out.println(siteId);

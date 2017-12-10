@@ -1,5 +1,6 @@
 from pylab import *
 from Util.db_util import *
+
 pd.options.mode.chained_assignment = None
 
 
@@ -27,22 +28,25 @@ def retrieve_data(database, Year, Months, feq=None):
         try:
             orientation = {}
             c = conn.cursor()
-            site_list = c.execute("select site from details_sensor group by site;") # TODO or fill the table :details_site
-            site_list = [str(id[0]) for id in site_list]
-            # site_list=[
-            #     #"144024","28843", "144243", "28850",
-            #     "144242","155849", #"144242",  "19640", "27827", "155849",
-            # #     "155851", "155076", "155865", "155077",
-            # #     "155877", "157185", "159705"
-            # ]
+            # site_list = c.execute("select site from details_sensor group by site;") # TODO or fill the table :details_site
+            # site_list = [str(id[0]) for id in site_list]
+            site_list = [
+                # "144024","28843", "144243", "28850",
+                '157185'  # "155849","144242",  "19640", "27827", "155849",
+                #     "155851", "155076", "155865", "155077",
+                #     "155877", "157185", "159705"
+            ]
             for site_id in site_list:
+
                 temperature_resource_list = query_site_room_orientaion(c, site_id)
                 orientation[site_id] = temperature_resource_list
                 temperature_resource_list = [i[0] for i in temperature_resource_list]
                 if feq:
-                    dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A, date_B,feq)
+                    dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A,
+                                                                      date_B, feq)
                 else:
-                    dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A,date_B)
+                    dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A,
+                                                                      date_B)
 
                 query = " select time,value from API_CloudCoverage " \
                         "where id=" + site_id + " and (time> '" + date_A + "' and time < '" + date_B + "');"
@@ -54,7 +58,6 @@ def retrieve_data(database, Year, Months, feq=None):
         except Error as e:
             print("SQL ERROR:", e)
     return site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation
-
 
 
 def retrieve_coordinate(database):
@@ -90,6 +93,7 @@ def retrieve_orientation(database):
             print("SQL ERROR:", e)
             return None
     return orientation_dict
+
 
 def outliers_sliding_window(df, window_number):
     """
@@ -135,10 +139,10 @@ def outliers_sliding_window(df, window_number):
         if now_range > max_range * 0.9:  # 0.8:
             outlier += 1
             if item < lower:
-                window[-1] = average  #or fill back with last_min ; (last_min + min) / 2
-                df[i] = average  #or fill back with last_min ;(last_min + min) / 2
+                window[-1] = average  # or fill back with last_min ; (last_min + min) / 2
+                df[i] = average  # or fill back with last_min ;(last_min + min) / 2
             if item > upper:
-                window[-1] = average  #or fill back with last_max; (last_max + max) / 2
+                window[-1] = average  # or fill back with last_max; (last_max + max) / 2
                 df[i] = average  # or fill back with last_max ; (last_max + max) / 2
 
     return df, outlier, average
@@ -186,6 +190,39 @@ def ETL(df):
     return df, list(df), begin
 
 
+def ETL_activity(df):
+    """
+    if any none zero data from any sensor, this device is active
+    so we add all up from one device and more accuracy for activity statistic
+
+    :param df: data from the same device, different sensors
+    :return: the device on the timeline  active or not (1 or 0)
+    """
+    df = df[~df.index.duplicated(keep='first')]
+    df[df != 0] = 1
+    df_active = df.sum(axis=1)
+    df_active[df_active > 0] = 1
+    return df_active
+
+
 def feedback_data():
     # TODO write ETL data into database
     pass
+
+
+def reindex_df(day_index, df):
+    """
+    use new index timestamps to replace the default index
+    must be the same size or it won't work
+    :param day_index: timestamp index
+    :param df: dataframe with default index
+    :return: dataframe with timestamp index
+    """
+    try:
+        df['timestamps'] = day_index
+        df = df.reset_index(drop=True)
+        df = df.set_index('timestamps')
+        return df
+    except ValueError:
+        print(len(day_index), df.shape, "see they are different size to merge")
+        return df

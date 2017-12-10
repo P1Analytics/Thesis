@@ -1,9 +1,11 @@
 from Util.db_util import *
+from Util.Data_Preparation import *
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
 import seaborn as sns
 sns.set()
+
 
 def select_time_range_to_dataframe(cursor, site_id, resource_list):
     df_final = pd.DataFrame()
@@ -20,35 +22,20 @@ def select_time_range_to_dataframe(cursor, site_id, resource_list):
     return df_final
 
 
-def ETL_activity(df):
-    """
-    if any none zero data from any sensor, this device is active
-    so we add all up from one device and more accuracy for activity statistic
-
-    :param df: data from the same device, different sensors
-    :return: the device on the timeline  active or not (1 or 0)
-    """
-    df = df[~df.index.duplicated(keep='first')]
-    df[df > 0] = 1
-    df_active = df.sum(axis=1)
-    df_active[df_active > 0] = 1
-    return df_active
-
-
-def query_device(c, site_id):
+def query_device(cursor, site_id):
     """
     query {device : resource list} from same site
-    :param c: cursor of database
+    :param cursor: cursor of database
     :param site_id: site id
     :return: dictionary list
     """
     device_dict = defaultdict(list)
     query = "select site,resource,uri from details_sensor " \
             "where uri not like 'site%' and subsite=0 and site =" + str(site_id)
-    resp = c.execute(query).fetchall()
+    resp = cursor.execute(query).fetchall()
 
     # find device
-    for site, resource,uri in resp:
+    for site, resource, uri in resp:
         if '0x' in uri:
             for i in uri.split('/'):
                 if '0x' in i:
@@ -68,12 +55,6 @@ def query_device(c, site_id):
     return device_dict
 
 
-def reindex_df(day_index, df):
-    df['timestamps'] = day_index
-    df = df.reset_index(drop=True)
-    df = df.set_index('timestamps')
-    return df
-
 if __name__ == "__main__":
     # retrieve data from database
     database = '/Users/nanazhu/Documents/Sapienza/Thesis/src_python/test.db'
@@ -89,14 +70,14 @@ if __name__ == "__main__":
             #              ]
             if len(site_list) <= 1:
                 print("site list need more than 1 ", site_list)
-            fig, axn = plt.subplots(len(site_list), 1,sharex=True)
+            fig, axn = plt.subplots(len(site_list), 1, sharex=True)
             df_device_type = pd.DataFrame()
             for j, ax in enumerate(axn.flat):
                 site_id = site_list[j]
                 print(site_id, "............")
 
                 # query database:  {device:[resources list],...}
-                device_dict = query_device(c,site_id)
+                device_dict = query_device(c, site_id)
 
                 # device : list of sensors , check activity
                 df_site_devices = pd.DataFrame()
@@ -107,10 +88,9 @@ if __name__ == "__main__":
                     df_static = ETL_activity(df_device)
                     df_site_devices[device] = df_static.values
 
-
                 # reset index with plot Year - Month as label
                 day_index = [pd.to_datetime(str(date)).strftime('%Y-%m') for date in df_static.index.values]
-                df_site_devices = reindex_df(day_index,df_site_devices)
+                df_site_devices = reindex_df(day_index, df_site_devices)
                 # plot the heatmap for each site
                 sns.heatmap(df_site_devices.T,
                             ax=ax,
@@ -119,7 +99,7 @@ if __name__ == "__main__":
                             cbar=False
                             )
                 ax.set_xlabel('')
-                ax.set_ylabel(site_id)# , rotation=90, labelpad=5, fontsize=9)
+                ax.set_ylabel(site_id,rotation=0,labelpad=20)#, fontsize=9)
             axn[-1].set_xticklabels(sorted(set(day_index)))
             plt.show()
         except Error as e:
