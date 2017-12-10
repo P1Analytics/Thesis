@@ -1,9 +1,5 @@
-from Util.db_util import *
-from Util.Data_Preparation import *
-import numpy as np
-import matplotlib.pyplot as plt
-from pylab import *
 import seaborn as sns
+from Util.Data_Preparation import *
 sns.set()
 
 def select_time_range_to_dataframe(cursor, site_id, resource_list):
@@ -96,8 +92,6 @@ if __name__ == "__main__":
                     df_device = select_time_range_to_dataframe(c, site_id, device_dict[device])
                     df_device = df_device.sort_index()
                     df_static = ETL_activity(df_device)
-
-                    print(device,device_dict[device],df_static.shape[0])
                     day_index = [pd.to_datetime(str(date)).strftime('%Y-%m') for date in df_static.index.values]
                     if len(day_index) > size_max:
                         final_index = day_index
@@ -117,14 +111,14 @@ if __name__ == "__main__":
                     except ValueError:
                         print(df_static.shape)
                         continue
-                # print(df_static.index.values)
 
             # reset index with plot Year - Month as label
             df_device_syn = reindex_df(final_index, df_device_syn)
             df_device_lib = reindex_df(final_index, df_device_lib)
             df_device_pow = reindex_df(final_index, df_device_pow)
             df_device_env = reindex_df(final_index, df_device_env)
-            print(df_device_env.shape,df_device_lib.shape,df_device_syn.shape,df_device_pow.shape)
+            print('env',df_device_env.shape,"\n",'libelium',df_device_lib.shape,"\n",
+                  'synfield',df_device_syn.shape,"\n",'power',df_device_pow.shape)
             ylabel_list = ["Env", "Syn", "Lib", "Pow"]
             df_list = [df_device_env, df_device_syn, df_device_lib, df_device_pow]
             fig, axn = plt.subplots(4, 1, sharex=True)
@@ -141,7 +135,7 @@ if __name__ == "__main__":
                                 cbar=False
                                 )
                     ax.set_xlabel('')
-                    ax.set_ylabel(ylabel_list[j],rotation=0, labelpad=20)# , rotation=90, fontsize=9)
+                    ax.set_ylabel(ylabel_list[j],rotation=0, labelpad=20)
                     axn[-1].set_xticklabels(sorted(set(day_index)))
                 except TypeError:
                     continue

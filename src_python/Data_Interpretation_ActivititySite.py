@@ -1,13 +1,16 @@
-from Util.db_util import *
-from Util.Data_Preparation import *
-import numpy as np
-import matplotlib.pyplot as plt
-from pylab import *
 import seaborn as sns
+from Util.Data_Preparation import *
 sns.set()
 
 
 def select_time_range_to_dataframe(cursor, site_id, resource_list):
+    """
+    select device resource list for the whole avaliable database save into one dataframe for later process
+    :param cursor:
+    :param site_id: for site table
+    :param resource_list: for one device , all the sensor data resource list
+    :return: dataframe for one device
+    """
     df_final = pd.DataFrame()
     feq = '21:00'
     for id in resource_list:
@@ -99,7 +102,7 @@ if __name__ == "__main__":
                             cbar=False
                             )
                 ax.set_xlabel('')
-                ax.set_ylabel(site_id,rotation=0,labelpad=20)#, fontsize=9)
+                ax.set_ylabel(site_id,rotation=0,labelpad=20)
             axn[-1].set_xticklabels(sorted(set(day_index)))
             plt.show()
         except Error as e:
