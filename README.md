@@ -98,43 +98,65 @@ It is a good start we could see the difference and find the similarity.
     
 ![sensortype](./image/sensorType.png?raw=true "")
  ### Sensor device connection 
-- WiFi 
+- WiFi
+- 2G/3G mobile network connection 
 
 
     
 ## Accessibility
- - This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  
-        during [2015-Nov-1,2017-Oct-30]
-                    
-    |ID |	Name	| Inactive | start time  | outlier| Total number of measurements | 
-    | :------------: | :------------: | :------------:| :------------:|:--------:|:------:| 
-    |144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30| 16.49% | 73,000
-    |144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30|10.90% |  94,900 |
-    |144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30|15.80% | 64,970|
-    |155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04|39.77%|39.77% |120,450|
-    |155077	|Sapienza	|58.22 %	| 2016-10-29|51.01%|177,390|
-    |155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30|16.76%|52,560
-    |155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02|39.25% | 75,190|
-    |155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22|38.28% | 53,290 | 
-    |155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01|45.80% | 46,720| 
-    |157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01|40.50% | 123,370
-    |159705	|Soderhamn	|0.00 %|2017-09-21|48.24% | 70,810
-    |19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30 | 20.34% | 112,420
-    |27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30|10.71% | 71,540 | 
-    |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17% | 117,530
-    |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36% | 91,250
-    
-    ![active](./image/active_15sites.png?raw=true"")
-    sensor device activities  
-    ![active](./image/active15_device.png?raw=true"")
-     - In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
+#####Algorithm for Accessibility is different from prediction in clean outlier and inactive data   
+Intuition: 
+  - Some sensor data has reasonable zero value as true value,like motion while nobody walking around 
+  - Some sensor data should never be zero , like Temperature and humidity always above zero, or some others type might below zero.
 
-     | Name	|Inactive |   outlier| Total number of measurements | 
-     | :------: | :------: | :------:| :------:| 
-     | Libelium for outdoor weather  | 15.16% |  10.61% | 31,390     
-     | Synfield for outdoor weather | 14.40 %| 9.28%|10,950
-     | Electrical Power Consumption |18.68 % |  33.40 %| 73010
- ![active](./image/active_3types.png?raw=true"")
+In general , the summary for one device even there is(/are) some sensor data has "legal" zero 
+the summary based on the same timestamps should always be above zero as long as it is active. 
+
+Process : 
+    - Put all [value != 0] =  1 
+    - Sum for all sensor data in one device
+    - Normalized all [value > 0] = 1 
+Output :  1 = active , 0 = inactive for each device 
+
+
+######  Visualize in Heatmap for device activities  
+![active](./image/active15_device.png?raw=true"")
+
+##### This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  during [2015-Nov-1,2017-Oct-30]                  
+|ID |	Name	| Inactive | start time  | outlier| Total number of measurements | 
+| :------------: | :------------: | :------------:| :------------:|:--------:|:------:| 
+|144024	|Δημοτικό Σχολείο Λυγιάς|	30.48 %| before 2015-10-30| 16.49% | 73,000
+|144242	|1ο Γυμνάσιο Ν. Φιλαδέλφειας	|2.94 %| before 2015-10-30|10.90% |  94,900 |
+|144243	|Δημοτικό Σχολείο Μεγίστης	|24.49 %|before 2015-10-30|15.80% | 64,970|
+|155076	|Gramsci-Keynes School	|4.56 %	|  2016-08-04|39.77%|39.77% |120,450|
+|155077	|Sapienza	|58.22 %	| 2016-10-29|51.01%|177,390|
+|155849	|6ο Δημοτικό Σχολείο Καισαριανής|	22.98 %|	before 2015-10-30|16.76%|52,560
+|155851	|5ο Δημοτικό Σχολείο Νέας Σμύρνης	|29.23 %|2016-08-02|39.25% | 75,190|
+|155865	|46ο Δημοτικό Σχολείο Πατρών	|38.72 %	|2016-09-22|38.28% | 53,290 | 
+|155877	|2ο Δημοτικό Σχολείο Παραλίας Πατρών|35.18 %	|2017-02-01|45.80% | 46,720| 
+|157185	|Ελληνογερμανική Αγωγή	|3.31 %|2017-02-01|40.50% | 123,370
+|159705	|Soderhamn	|0.00 %|2017-09-21|48.24% | 70,810
+|19640	|Γυμνάσιο Πενταβρύσου Καστοριάς	|1.72 %	|before 2015-10-30 | 20.34% | 112,420
+|27827	|8ο Γυμνάσιο Πατρών	|3.71 %	|before 2015-10-30|10.71% | 71,540 | 
+|28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17% | 117,530
+|28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36% | 91,250
+
+######  Visualize in Heatmap
+All sensor data activity 
+![active](./image/active_15sites.png?raw=true"")
+
+##### In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
+ | Name	|Inactive |   outlier| Total number of measurements | 
+ | :------: | :------: | :------:| :------:| 
+ | Libelium for outdoor weather  | 15.16% |  10.61% | 31,390     
+ | Synfield for outdoor weather | 14.40 %| 9.28%|10,950
+ | Electrical Power Consumption |18.68 % |  33.40 %| 73010
+
+######  Visualize in Heatmap
+Category by device connection
+![active](./image/active_3types.png?raw=true"")
+
+
 
 ## Reliability
 __ETL for raw data__
