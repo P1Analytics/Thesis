@@ -112,8 +112,9 @@ Take a close look on the raw data and seek for the changing patterns :
 - Power consumption
 
 
-- Demo on all the schools in Greece, for one year, time interval: day
-    - Power Consumption, 10 schools in Greece 
+##### Demo on all the schools in Greece, for one year, time interval: day
+    
+   - Power Consumption, 10 schools in Greece 
     ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
     There are 3 other schools without power consumption sensors or no data.
     - Temperature, 12 schools in Greece
