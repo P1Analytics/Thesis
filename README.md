@@ -380,7 +380,7 @@ Conclusion : Yes we can retrieve both realtime and history,but the accuracy is n
         ![cloudy](./image/CloudyFeb-Oct155865.png?raw=true"")
         ![cloudy](./image/CloudyFeb-Oct155851.png?raw=true"")
 
-- __Identify patten by slope = delta(temperature)/delta(time):__ 
+- __Identify deviation by slope = delta(temperature)/delta(time):__ 
     
     - Slope for one room: first picture is the data after ETL, second is the slop for the data
     If we are focusing on detecting sudden change of the indoor temperature, this slope plot could provide fast and efficient 
