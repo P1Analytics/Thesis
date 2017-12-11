@@ -32,7 +32,7 @@ We need some first-hand data to tell us which part is the most expensive one so 
 In this situation, sensor data is good cutting point for having an observation and do the analysis. 
  
 
-### Sensor device geography distribution 
+### Points of sensors geography distribution 
 
  - Locations in [Google Map](https://drive.google.com/open?id=1MP6JIzob6P2g3Kvq-l-yRYSZAXE&usp=sharing)
 
@@ -98,23 +98,24 @@ It is a good start we could see the difference and find the similarity.
 
 
 ![sensortype](./image/sensorType.png?raw=true "")
- ### Sensor device connection 
+ ### Points of sensors connection 
 - WiFi
-- 2G/3G mobile network connection 
+- 2G/3G mobile network connection
+- Ethernet
+- Low-rate wireless personal area networks(IEEE 802.15.4)
 
 ## Data Variability and Potential Patterns 
+Take a close look on the raw data and seek for the changing patterns :
 - Temperature  
 - Light
 - Motion 
 - Power consumption
 
-We take a close look on the raw data and see what kind of story or intuition we might get:
 
 - Demo on all the schools in Greece, for one year, time interval: day
     - Power Consumption, 10 schools in Greece 
     ![greece one year](./image/power_greece_16Sep_17_Sep_perday.png?raw=true "")
     There are 3 other schools without power consumption sensors or no data.
-    
     - Temperature, 12 schools in Greece
     ![greece one year](./image/Greece%20Temperature.png?raw=true "")
         
@@ -126,44 +127,46 @@ We take a close look on the raw data and see what kind of story or intuition we 
    - the room(4ce) at ground floor , heading to the north has lowest temperature all the time.
    - the two on the first floor, two classrooms to west (class 1 and 2) are next to each other and have similar pattern of temperature changing
    and the "warmest" rooms in the whole school building. 
-   - the rooms at the north are cooler compared to.
-![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
+   - the rooms at the north are cooler 
+   ![4 weeks temperature](./image/27827%20Temperature1.png?raw=true"")
  
 ##### Demo on site __Γυμνάσιο Πενταβρύσου Καστοριάς,Greece__, for 4 weeks, time interval: hour  
 - Temperature at the main building with building floor plan
 
     Patterns :
     Temperature in Computer Lab is more stable than the rest of others , but still fit our expectation.
-![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
+    ![4 weeks Temperature](./image/19640%20Temperature0.png?raw=true"")    
     
 - Humidity at the main building with building floor plan
-    
-   Patterns : we can see the basement has the highest humidity and the music class is stable and remain in a good dry condition for preserving the music instruments 
-![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
- 
-- Luminosity at the main building 
-![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
 
-- Luminosity at the sub-site building
-![4 weeks](./image/19640%20Luminosity2.png?raw=true"")
+   Patterns : we can see the basement has the highest humidity and the music class is stable and remain in a good dry condition for preserving the music instruments 
+   ![4 weeks Temperature](./image/19640%20humidity0.png?raw=true"")
+ 
+- Luminosity at the main building and the sub-site building
     
-## Activity
-#####Algorithm for Accessibility is different from prediction in clean outlier and inactive data   
+    Pattern: 
+    Most of the rooms use natural light but there is always light only turn off during the weekend
+    The rooms facing south exposed in the longer daylight have maximum luminosity compared with the lab in the basement.
+    ![4 weeks Luminosity](./image/19640%20Luminosity1.png?raw=true"")
+    ![4 weeks](./image/19640%20Luminosity2.png?raw=true"")
+    
+## Availability
+##### Algorithm for Availability is different from prediction in clean outlier and inactive data   
 Intuition: 
   - Some sensor data has reasonable zero value as true value,like motion while no one walking around 
   - Some sensor data should never be zero , like Temperature and humidity always above zero, or some others type might below zero.
 
-In general , the summary for one device even there is(/are) some sensor data has "legal" zero 
+In general , the summary for one point of sensors even there is(/are) some sensor data has "legal" zero 
 the summary based on the same timestamps should always be above zero as long as it is active. 
 
 Process : 
   - Put all [value != 0] =  1 
-  - Sum for all sensor data in one device
+  - Sum for all sensor data in one points of sensors
   - Normalized all [value > 0] = 1 
 
-Output :  1 = active , 0 = inactive for each device 
+Output :  1 = active , 0 = inactive for each points of sensors 
 
-######  Visualize in Heatmap for device activities  
+###### Visualize in Heatmap for points of sensors availabilities  
 ![active](./image/active15_device.png?raw=true"")
 
 ##### This table includes large range of data which are missing due to sensors no longer working or the whole sites are power off  during [2015-Nov-1,2017-Oct-30]                  
@@ -185,19 +188,17 @@ Output :  1 = active , 0 = inactive for each device
 |28843	|2ο ΕΠΑΛ Λάρισας	|43.08 %	|before 2015-10-30|22.17% | 117,530
 |28850	|55o Δημοτικό Σχολείο Αθηνών	|21.23 %|before 2015-10-30|22.36% | 91,250
 
-######  Visualize in Heatmap
-All sensor data activity 
+######  Visualize in Heatmap all sensor data availabilities 
 ![active](./image/active_15sites.png?raw=true"")
 
-##### In this table, statistic for sensors belong to three different vendors and different ways to  transfer data in the whole sensors
+##### In this table, statistic for sensors belong to three different vendors and different connections 
  | Name	|Inactive |   outlier| Total number of measurements | 
  | :------: | :------: | :------:| :------:| 
  | Libelium for outdoor weather  | 15.16% |  10.61% | 31,390     
  | Synfield for outdoor weather | 14.40 %| 9.28%|10,950
  | Electrical Power Consumption |18.68 % |  33.40 %| 73010
 
-######  Visualize in Heatmap
-Category by device connection
+######  Visualize in Heatmap category by different connections for sensors data
 ![active](./image/active_3types.png?raw=true"")
 
 
@@ -208,7 +209,6 @@ Category by device connection
 
      - If the site is not power-on yet, it will not be counted as inactive
      - Only after sensor(s)(maybe just a few of them)actived, start to count inactive missing data
-     - In order to present all data in the one heatmap, here use [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling) to normalize the values into [0,1]   
 
 - Remove the outliers with Turkey's fences and replace with min/max value
     ```
