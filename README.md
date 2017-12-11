@@ -379,19 +379,19 @@ Conclusion : Yes we can retrieve both realtime and history,but the accuracy is n
         ![cloudy](./image/CloudyFeb-Oct155865.png?raw=true"")
         ![cloudy](./image/CloudyFeb-Oct155851.png?raw=true"")
 
-- **TODO** __Identify patten by slope = delta(temperature)/delta(time):__ 
+- __Identify patten by slope = delta(temperature)/delta(time):__ 
     
-    - slope for one room,first picture is the data after ETL, second is the slop for the data
+    - Slope for one room: first picture is the data after ETL, second is the slop for the data
+    If we are focusing on detecting sudden change of the indoor temperature, this slope plot could provide fast and efficient 
+    way, such as the fluctuate exists on Sep-23 on the top plot, a peak matching to this change is observed at the bottom plot as well.
+    We can use the similar algorithm: searching the "outliers" for slope to detect the fluctuate.  
     ![trend](./image/slope.png?raw=true"")
-    But we can't see pattern so obviously
-    - if it is not easy to see the patten,then put several subsites in one day together
     
-        raw data
+    - And put all the classrooms from one site together(ETL data on top and slope on bottom) we can detect which room behavior abnormal : 
+    the room in red during the day time and room in orange in the night time.
     ![](./image/27827_raw.png?raw=true"")
-    slope of the data
     ![](./image/27827_diff.png?raw=true"")
-    heatmap for the slop of the data
-    ![](./image/27827_diff_heatmap.png?raw=true"")
+    
 
 ### Comfort
 
