@@ -1,5 +1,5 @@
 from pylab import *
-from Util.db_util import *
+from util.database import *
 
 pd.options.mode.chained_assignment = None
 
@@ -26,20 +26,17 @@ def retrieve_data(database, Year, Months, feq=None):
     with create_connection(database) as conn:
         print("Database Connecting for sensor data....")
         try:
-            orientation = {}
             c = conn.cursor()
-            # site_list = c.execute("select site from details_sensor group by site;") # TODO or fill the table :details_site
-            # site_list = [str(id[0]) for id in site_list]
-            site_list = [
-                # "144024","28843", "144243", "28850",
-                '157185'  # "155849","144242",  "19640", "27827", "155849",
-                #     "155851", "155076", "155865", "155077",
-                #     "155877", "157185", "159705"
-            ]
+            site_list = c.execute("select site from details_sensor group by site;") # TODO or fill the table :details_site
+            site_list = [str(id[0]) for id in site_list]
+            # site_list = [
+            #     # "144024","28843", "144243", "28850",
+            #     '157185'  # "155849","144242",  "19640", "27827", "155849",
+            #     #     "155851", "155076", "155865", "155077",
+            #     #     "155877", "157185", "159705"
+            # ]
             for site_id in site_list:
-
                 temperature_resource_list = query_site_room_orientaion(c, site_id)
-                orientation[site_id] = temperature_resource_list
                 temperature_resource_list = [i[0] for i in temperature_resource_list]
                 if feq:
                     dict_df[site_id] = select_time_range_to_dataframe(c, site_id, temperature_resource_list, date_A,
@@ -57,7 +54,7 @@ def retrieve_data(database, Year, Months, feq=None):
                 dict_df_tempc[site_id] = select_single_sensor_to_pandas(c, query, site_id)
         except Error as e:
             print("SQL ERROR:", e)
-    return site_list, dict_df, dict_df_cloud, dict_df_tempc, orientation
+    return site_list, dict_df, dict_df_cloud, dict_df_tempc
 
 
 def retrieve_coordinate(database):
@@ -70,7 +67,7 @@ def retrieve_coordinate(database):
         print("Database Connecting for coordinate....")
         try:
             c = conn.cursor()
-            coordinate_dict = query_site_lat_lng(c)
+            coordinate_dict = query_site_coordinate_dict(c)
             return coordinate_dict
         except Error as e:
             print("SQL ERROR:", e)

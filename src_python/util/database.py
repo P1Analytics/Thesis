@@ -104,7 +104,7 @@ def WeatherAPI_to_sqlite(c, date_range, Y):
     :param Y: Year
     :return: print stdout sqlite commands for import API weather data into sqlite
     """
-    coordinate_dict = query_site_lat_lng(c)
+    coordinate_dict = query_site_coordinate_dict(c)
     site_list = query_site_list(c)
 
     df_peak_API_Cloud = pd.DataFrame(columns=site_list)
@@ -263,8 +263,7 @@ def query_site_list(c):
 def query_temp_resource_value(cursor, temp_resource_list):
     for id in temp_resource_list:
         resource_value = cursor.execute("select id , time, value from resource_value "
-                                        "where id = " + str(id)
-                                        + " and time > '2017-03-21' and time < '2017-03-22';")
+                                        "where id = " + str(id) + " and time > '2017-03-21' and time < '2017-03-22';")
     return resource_value
 
 
@@ -283,7 +282,7 @@ def query_site_orientaion(cursor):
     return orientaion_dict
 
 
-def query_site_lat_lng(cursor):
+def query_site_coordinate_dict(cursor):
     coordinate_dict = {}
     resp = cursor.execute("select * from coordinates")
     for site, lng, lat in resp.fetchall():
@@ -325,7 +324,6 @@ def query_resource_device(cursor, site_id, property):
     sensors = [iter[0] for iter in resp]
     devices = [iter[1].split("/")[-2] for iter in resp]  # TODO depend on different type of uri naming rules
     print(devices)
-    sensor_temp = []
     for iter in devices:
         subsite = cursor.execute("select subsite from details_sensor "
                               "where site= " + str(site_id)
@@ -334,7 +332,6 @@ def query_resource_device(cursor, site_id, property):
                               + " and subsite != 0 "
                               + " group by resource"
                               ).fetchall()[0][0]
-
         print(subsite)
 
     return sensors, devices
@@ -346,7 +343,6 @@ def select_single_sensor_to_pandas(cursor, query, id):
     df = df.reset_index(drop=True)
     df = df.set_index('timestamps')
     df = df[~df.index.duplicated(keep='first')]
-
     return df
 
 
@@ -382,7 +378,7 @@ def create_resource_ETL_tables(cursor):
     site_list = c.execute("select site from details_sensor group by site;")
     site_list = [str(id[0]) for id in site_list]
     for site_id in site_list:
-        sql_create_site_i_table = " CREATE TABLE IF NOT EXISTS site_" + site_id + "_ETL (id INT,time DATETIME ,value  REAL);"
+        sql_create_site_i_table = "CREATE TABLE IF NOT EXISTS site_" + site_id + "_ETL (id INT,time DATETIME ,value  REAL);"
         # print(sql_create_site_i_table)
         execute_sql(cursor, sql_create_site_i_table)
 
