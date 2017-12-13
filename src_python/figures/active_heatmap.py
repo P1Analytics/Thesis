@@ -1,7 +1,6 @@
 import seaborn as sns
 import os
 from util.data_preparation import *
-
 sns.set()
 
 
@@ -86,7 +85,7 @@ def reindex_df(new_index, df):
     return df
 
 
-def active_by_type(c, site_list):
+def type_activity(c, site_list):
     df_device_env = pd.DataFrame()
     df_device_syn = pd.DataFrame()
     df_device_lib = pd.DataFrame()
@@ -146,6 +145,33 @@ def active_by_type(c, site_list):
     return df_device_syn, df_device_lib, df_device_pow, df_device_env
 
 
+def single_site_activity(c,site_id):
+    """
+    put different devices activity into one site dataframe
+    :param c: cursor
+    :param site_id:
+    :return: df_site_devices for all devices on this site ; day_index for heatmap plot
+    """
+
+    df_site_devices = pd.DataFrame()
+    # query database:  {device:[resources list],...}
+    device_dict = query_device(c, site_id)
+    # device : list of sensors , check activity
+    for device in device_dict:
+        # interface from csv file
+        # df_device = select_csv_to_dataframe(site_id, device_dict[device])
+
+        # interface from database
+        df_device = select_all_to_dataframe(c, site_id, device_dict[device])
+        df_static = device_activity(df_device)
+        df_site_devices[device] = df_static.values
+
+    # print(site_id,outrages(df_site_devices))
+    # reset index for plot "Year - Month" as xtick label
+    day_index = [pd.to_datetime(str(date)).strftime('%Y-%m') for date in df_static.index.values]
+    df_site_devices = reindex_df(day_index, df_site_devices)
+    return df_site_devices,day_index
+
 def outrages(df):
     # print(df)
     temp = df
@@ -199,18 +225,14 @@ if __name__ == "__main__":
             #     print("site list need more than 1 ", site_list)
 
             print("active by type")
-            df_device_syn, df_device_lib, df_device_pow, df_device_env = active_by_type(c, site_list)
+            df_device_syn, df_device_lib, df_device_pow, df_device_env = type_activity(c, site_list)
             df_list = [df_device_env, df_device_syn, df_device_lib, df_device_pow]
             day_index = df_device_syn.index.values
-
-            # print('env', df_device_env.shape, "\n",'libelium',df_device_lib.shape,"\n",
-            #       'synfield',df_device_syn.shape, "\n",'power', df_device_pow.shape)
 
             fig, axn = plt.subplots(4, 1, sharex=True)
             ylabel_list = ["Env", "Syn", "Lib", "Pow"]
             for j, ax in enumerate(axn.flat):
                 # plot the heatmap for each type
-                # print(df_list[j].isnull)
                 try:
                     sns.heatmap(df_list[j].T,
                                 ax=ax,
@@ -231,26 +253,8 @@ if __name__ == "__main__":
             df_device_type = pd.DataFrame()
             for j, ax in enumerate(axn.flat):
                 site_id = site_list[j]
-                # print(site_id, "............")
-                df_site_devices = pd.DataFrame()
 
-                # query database:  {device:[resources list],...}
-                device_dict = query_device(c, site_id)
-
-                # device : list of sensors , check activity
-                for device in device_dict:
-                    # interface from csv file
-                    # df_device = select_csv_to_dataframe(site_id, device_dict[device])
-                    # interface from database
-                    df_device = select_all_to_dataframe(c, site_id, device_dict[device])
-                    df_static = device_activity(df_device)
-                    df_site_devices[device] = df_static.values
-
-                # print(site_id,outrages(df_site_devices))
-
-                # reset index for plot "Year - Month" as xtick label
-                day_index = [pd.to_datetime(str(date)).strftime('%Y-%m') for date in df_static.index.values]
-                df_site_devices = reindex_df(day_index, df_site_devices)
+                df_site_devices,day_index = single_site_activity(c,site_id)
                 # plot the heatmap for each site
                 sns.heatmap(df_site_devices.T,
                             ax=ax,
