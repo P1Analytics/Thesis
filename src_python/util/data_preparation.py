@@ -1,3 +1,6 @@
+import time
+
+import requests
 from pylab import *
 from util.database import *
 
@@ -187,13 +190,13 @@ def ETL(df):
     return df, list(df), begin
 
 
-def ETL_activity(df):
+def device_activity(df):
     """
     if any none zero data from any sensor, this device is active
     so we add all up from one device and more accuracy for activity statistic
 
     :param df: data from the same device, different sensors
-    :return: the device on the timeline  active or not (1 or 0)
+    :return: the device on the time line  active or not (1 or 0)
     """
     df = df[~df.index.duplicated(keep='first')]
     df[df != 0] = 1
@@ -223,3 +226,36 @@ def reindex_df(day_index, df):
     except ValueError:
         print(len(day_index), df.shape, "see they are different size to merge")
         return df
+
+
+def sun_rise_set(lat, lng, date):
+    """
+    Retrieve the data from API
+    :param lat: latitude
+    :param lng: longitude
+    :param timestamp: because the day time keep changing as time fly
+    :return: exact hour for sunset sunrise and noon
+    """
+    timestamp = pd.Timestamp(date + ' 12:00').timestamp()
+
+    # check the DST offset
+    timezone_url = "https://maps.googleapis.com/maps/api/timezone/json?location=" + str(lat) + "," + str(lng) + \
+                   "&timestamp=" + str(timestamp) + \
+                   "&key=AIzaSyAI4--_x4AE2K5zZ6Z5tZafwwpVI9uYlYM"
+    # print(timezone_url)
+    rs = requests.get(timezone_url).json()
+    # print(json.dumps(rs, sort_keys=True, indent=4))  # human-readable response :)
+    GMT = int((int(rs["dstOffset"]) + int(rs["rawOffset"])) / 3600)
+
+    # check the weather
+    rise_set_url = "https://api.sunrise-sunset.org/json?lat=" + str(lat) + "&lng=" + str(lng) + \
+                   "&date=" + time.strftime("%D", time.localtime(timestamp))
+    try:
+        rise_set = requests.get(rise_set_url).json()
+    except:
+        return 8, 12, 18
+    sunrise = int(rise_set["results"]["sunrise"].split(":")[0]) + GMT
+    noon = int(rise_set["results"]["solar_noon"].split(":")[0]) + GMT
+    sunset = int(rise_set["results"]["sunset"].split(":")[0]) + 12 + GMT
+
+    return sunrise, noon, sunset
