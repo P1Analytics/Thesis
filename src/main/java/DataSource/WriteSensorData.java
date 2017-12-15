@@ -10,19 +10,16 @@ import java.util.regex.Matcher;
 
 public class WriteSensorData {
     public static void main(String[] args) throws Exception {
+//       Warning : update the freq start and end also create folder where you going to have those csv files
         String freq = "5min"; //5min,hour,day,
         ZonedDateTime start = ZonedDateTime.parse("2016-05-01T00:00:00+01:00[Europe/Rome]");
-        ZonedDateTime end = ZonedDateTime.parse("2017-09-01T00:00:00+01:00[Europe/Rome]");
-//        String folder = "/Users/nanazhu/Documents/Sapienza/Thesis/src_python/5min2016May-Aug/";
-        String folder = "./";
+        ZonedDateTime end = ZonedDateTime.parse("2016-09-01T00:00:00+01:00[Europe/Rome]");
+        String folder = "/Users/nanazhu/Documents/Sapienza/Thesis/src_python/5min2016_5_8/";
         List<Long> siteIds = Arrays.asList(
-//                144242L, 27827L, 144024L,155076L,155849L,
-//                 155077L,155865L,155877L,144243L,
-                 //28843L bad end why ?
-//               28850L, 159705L ,155851L,157185L,
-                19640L,28843L
+                144242L, 27827L, 144024L,155076L,155849L,
+                 155077L,155865L,155877L,144243L,19640L,
+                 28843L,28850L, 159705L ,155851L,157185L
         );
-
         SparkAPI instance = new SparkAPI();
         instance.setUp();
         instance.authenticate();
