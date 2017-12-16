@@ -130,10 +130,10 @@ def type_activity(c, site_list):
                 print(df_static.shape)
                 continue
 
-    # print("outrage syn", outrages(df_device_syn))
-    # print("outrage lib", outrages(df_device_lib))
-    # print("outrage pow", outrages(df_device_pow))
-    # print("outrage env", outrages(df_device_env))
+    # print("outage syn", outages(df_device_syn))
+    # print("outage lib", outages(df_device_lib))
+    # print("outage pow", outages(df_device_pow))
+    # print("outage env", outages(df_device_env))
 
     # reset index with plot Year - Month as label
     df_device_syn = reindex_df(index_update, df_device_syn)
@@ -166,13 +166,13 @@ def single_site_activity(c,site_id):
         df_static = device_activity(df_device)
         df_site_devices[device] = df_static.values
 
-    # print(site_id,outrages(df_site_devices))
+    # print(site_id,outages(df_site_devices))
     # reset index for plot "Year - Month" as xtick label
     day_index = [pd.to_datetime(str(date)).strftime('%Y-%m') for date in df_static.index.values]
     df_site_devices = reindex_df(day_index, df_site_devices)
     return df_site_devices,day_index
 
-def outrages(df):
+def outages(df):
     # print(df)
     temp = df
     for head in list(temp):
