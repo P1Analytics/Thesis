@@ -9,10 +9,8 @@ electronic consumption, human activities, and etc.
 Using python library such as Pandas, Matplotlib, Numpy and Comfort Tools from Berkeley , 
 we aim to predict the overall comfort and other KPI for indoor environmental quality in the school buildings 
 
-Based on our findings, school management can optimise the energy consumption.
+Based on our findings, school management can optimise the environment quality.
 
-The ultimate target :  __Save the energy Save the world__   
-    
 ## Basic information
 ### Why do we care about collecting data in schools? 
 From six until we are ready to step out to get to work, most of our time spent at school, 
@@ -470,118 +468,9 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
         - Use Worldweatheronline API as outdoor temperature.
 ![heatmap](./image/19640_comfortableAPI.png?raw=true"")
     
-    Since we do not have good stable outdoor temperature resource,API could be an idealy option.   
-    ![heatmap](./image/comfort_compare.png?raw=true"")
-    
 
 
-## Setup enviroment on mac OS Sierra 10
-### Cassandra and Flink 
-```
-`brew install python` (may or maybe not need to use it but I run this anyway)
-
-`pip install cql --ignore-installed six`
-
-   --ignore-installed six is due to [fail of updating six on macOS 10.11](https://github.com/donnemartin/haxor-news/issues/54)
-    
-`brew install cassandra`
-    
-`brew install apache-flink`
-```
-### Why use Flink and Cassandra 
-
-1. __Flink__
-
-    Flink is well-designed on processing [streaming data](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/datastream_api.html) 
-    comparing with Spark, Hadoop.
-    
-    That is the crucial requisition for processing the sensor data
-    
-    Flink also has [connector for Cassandra as data sink](https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/connectors/index.html)
-    and we can customize for connecting Cassandra as batch data source.
-    
-    ![architechture of flink](./image/flink.png?raw=true "")
-    
-
-2. __Cassandra__
-
-    We are dealing with sensors data, which means a lot of machines, continuous emission and a large amount of data
-    
-    And Cassandra is one of the many options.
-    
-    Here are the [Key Cassandra Features and Benefits](https://academy.datastax.com/resources/brief-introduction-apache-cassandra)
-    - Massively scalable architecture – a masterless design where all nodes are the same, which provides operational simplicity and easy scale-out.
-    - Flexible and dynamic data model – supports modern data types with fast writes and reads.
-    - Linear scale performance – the ability to add nodes without going down produces predictable increases in performance
-    - Transparent fault detection and recovery – nodes that fail can easily be restored or replaced.
-    - Multi-data center replication – cross data center (in multiple geographies) and multi-cloud availability zone support for writes/reads.
-    - CQL (Cassandra Query Language) – an SQL-like language that makes moving from a relational database very easy.  
-    - ...
-    
-    Allow me highlight the part we are looking for and give us more confidence:
-    > __Top Use Cases__
-    _While Cassandra is a general purpose non-relational database that can be used for a variety of different applications, there are a number of use cases where the database excels over most any other option._
-    >> Internet of things applications – Cassandra is perfect for consuming lots of fast incoming data from devices, __sensors__ and similar mechanisms that exist in many different locations.
-    
-    There are a tons of [lectures how to use it properly](https://academy.datastax.com/courses)
-
-    __Challenge__:
-    - Unlike in the SQL world where you model your data first and then write the queries, in Cassandra you need to figure out all the queries that will be done and model your data accordingly.
-    It means you need to think twice when [building the data model](https://medium.com/@jscarp). Now we just use a very simple table as below for current phase
-    
-    GAIA has 1841 resources including duplicated 538 data sets categorized again in subsites 
-    Information for resources under each site :
-    
-    | Site ID  | ResourceID | Subsite ID | URI | Property
-    | :------:  | :------:| :------: | :------:| :------: |
-    | int |  int |int | text | text | 
-    
-    Information for sites :
-    
-     | Site(SubSite) ID  | Latitude | Longtitude | Name |
-     | :------:  | :------:| :------: | :------: | 
-     | int | float | float | text | 
-    
-    API data for weather
-    
-    | Site ID  | Timestamp |Type| value |  
-    | :------:  | :------:| :------: | :------:| 
-        
-    The data collected every 5mins from the resources: [Version 1 ]
-    
-    | Resource ID | Timestamp |reading |
-    | :------:| :------: | :------: |
-    | int | timestamp | float | 
-    
-    Design for the above table which stores time series data
-    ![pic](./image/cassandra_table_by_date.png?raw=true "")
-    
-    Cassandra tutorials : [Basic Time Series Data](https://academy.datastax.com/resources/getting-started-time-series-data-modeling) 
-    and [Advanced Time Series](https://www.datastax.com/dev/blog/advanced-time-series-with-cassandra)
-    - The Primary Key is equivalent to the Partition Key in a single-field-key table.
-    - The Composite/Compound Key is just a multiple-columns key: 
-        - The first part of the key is called PARTITION KEY
-        - The second part(the rest after first part) of the key is the CLUSTERING KEY 
-    - The Partition Key is responsible for data distribution across your nodes.
-    - The Clustering Key is responsible for data sorting within the partition.
-    
-    The data collected every 5mins from the resources: [Version 2]
-
-    |  Resource ID | Date | Timestamp |value |
-    | :------:| :------: |:------: | :------: |
-    | int | text | timestamp | float | 
-        
-    ```
-    CREATE TABLE gaia.read_data (
-    id int,
-    timeindex timestamp,
-    value float,
-    date text,
-    PRIMARY KEY ((id,date), timeindex )
-    ) WITH CLUSTERING ORDER BY (timeindex ASC);
-    ```   
 ## Retrieve the data 
-### Stream
 
 - [x] Retrieve the data by using APIs on  https://api.sparkworks.net/swagger-ui.html
   
@@ -631,28 +520,6 @@ Tool: [CBE Thermal Comfort Tool for ASHRAE-55 ](http://comfort.cbe.berkeley.edu)
         }
 ```
 
-### Batch
-
-## Process the data on Flink
-Flink has the special classes DataSet and DataStream to represent data in a program. 
-You can think of them as immutable collections of data that can contain duplicates. 
-In the case of DataSet the data is finite while for a DataStream the number of elements can be unbounded.
-
-Flink program programs look like regular programs that transform collections of data. 
-Each program consists of the same basic parts:
-- Obtain an execution environment,
-- Load/create the initial data,
-- Specify transformations on this data,
-- Specify where to put the results of your computations,
-- Trigger the program execution
-
-Let's talk something about "Key" first
-- Define keys for Tuples 
-- Define keys using Field Expressions
-- Define keys using Key Selector Functions  
-### Stream
-- Reference [SocketWindowWordCount.java](https://github.com/apache/flink/blob/master/flink-examples/flink-examples-streaming/src/main/java/org/apache/flink/streaming/examples/socket/SocketWindowWordCount.java)
-### Batch 
 
 
 ## Known Issues:
