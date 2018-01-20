@@ -12,14 +12,17 @@ public class WriteSensorData {
     public static void main(String[] args) throws Exception {
 //       Warning : update the freq start and end also create folder where you going to have those csv files
         String freq = "5min"; //5min,hour,day,
-        ZonedDateTime start = ZonedDateTime.parse("2016-05-01T00:00:00+01:00[Europe/Rome]");
-        ZonedDateTime end = ZonedDateTime.parse("2016-09-01T00:00:00+01:00[Europe/Rome]");
-        String folder = "/Users/nanazhu/Documents/Sapienza/Thesis/src_python/5min2016_5_8/";
+        ZonedDateTime start = ZonedDateTime.parse("2016-01-01T00:00:00+01:00[Europe/Rome]");
+        ZonedDateTime end = ZonedDateTime.parse("2016-05-01T00:00:00+01:00[Europe/Rome]");
+        String folder = "/Users/nanazhu/Documents/Sapienza/Thesis/src_python/5min2016_1_4/";
+
         List<Long> siteIds = Arrays.asList(
-                144242L, 27827L, 144024L,155076L,155849L,
-                 155077L,155865L,155877L,144243L,19640L,
-                 28843L,28850L, 159705L ,155851L,157185L
+                144242L, 27827L, 144024L,155076L,
+                155849L,155077L,155865L,144243L,
+                155877L,19640L,28843L,28850L,
+                159705L ,155851L,157185L
         );
+
         SparkAPI instance = new SparkAPI();
         instance.setUp();
         instance.authenticate();
@@ -30,15 +33,15 @@ public class WriteSensorData {
             FileWriter fw = new FileWriter(folder+siteId+".csv", true);
             for (Long subsiteId : instance.listSubsites(siteId)) {
                 List<Long> sub_resourcesIds = instance.listResourcesIds(subsiteId);
-                WriteResouceData(sub_resourcesIds,instance, freq, start, end, time_format,fw);
+                WriteResourceData(sub_resourcesIds,instance, freq, start, end, time_format,fw);
             }
             List<Long> resourcesIds = instance.listResourcesIds(siteId);
-            WriteResouceData(resourcesIds,instance, freq,start, end,time_format,fw);
+            WriteResourceData(resourcesIds,instance, freq,start, end,time_format,fw);
             fw.close();
         }
     }
 
-    private static void WriteResouceData(List<Long> resourcesIds, SparkAPI instance, String freq,
+    private static void WriteResourceData(List<Long> resourcesIds, SparkAPI instance, String freq,
                              ZonedDateTime start, ZonedDateTime end, DateFormat time_format,FileWriter fw) {
         for (Long resourceId : resourcesIds) {
             try{
