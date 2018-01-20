@@ -571,13 +571,13 @@ However the real data is not all-zeros in https://console.sparkworks.net/resourc
 1. [The building data genome project](https://github.com/buds-lab/the-building-data-genome-project)
 2. [Big data computing](https://piazza.com/uniroma1.it/spring2017/1044406/resources) 
 3. [Naked Statistics: Stripping the Dread from the Data by Charles Wheelan](https://www.goodreads.com/book/show/17986418-naked-statistics)
-    
+4. [Real Time sensor status on GAIA](http://console.sparkworks.net/) 
 
 ## Supervisors:
   Professor Ioannis Chatzigiannakis   
   Professor Aris Anagnostopoulos
   
-Thank notes: 
+### Acknowledgement : 
 Since the first day I stepped into Sapienza , you are the ones lead me to “find true love with data mining”. 
 Till the last six months, you not only gave me “fish” but also taught me “how to fish” with all your supports and encourage. 
 That is beyond anything I could expect but I am so blessed to have. Without you, I won’t be standing here today.
